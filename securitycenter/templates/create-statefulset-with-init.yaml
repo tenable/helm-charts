@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: tenable-security-center
+  namespace: {{ .Values.namespace | default "tenable" }}
+  labels:
+    app: sc-pod
+spec:
+  # Do not change. replicas 1 is the only supported value right now
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sc-pod
+  template:
+    metadata:
+      labels:
+        app: sc-pod
+        date: "{{ now | unixEpoch }}"
+    spec:
+      {{- if .Values.affinity }}
+      affinity:
+{{ .Values.affinity | toYaml | indent 8}}
+      {{- end }}
+
+      # This container is run during pod initialization
+      initContainers:
+      - name: sc-install-container
+        image: "{{ .Values.image.repository }}/{{ .Values.image.installImageName }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        volumeMounts:
+          - mountPath: "/opt"
+            name: sc-app-data
+
+      containers:
+      - name: sc-runtime-container
+        image: "{{ .Values.image.repository }}/{{ .Values.image.runtimeImageName }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        resources:
+          requests:
+            cpu: {{ .Values.resources.requests.cpu }}
+            memory: {{ .Values.resources.requests.memory }}
+          limits:
+            cpu: {{ .Values.resources.limits.cpu }}
+            memory: {{ .Values.resources.limits.memory }}
+        ports:
+        - containerPort: 443
+        volumeMounts:
+          - mountPath: "/opt"
+            name: sc-app-data
+        livenessProbe:
+          exec:
+            command:
+              - /scbase/healthCheck.sh
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+
+      volumes:
+        - name: sc-app-data
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistentVolumeClaim.name | default "tenable-pvc-sc" }}

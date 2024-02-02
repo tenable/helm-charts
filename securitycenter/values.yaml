@@ -1,0 +1,27 @@
+# Default values for securitycenter.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates-org.
+
+persistentVolumeClaim:
+  size: 900Gi
+
+resources:
+   limits:
+     cpu: 16000m
+     memory: 32Gi
+   requests:
+     cpu: 8000m
+     memory: 16Gi
+
+image:
+  repository: tenable
+  pullPolicy: Always
+  installImageName: securitycenter-install
+  runtimeImageName: securitycenter-runtime
+  tag: 6.3.0
+
+service:
+  name: tenable-sc
+  port: 443
+  targetPort: 443
+  type: LoadBalancer
