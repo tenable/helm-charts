@@ -3,7 +3,7 @@ description: A Helm chart to deploy Tenable Security Center into Kubernetes clus
 type: application
 home: https://www.tenable.com
 sources:
-  - https://github.com/tenable/helm-charts/securitycenter
+  - https://github.com/tenable/helm-charts
 maintainers:
   - name: Tenable SecurityCenter
     email: securitycenter@tenable.com
