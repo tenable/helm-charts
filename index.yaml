@@ -1,0 +1,20 @@
+apiVersion: v1
+entries:
+  securitycenter:
+  - apiVersion: v2
+    appVersion: 6.3.0
+    created: "2024-02-03T16:04:46.4838551-06:00"
+    description: A Helm chart to deploy Tenable Security Center into Kubernetes clusters
+    digest: a983f2dc4129266342033bd86da031c3eaf3dffac62043040a9b5a851d1d92ae
+    home: https://www.tenable.com
+    maintainers:
+    - email: securitycenter@tenable.com
+      name: Tenable SecurityCenter
+    name: securitycenter
+    sources:
+    - https://github.com/tenable/helm-charts
+    type: application
+    urls:
+    - releases/securitycenter-6.3.0.tgz
+    version: 6.3.0
+generated: "2024-02-03T16:04:46.4759239-06:00"
