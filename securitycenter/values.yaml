@@ -8,10 +8,10 @@ persistentVolumeClaim:
 resources:
    limits:
      cpu: 16000m
-     memory: 32Gi
+     memory: 64Gi
    requests:
-     cpu: 8000m
-     memory: 16Gi
+     cpu: 16000m
+     memory: 64Gi
 
 image:
   repository: tenable
