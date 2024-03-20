@@ -2,7 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: tenable-pvc-sc
-  namespace: {{ .Values.namespace | default "tenable" }}
+  namespace: {{ .Release.Namespace  }}
 spec:
   accessModes:
     - ReadWriteOnce
