@@ -2,7 +2,11 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: tenable-security-center
-  namespace: {{ .Values.namespace | default "tenable" }}
+  {{- if eq .Release.Namespace "default" }}
+  {{ fail "Installation to default namespace is not supported. Please review Tenable installation documentation." }}
+  {{- else }}
+  namespace: {{ .Release.Namespace  }}
+  {{- end}}
   labels:
     app: sc-pod
 spec:
@@ -70,4 +74,4 @@ spec:
       volumes:
         - name: sc-app-data
           persistentVolumeClaim:
-            claimName: {{ .Values.persistentVolumeClaim.name | default "tenable-pvc-sc" }}
+            claimName: tenable-pvc-sc
