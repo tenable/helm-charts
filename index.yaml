@@ -3,7 +3,7 @@ entries:
   securitycenter:
   - apiVersion: v2
     appVersion: 6.3.0
-    created: "2024-03-15T16:46:37.9796158-05:00"
+    created: "2024-05-26T20:21:03.5097018+03:00"
     description: A Helm chart to deploy Tenable Security Center into Kubernetes clusters
     digest: 162b3582e1c70a0c0e563b4f2321e0625f110f8fc47a9e31b0043b08d302ae5d
     home: https://www.tenable.com
@@ -17,4 +17,26 @@ entries:
     urls:
     - releases/securitycenter-1.1.0.tgz
     version: 1.1.0
-generated: "2024-03-15T16:46:37.9785844-05:00"
+  tenable-endpoint-connector:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2024-05-26T20:21:03.5107895+03:00"
+    description: Tenable Cloud Security endpoint connector
+    digest: 7feab6603a455c165e82cecb1bc6f9fad25417587db0168dc70fd0e161f34160
+    name: tenable-endpoint-connector
+    type: application
+    urls:
+    - releases/tenable-endpoint-connector-1.0.0.tgz
+    version: 1.0.0
+  tenable-kubernetes-cluster-connector:
+  - apiVersion: v2
+    appVersion: 1.3.0
+    created: "2024-05-26T20:21:03.5119791+03:00"
+    description: Tenable Cloud Security Kubernetes cluster connector
+    digest: 93a9363af962c096d9252ac2c091cecad92f787e174c348411dd081b1924ab4a
+    name: tenable-kubernetes-cluster-connector
+    type: application
+    urls:
+    - releases/tenable-kubernetes-cluster-connector-1.3.0.tgz
+    version: 1.3.0
+generated: "2024-05-26T20:21:03.5027416+03:00"

@@ -1,0 +1,8 @@
+containerImagePath: tenable/cloud-security-endpoint-connector
+containerImagePullSecrets: []
+pod:
+  affinity: {}
+  annotations: {}
+  labels: {}
+  resources: {}
+  tolerations: []

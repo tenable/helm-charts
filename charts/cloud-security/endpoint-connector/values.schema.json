@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "properties": {
+    "apiKeyToken": {
+      "type": "string"
+    },
+    "apiKeyTokenSecretName": {
+      "type": "string"
+    },
+    "apiUrl": {
+      "type": "string"
+    },
+    "containerImagePath": {
+      "type": "string"
+    },
+    "serviceEndpoint": {
+      "type": "string"
+    },
+    "serviceId": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "apiUrl",
+    "containerImagePath",
+    "serviceEndpoint",
+    "serviceId"
+  ],
+  "type": "object"
+}

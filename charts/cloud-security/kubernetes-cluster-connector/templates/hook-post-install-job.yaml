@@ -1,0 +1,93 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    {{- include "annotations" . | nindent 4 }}
+    helm.sh/hook: post-install, post-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation, hook-succeeded
+  labels:
+    {{- include "labels" . | nindent 4 }}
+  name: {{ .Release.Name }}-hook-post-install
+  namespace: {{ .Release.Namespace }}
+spec:
+  backoffLimit: 0
+  template:
+    metadata:
+      annotations:
+        {{- with .Values.pod.annotations }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- with .Values.pod.labels }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.pod.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+      - args: [
+          "release-post-install",
+          "--api-key-token-file-path",
+          "/var/run/secrets/application/apikeytoken",
+          "--api-url",
+          {{ .Values.apiUrl | quote }},
+          "--helm-release-name",
+          {{ .Release.Name | quote }},
+          {{- if .Values.configureIdentity }}
+          "--identity-service-account-secret-name",
+          "{{ .Release.Name }}-identity",
+          "--identity-service-account-secret-namespace-name",
+          {{ .Release.Namespace | quote }},
+          {{- end}}
+          {{- if .Values.name }}
+          "--name",
+          {{ .Values.name | quote }},
+          {{- end}}
+          {{- if .Values.configureNetwork }}
+          "--network",
+          {{- end}}
+          {{- if .Values.accountId }}
+          "--tenant-raw-id",
+          {{ .Values.accountId | quote }}
+          {{- end}}
+        ]
+        {{- include "environmentVariables" . | nindent 8 }}
+        image: {{ include "containerImagePath" . }}
+        imagePullPolicy: Always
+        name: {{ .Release.Name }}-hook-post-install
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+        volumeMounts:
+        - name: {{ .Release.Name }}-hook-post-install
+          mountPath: "/var/run/secrets/application"
+          readOnly: true
+      {{- with .Values.containerImagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      restartPolicy: "Never"
+      securityContext:
+        runAsNonRoot: true
+        {{- if not (.Capabilities.APIVersions.Has "security.openshift.io/v1/SecurityContextConstraints") }}
+        runAsUser: 1000
+        {{- end }}
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: {{ .Release.Name }}-hook-post-install
+      {{- with .Values.pod.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+      {{- include "apiKeyTokenVolume" (dict "name" (printf "%s-hook-post-install" .Release.Name) "root" .) | nindent 6 }}
+---
+{{ $annotations :=
+  list
+  "helm.sh/hook: post-install, post-upgrade"
+  "helm.sh/hook-delete-policy: hook-failed, before-hook-creation, hook-succeeded" }}
+{{ include "apiKeyTokenSecret" (dict "name" (printf "%s-hook-post-install" .Release.Name) "root" . "annotations" $annotations) }}
