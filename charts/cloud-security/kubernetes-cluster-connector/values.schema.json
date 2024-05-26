@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "properties": {
+    "accountId": {
+      "type": ["integer", "string"]
+    },
+    "apiKeyToken": {
+      "type": "string"
+    },
+    "apiKeyTokenSecretName": {
+      "type": "string"
+    },
+    "apiUrl": {
+      "type": "string"
+    },
+    "configureIdentity": {
+      "type": "boolean"
+    },
+    "configureNetwork": {
+      "type": "boolean"
+    },
+    "containerImagePath": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "apiUrl",
+    "configureIdentity",
+    "configureNetwork",
+    "containerImagePath"
+  ],
+  "type": "object"
+}

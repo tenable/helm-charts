@@ -1,0 +1,8 @@
+containerImagePath: tenable/cloud-security-kubernetes-cluster-connector
+containerImagePullSecrets: []
+pod:
+  affinity: {}
+  annotations: {}
+  labels: {}
+  resources: {}
+  tolerations: []

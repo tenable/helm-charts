@@ -1,0 +1,80 @@
+{{- if .Values.configureNetwork }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    {{- include "annotations" . | nindent 4 }}
+  labels:
+    {{- include "labels" . | nindent 4 }}
+  name: {{ .Release.Name }}-network
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "matchLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        {{- with .Values.pod.annotations }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "labels" . | nindent 8 }}
+        {{- with .Values.pod.labels }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.pod.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      automountServiceAccountToken: true
+      containers:
+      - args: [
+          "network",
+          "--api-key-token-file-path",
+          "/var/run/secrets/application/apikeytoken",
+          "--api-url",
+          {{ .Values.apiUrl | quote }},
+          "--helm-release-name",
+          {{ .Release.Name | quote }}
+        ]
+        {{- include "environmentVariables" . | nindent 8 }}
+        image: {{ include "containerImagePath" . }}
+        imagePullPolicy: Always
+        name: {{ .Release.Name }}-network
+        {{- with .Values.pod.resources }}
+        resources:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          runAsNonRoot: true
+          {{- if not (.Capabilities.APIVersions.Has "security.openshift.io/v1/SecurityContextConstraints") }}
+          runAsUser: 1000
+          {{- end }}
+        volumeMounts:
+        - name: {{ .Release.Name }}-network
+          mountPath: "/var/run/secrets/application"
+          readOnly: true
+      {{- with .Values.containerImagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: {{ .Release.Name }}-network
+      {{- with .Values.pod.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+      {{- include "apiKeyTokenVolume" (dict "name" (printf "%s-network" .Release.Name) "root" .) | nindent 6 }}
+---
+{{ include "apiKeyTokenSecret" (dict "name" (printf "%s-network" .Release.Name) "root" .) }}
+{{- end }}

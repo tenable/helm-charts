@@ -1,0 +1,19 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  annotations:
+    {{- include "annotations" . | nindent 4 }}
+    helm.sh/hook: post-delete
+    helm.sh/hook-delete-policy: before-hook-creation, hook-succeeded
+    helm.sh/hook-weight: "-1"
+  labels:
+    {{- include "labels" . | nindent 4 }}
+  name: {{ .Release.Name }}-hook-post-delete
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ .Release.Name }}-hook-post-delete
+subjects:
+- kind: ServiceAccount
+  name: {{ .Release.Name }}-hook-post-delete
+  namespace: {{ .Release.Namespace }}
