@@ -6,3 +6,4 @@ pod:
   labels: {}
   resources: {}
   tolerations: []
+resourceNamePrefix: endpoint-connector

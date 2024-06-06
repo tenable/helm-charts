@@ -54,6 +54,10 @@ env:
   value: Text
 {{- end }}
 
+{{- define "globalResourceName" -}}
+{{- print "tenable" "-" .root.Values.resourceNamePrefix "-" .name "-" (trunc 8 (sha256sum (print .root.Release.Namespace ":" .root.Release.Name))) }}
+{{- end }}
+
 {{- define "labels" -}}
 {{ include "matchLabels" . }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}

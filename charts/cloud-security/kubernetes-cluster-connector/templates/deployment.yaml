@@ -1,4 +1,3 @@
-{{- if .Values.configureNetwork }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6,7 +5,7 @@ metadata:
     {{- include "annotations" . | nindent 4 }}
   labels:
     {{- include "labels" . | nindent 4 }}
-  name: {{ .Release.Name }}-network
+  name: {{ .Values.resourceNamePrefix }}-deployment
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: 1
@@ -32,33 +31,49 @@ spec:
       automountServiceAccountToken: true
       containers:
       - args: [
-          "network",
+          "connector",
           "--api-key-token-file-path",
           "/var/run/secrets/application/apikeytoken",
           "--api-url",
           {{ .Values.apiUrl | quote }},
+          "--application-version",
+          {{ .Chart.AppVersion | quote }},
           "--helm-release-name",
-          {{ .Release.Name | quote }}
+          {{- print .Release.Namespace ":" .Release.Name | quote }},
+          {{- if .Values.configureIdentity }}
+          "--identity",
+          {{- end}}
+          {{- if .Values.name }}
+          "--name",
+          {{ .Values.name | quote }},
+          {{- end}}
+          {{- if .Values.configureNetwork }}
+          "--network",
+          {{- end}}
+          {{- if .Values.accountId }}
+          "--tenant-raw-id",
+          {{ .Values.accountId | quote }}
+          {{- end}}
         ]
         {{- include "environmentVariables" . | nindent 8 }}
         image: {{ include "containerImagePath" . }}
         imagePullPolicy: Always
-        name: {{ .Release.Name }}-network
+        name: {{ .Values.resourceNamePrefix }}-container
         {{- with .Values.pod.resources }}
         resources:
-          {{- toYaml . | nindent 10 }}
+        {{- toYaml . | nindent 10 }}
         {{- end }}
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
             drop:
-            - ALL
+              - ALL
           runAsNonRoot: true
           {{- if not (.Capabilities.APIVersions.Has "security.openshift.io/v1/SecurityContextConstraints") }}
           runAsUser: 1000
           {{- end }}
         volumeMounts:
-        - name: {{ .Release.Name }}-network
+        - name: {{ .Values.resourceNamePrefix }}-secret
           mountPath: "/var/run/secrets/application"
           readOnly: true
       {{- with .Values.containerImagePullSecrets }}
@@ -68,13 +83,12 @@ spec:
       securityContext:
         seccompProfile:
           type: RuntimeDefault
-      serviceAccountName: {{ .Release.Name }}-network
+      serviceAccountName: {{ .Values.resourceNamePrefix }}-service-account
       {{- with .Values.pod.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-      {{- include "apiKeyTokenVolume" (dict "name" (printf "%s-network" .Release.Name) "root" .) | nindent 6 }}
+      {{- include "apiKeyTokenVolume" (dict "name" (print .Values.resourceNamePrefix "-secret") "root" .) | nindent 6 }}
 ---
-{{ include "apiKeyTokenSecret" (dict "name" (printf "%s-network" .Release.Name) "root" .) }}
-{{- end }}
+{{ include "apiKeyTokenSecret" (dict "name" (print .Values.resourceNamePrefix "-secret") "root" .) }}

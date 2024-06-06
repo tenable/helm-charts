@@ -5,7 +5,7 @@ metadata:
     {{- include "annotations" . | nindent 4 }}
   labels:
     {{- include "labels" . | nindent 4 }}
-  name: {{ .Release.Name }}
+  name: {{ .Values.resourceNamePrefix }}-deployment
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: 1
@@ -38,7 +38,7 @@ spec:
         ]
         image: {{ include "containerImagePath" . }}
         imagePullPolicy: Always
-        name: {{ .Release.Name }}
+        name: {{ .Values.resourceNamePrefix }}-container
         {{- with .Values.pod.resources }}
         resources:
           {{- toYaml . | nindent 10 }}
@@ -53,7 +53,7 @@ spec:
           runAsUser: 1000
           {{- end }}
         volumeMounts:
-        - name: {{ .Release.Name }}
+        - name: {{ .Values.resourceNamePrefix }}-secret
           mountPath: "/var/run/secrets/application"
           readOnly: true
       {{- with .Values.containerImagePullSecrets }}
@@ -68,6 +68,6 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-      {{- include "apiKeyTokenVolume" (dict "name" .Release.Name "root" .) | nindent 6 }}
+      {{- include "apiKeyTokenVolume" (dict "name" (print .Values.resourceNamePrefix "-secret") "root" .) | nindent 6 }}
 ---
-{{ include "apiKeyTokenSecret" (dict "name" .Release.Name "root" .) }}
+{{ include "apiKeyTokenSecret" (dict "name" (print .Values.resourceNamePrefix "-secret") "root" .) }}

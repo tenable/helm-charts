@@ -1,4 +1,3 @@
-{{- if .Values.configureIdentity }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -6,9 +5,8 @@ metadata:
     {{- include "annotations" . | nindent 4 }}
   labels:
     {{- include "labels" . | nindent 4 }}
-  name: {{ .Release.Namespace }}:{{ .Release.Name }}-identity
+  name: {{ include "globalResourceName" (dict "name" "cr" "root" .) }}
 rules:
   - apiGroups: ["*"]
     resources: ["*"]
     verbs: ["get", "list", "watch"]
-{{- end }}

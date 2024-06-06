@@ -1,3 +1,5 @@
+configureIdentity: true
+configureNetwork: true
 containerImagePath: tenable/cloud-security-kubernetes-cluster-connector
 containerImagePullSecrets: []
 pod:
@@ -6,3 +8,4 @@ pod:
   labels: {}
   resources: {}
   tolerations: []
+resourceNamePrefix: kubernetes-cluster-connector
