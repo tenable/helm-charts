@@ -8,12 +8,12 @@ metadata:
     helm.sh/hook-weight: "-1"
   labels:
     {{- include "labels" . | nindent 4 }}
-  name: {{ .Release.Name }}-hook-post-delete
+  name: {{ include "globalResourceName" (dict "name" "post-delete-crb" "root" .) }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: {{ .Release.Name }}-hook-post-delete
+  name: {{ include "globalResourceName" (dict "name" "post-delete-cr" "root" .) }}
 subjects:
 - kind: ServiceAccount
-  name: {{ .Release.Name }}-hook-post-delete
+  name: {{ .Values.resourceNamePrefix }}-post-delete-service-account
   namespace: {{ .Release.Namespace }}

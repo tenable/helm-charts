@@ -7,7 +7,7 @@ metadata:
     helm.sh/hook-delete-policy: before-hook-creation, hook-succeeded
   labels:
     {{- include "labels" . | nindent 4 }}
-  name: {{ .Release.Name }}-hook-post-delete
+  name: {{ .Values.resourceNamePrefix }}-post-delete-job
   namespace: {{ .Release.Namespace }}
 spec:
   backoffLimit: 0
@@ -35,22 +35,22 @@ spec:
           "--api-url",
           {{ .Values.apiUrl | quote }},
           "--helm-release-name",
-          {{ .Release.Name | quote }}
+          {{- print .Release.Namespace ":" .Release.Name | quote }},
         ]
         {{- include "environmentVariables" . | nindent 8 }}
         image: {{ include "containerImagePath" . }}
         imagePullPolicy: Always
-        name: {{ .Release.Name }}-hook-post-delete
+        name: {{ .Values.resourceNamePrefix }}-post-delete-container
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
             drop:
             - ALL
         volumeMounts:
-        - name: {{ .Release.Name }}-hook-post-delete
+        - name: {{ .Values.resourceNamePrefix }}-post-delete-secret
           mountPath: "/var/run/secrets/application"
           readOnly: true
-      restartPolicy: "Never"
+      restartPolicy: Never
       securityContext:
         runAsNonRoot: true
         {{- if not (.Capabilities.APIVersions.Has "security.openshift.io/v1/SecurityContextConstraints") }}
@@ -62,17 +62,17 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ .Release.Name }}-hook-post-delete
+      serviceAccountName: {{ .Values.resourceNamePrefix }}-post-delete-service-account
       {{- with .Values.pod.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-      {{- include "apiKeyTokenVolume" (dict "name" (printf "%s-hook-post-delete" .Release.Name) "root" .) | nindent 6 }}
+      {{- include "apiKeyTokenVolume" (dict "name" (print .Values.resourceNamePrefix "-post-delete-secret") "root" .) | nindent 6 }}
 ---
 {{ $annotations := 
   list 
   "helm.sh/hook: post-delete"
   "helm.sh/hook-delete-policy: hook-failed, before-hook-creation, hook-succeeded"
   "helm.sh/hook-weight: \"-1\"" }}
-{{ include "apiKeyTokenSecret" (dict "name" (printf "%s-hook-post-delete" .Release.Name) "root" . "annotations" $annotations) }}
+{{ include "apiKeyTokenSecret" (dict "name" (print .Values.resourceNamePrefix "-post-delete-secret") "root" . "annotations" $annotations) }}
