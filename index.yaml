@@ -3,7 +3,7 @@ entries:
   cloud-security-endpoint-connector:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2024-06-06T13:13:46.4379638+03:00"
+    created: "2024-06-07T14:25:26.7889267-05:00"
     description: Tenable Cloud Security endpoint connector
     digest: 9a7f02a01f03d8919629323eb6d90198e0519367f1495b18c82de03e12c35758
     name: cloud-security-endpoint-connector
@@ -14,7 +14,7 @@ entries:
   cloud-security-kubernetes-cluster-connector:
   - apiVersion: v2
     appVersion: 1.4.0
-    created: "2024-06-06T13:13:46.4379638+03:00"
+    created: "2024-06-07T14:25:26.7894403-05:00"
     description: Tenable Cloud Security Kubernetes cluster connector
     digest: 65187d18e609e3c07208b311a45f692ae7d127a1d6617726734b36a3ebc68222
     name: cloud-security-kubernetes-cluster-connector
@@ -24,8 +24,24 @@ entries:
     version: 1.4.0
   securitycenter:
   - apiVersion: v2
+    appVersion: 6.4.0
+    created: "2024-06-07T14:25:26.7910605-05:00"
+    description: A Helm chart to deploy Tenable Security Center into Kubernetes clusters
+    digest: 19d6a0a1161bec4345b38b9b4cbb221510386306e1e7200b76badd81cc254aeb
+    home: https://www.tenable.com
+    maintainers:
+    - email: securitycenter@tenable.com
+      name: Tenable SecurityCenter
+    name: securitycenter
+    sources:
+    - https://github.com/tenable/helm-charts
+    type: application
+    urls:
+    - releases/securitycenter-1.2.0.tgz
+    version: 1.2.0
+  - apiVersion: v2
     appVersion: 6.3.0
-    created: "2024-06-06T13:13:46.4389685+03:00"
+    created: "2024-06-07T14:25:26.7899594-05:00"
     description: A Helm chart to deploy Tenable Security Center into Kubernetes clusters
     digest: 2afdec84f65b1df30aedb392412bacd0c8242d21fb7fc847b333f349fc36a9bc
     home: https://www.tenable.com
@@ -42,7 +58,7 @@ entries:
   tenable-endpoint-connector:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2024-06-06T13:13:46.4389685+03:00"
+    created: "2024-06-07T14:25:26.7915758-05:00"
     description: Tenable Cloud Security endpoint connector
     digest: 287c70490e944b4ab916afa430d3068dd41632f8e82f0a581ae32f423cdef5e2
     name: tenable-endpoint-connector
@@ -53,7 +69,7 @@ entries:
   tenable-kubernetes-cluster-connector:
   - apiVersion: v2
     appVersion: 1.3.0
-    created: "2024-06-06T13:13:46.4399674+03:00"
+    created: "2024-06-07T14:25:26.7916311-05:00"
     description: Tenable Cloud Security Kubernetes cluster connector
     digest: 29b57f0eaf7e0532cc773bd00466665672ad9992d37680bcfe94bb36c125ced2
     name: tenable-kubernetes-cluster-connector
@@ -61,4 +77,4 @@ entries:
     urls:
     - releases/tenable-kubernetes-cluster-connector-1.3.0.tgz
     version: 1.3.0
-generated: "2024-06-06T13:13:46.435458+03:00"
+generated: "2024-06-07T14:25:26.7884233-05:00"
