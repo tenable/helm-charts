@@ -34,7 +34,8 @@ spec:
           "/var/run/secrets/application/apikeytoken",
           {{ .Values.apiUrl | quote }},
           {{ .Values.serviceEndpoint | quote }},
-          {{ .Values.serviceId | quote }}
+          {{ .Values.serviceId | quote }},
+          {{ .Values.proxyUrl | quote }}
         ]
         image: {{ include "containerImagePath" . }}
         imagePullPolicy: Always

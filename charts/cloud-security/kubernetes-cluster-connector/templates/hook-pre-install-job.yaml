@@ -41,6 +41,10 @@ spec:
           "--name",
           {{ .Values.name | quote }},
           {{- end}}
+          {{- if .Values.proxyUrl }}
+          "--proxy-url",
+          {{ .Values.proxyUrl | quote }},
+          {{- end}}
           {{- if .Values.accountId }}
           "--tenant-raw-id",
           {{ .Values.accountId | quote }}

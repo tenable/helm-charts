@@ -21,6 +21,9 @@
     },
     "containerImagePath": {
       "type": "string"
+    },
+    "proxyUrl": {
+      "type": "string"
     }
   },
   "required": [
