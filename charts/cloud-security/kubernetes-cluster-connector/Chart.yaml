@@ -3,4 +3,4 @@ appVersion: 1.4.0
 description: Tenable Cloud Security Kubernetes cluster connector
 name: cloud-security-kubernetes-cluster-connector
 type: application
-version: 1.4.0
+version: 1.4.1

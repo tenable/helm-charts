@@ -13,6 +13,9 @@
     "containerImagePath": {
       "type": "string"
     },
+    "proxyUrl": {
+      "type": "string"
+    },
     "serviceEndpoint": {
       "type": "string"
     },
