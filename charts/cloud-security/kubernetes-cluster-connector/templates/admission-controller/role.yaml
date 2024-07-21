@@ -1,0 +1,16 @@
+{{- if and .Values.configureAdmissionController (not .Values.admissionController.webhookUrl) }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations:
+    {{- include "admissionController.annotations" . | nindent 4 }}
+  labels:
+    {{- include "admissionController.labels" . | nindent 4 }}
+  name: {{ include "admissionController.globalResourceName" (dict "name" "r" "root" .) }}
+rules:
+- apiGroups: [""]
+  resourceNames:
+  - {{ .Values.admissionController.resourceNamePrefix }}-certificate-secret
+  resources: ["secrets"]
+  verbs: ["get", "list", "update", "watch"]
+{{- end }}

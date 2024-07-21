@@ -1,0 +1,19 @@
+{{- if and .Values.configureAdmissionController (not .Values.admissionController.webhookUrl) }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  annotations:
+    {{- include "admissionController.annotations" . | nindent 4 }}
+  labels:
+    {{- include "admissionController.labels" . | nindent 4 }}
+  name: {{ include "admissionController.globalResourceName" (dict "name" "cr" "root" .) }}
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["admissionregistration.k8s.io"]
+  resources: ["validatingwebhookconfigurations"]
+  resourceNames:
+  - {{ .Values.admissionController.resourceNamePrefix }}-webhook-configuration
+  verbs: ["get", "list", "update", "watch"]
+{{- end }}

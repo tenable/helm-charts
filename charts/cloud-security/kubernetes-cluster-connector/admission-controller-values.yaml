@@ -13,21 +13,8 @@ admissionController:
     webhook: "443"
   replicas: 3
   resourceNamePrefix: kubernetes-cluster-admission-controller
+  webhookTimeoutSeconds: 3
   webhookFailurePolicy: Ignore
   webhookMatchConditions: []
   webhookServiceName: kubernetes-cluster-admission-controller-service
   webhookServerCertificateAuthorityName: tenable-cloud-security-kubernetes-cluster-admission-controller
-  webhookTimeoutSeconds: 3
-  webhookUrl: null
-configureAdmissionController: false
-configureIdentity: true
-configureNetwork: true
-containerImagePath: tenable/cloud-security-kubernetes-cluster-connector
-containerImagePullSecrets: []
-pod:
-  affinity: {}
-  annotations: {}
-  labels: {}
-  resources: {}
-  tolerations: []
-resourceNamePrefix: kubernetes-cluster-connector

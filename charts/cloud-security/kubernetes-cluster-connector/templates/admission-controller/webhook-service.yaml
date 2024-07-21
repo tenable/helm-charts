@@ -1,0 +1,19 @@
+{{- if and .Values.configureAdmissionController (not .Values.admissionController.webhookUrl) }}
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    {{- include "admissionController.annotations" . | nindent 4 }}
+  labels:
+    {{- include "admissionController.labels" . | nindent 4 }}
+  name: {{ .Values.admissionController.resourceNamePrefix }}-service
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+  - name: webhook-server
+    port: {{ .Values.admissionController.ports.webhook }}
+    targetPort: webhook-server
+  type: ClusterIP
+  selector:
+    {{- include "admissionController.matchLabels" . | nindent 4 }}
+{{- end }}

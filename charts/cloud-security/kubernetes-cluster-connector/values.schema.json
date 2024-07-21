@@ -4,6 +4,15 @@
     "accountId": {
       "type": ["integer", "string"]
     },
+    "admissionController": {
+      "containerImagePath": {
+        "type": "string"
+      },
+      "required": [
+        "containerImagePath"
+      ],
+      "type": "object"
+    },
     "apiKeyToken": {
       "type": "string"
     },
