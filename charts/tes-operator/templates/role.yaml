@@ -1,0 +1,9 @@
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ .Release.Name }}-role
+  namespace: {{ .Release.Namespace }}
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]  # Grants access to all resources
+  verbs: ["*"]       # Grants all perms

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tes-blade-configs
+data:
+  {{- range $key, $value := .Values.tes }}
+    {{ $key }}: |
+  {{ toJson $value | default "{}" | indent 4 }}
+  {{- end -}}

@@ -1,0 +1,6 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tes-operator-config
+data:
+  {{- ( include "tes-operator-configmap" . ) | indent 2 -}}
