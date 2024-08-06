@@ -3,9 +3,9 @@ entries:
   cloud-security-endpoint-connector:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2024-07-30T15:50:25.152413-07:00"
+    created: "2024-08-06T09:59:21.746288-07:00"
     description: Tenable Cloud Security endpoint connector
-    digest: 3b2f918d33f770844fd172bde1d77b751148450286249f3a6180b6b65eccf651
+    digest: 5d4d77ed28493f66c64fe35f74a309314ec65001b505a1e907b21b2e11358636
     name: cloud-security-endpoint-connector
     type: application
     urls:
@@ -13,7 +13,7 @@ entries:
     version: 1.0.1
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2024-07-30T15:50:25.15229-07:00"
+    created: "2024-08-06T09:59:21.746115-07:00"
     description: Tenable Cloud Security endpoint connector
     digest: f76126432c5b731ba2c740261fa68df2cb76a0ec165d92ac63422069faba482d
     name: cloud-security-endpoint-connector
@@ -24,9 +24,9 @@ entries:
   cloud-security-kubernetes-cluster-connector:
   - apiVersion: v2
     appVersion: 1.4.0
-    created: "2024-07-30T15:50:25.15277-07:00"
+    created: "2024-08-06T09:59:21.746882-07:00"
     description: Tenable Cloud Security Kubernetes cluster connector
-    digest: 758071a00a773e5977c89719f2a6ecbc85088072c046e86915dd0882228db1b3
+    digest: a6a3f8f3cf6fe9fa46738a544e127fd8655860eea3e68b6e223f0c0033f93b66
     name: cloud-security-kubernetes-cluster-connector
     type: application
     urls:
@@ -34,7 +34,7 @@ entries:
     version: 1.4.1
   - apiVersion: v2
     appVersion: 1.4.0
-    created: "2024-07-30T15:50:25.15259-07:00"
+    created: "2024-08-06T09:59:21.746626-07:00"
     description: Tenable Cloud Security Kubernetes cluster connector
     digest: 35536b2a177aa01db6a7b505b7f23a0047bc7c73fa74d57e4e8cc763717a40f6
     name: cloud-security-kubernetes-cluster-connector
@@ -45,9 +45,9 @@ entries:
   securitycenter:
   - apiVersion: v2
     appVersion: 6.4.0
-    created: "2024-07-30T15:50:25.153078-07:00"
+    created: "2024-08-06T09:59:21.747408-07:00"
     description: A Helm chart to deploy Tenable Security Center into Kubernetes clusters
-    digest: 5ce9cc63a125ead85149ce5de2c371598df63d754acf569dc22db2d5e4cf6fbc
+    digest: 770a0a9ff2d641fcd43e014b30ca2c86f482655e6891d7bebf90fb38791e98ba
     home: https://www.tenable.com
     maintainers:
     - email: securitycenter@tenable.com
@@ -61,7 +61,7 @@ entries:
     version: 1.2.0
   - apiVersion: v2
     appVersion: 6.3.0
-    created: "2024-07-30T15:50:25.152929-07:00"
+    created: "2024-08-06T09:59:21.747159-07:00"
     description: A Helm chart to deploy Tenable Security Center into Kubernetes clusters
     digest: 416c00aca31dc6505e6e9d6bc9791436bb3791077c06ea5d83b7f42b047b2947
     home: https://www.tenable.com
@@ -78,7 +78,7 @@ entries:
   tenable-endpoint-connector:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2024-07-30T15:50:25.153195-07:00"
+    created: "2024-08-06T09:59:21.747744-07:00"
     description: Tenable Cloud Security endpoint connector
     digest: 287c70490e944b4ab916afa430d3068dd41632f8e82f0a581ae32f423cdef5e2
     name: tenable-endpoint-connector
@@ -89,7 +89,7 @@ entries:
   tenable-kubernetes-cluster-connector:
   - apiVersion: v2
     appVersion: 1.3.0
-    created: "2024-07-30T15:50:25.153373-07:00"
+    created: "2024-08-06T09:59:21.748044-07:00"
     description: Tenable Cloud Security Kubernetes cluster connector
     digest: 29b57f0eaf7e0532cc773bd00466665672ad9992d37680bcfe94bb36c125ced2
     name: tenable-kubernetes-cluster-connector
@@ -100,12 +100,12 @@ entries:
   tes-operator:
   - apiVersion: v2
     appVersion: 0.2.1
-    created: "2024-07-30T15:50:25.15366-07:00"
+    created: "2024-08-06T09:59:21.748363-07:00"
     description: Tenable Enclave Security operator
-    digest: ebd129479f231555f19cab23ea04d830eec56031e766e9f2b7297f91a9bf24c7
+    digest: 814fefd54b7a0c09cefe3caa109f4416eb05e359301d47f52f18cfb5b5cc3ad7
     name: tes-operator
     type: application
     urls:
     - releases/tes-operator-0.2.1-4.tgz
     version: 0.2.1-4
-generated: "2024-07-30T15:50:25.152083-07:00"
+generated: "2024-08-06T09:59:21.745642-07:00"
