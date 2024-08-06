@@ -3,9 +3,9 @@ entries:
   cloud-security-endpoint-connector:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2024-08-06T09:59:21.746288-07:00"
+    created: "2024-08-06T10:11:15.405171-07:00"
     description: Tenable Cloud Security endpoint connector
-    digest: 5d4d77ed28493f66c64fe35f74a309314ec65001b505a1e907b21b2e11358636
+    digest: 3acee5c0ff211a0bf61bdd1e474177489f5a1aab3cc6c30fc075a640826b6f16
     name: cloud-security-endpoint-connector
     type: application
     urls:
@@ -13,7 +13,7 @@ entries:
     version: 1.0.1
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2024-08-06T09:59:21.746115-07:00"
+    created: "2024-08-06T10:11:15.405026-07:00"
     description: Tenable Cloud Security endpoint connector
     digest: f76126432c5b731ba2c740261fa68df2cb76a0ec165d92ac63422069faba482d
     name: cloud-security-endpoint-connector
@@ -24,9 +24,9 @@ entries:
   cloud-security-kubernetes-cluster-connector:
   - apiVersion: v2
     appVersion: 1.4.0
-    created: "2024-08-06T09:59:21.746882-07:00"
+    created: "2024-08-06T10:11:15.405591-07:00"
     description: Tenable Cloud Security Kubernetes cluster connector
-    digest: a6a3f8f3cf6fe9fa46738a544e127fd8655860eea3e68b6e223f0c0033f93b66
+    digest: 3430a92d17c57d7dc125280cee09c150dfa86689ec0a3288ba1f282943079149
     name: cloud-security-kubernetes-cluster-connector
     type: application
     urls:
@@ -34,7 +34,7 @@ entries:
     version: 1.4.1
   - apiVersion: v2
     appVersion: 1.4.0
-    created: "2024-08-06T09:59:21.746626-07:00"
+    created: "2024-08-06T10:11:15.40541-07:00"
     description: Tenable Cloud Security Kubernetes cluster connector
     digest: 35536b2a177aa01db6a7b505b7f23a0047bc7c73fa74d57e4e8cc763717a40f6
     name: cloud-security-kubernetes-cluster-connector
@@ -45,9 +45,9 @@ entries:
   securitycenter:
   - apiVersion: v2
     appVersion: 6.4.0
-    created: "2024-08-06T09:59:21.747408-07:00"
+    created: "2024-08-06T10:11:15.406005-07:00"
     description: A Helm chart to deploy Tenable Security Center into Kubernetes clusters
-    digest: 770a0a9ff2d641fcd43e014b30ca2c86f482655e6891d7bebf90fb38791e98ba
+    digest: c0bab8b696eef75a208c682200bbf3fa7654ed6550eb7e331466a7202fbb0d63
     home: https://www.tenable.com
     maintainers:
     - email: securitycenter@tenable.com
@@ -61,7 +61,7 @@ entries:
     version: 1.2.0
   - apiVersion: v2
     appVersion: 6.3.0
-    created: "2024-08-06T09:59:21.747159-07:00"
+    created: "2024-08-06T10:11:15.405835-07:00"
     description: A Helm chart to deploy Tenable Security Center into Kubernetes clusters
     digest: 416c00aca31dc6505e6e9d6bc9791436bb3791077c06ea5d83b7f42b047b2947
     home: https://www.tenable.com
@@ -78,7 +78,7 @@ entries:
   tenable-endpoint-connector:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2024-08-06T09:59:21.747744-07:00"
+    created: "2024-08-06T10:11:15.406189-07:00"
     description: Tenable Cloud Security endpoint connector
     digest: 287c70490e944b4ab916afa430d3068dd41632f8e82f0a581ae32f423cdef5e2
     name: tenable-endpoint-connector
@@ -89,7 +89,7 @@ entries:
   tenable-kubernetes-cluster-connector:
   - apiVersion: v2
     appVersion: 1.3.0
-    created: "2024-08-06T09:59:21.748044-07:00"
+    created: "2024-08-06T10:11:15.406423-07:00"
     description: Tenable Cloud Security Kubernetes cluster connector
     digest: 29b57f0eaf7e0532cc773bd00466665672ad9992d37680bcfe94bb36c125ced2
     name: tenable-kubernetes-cluster-connector
@@ -100,12 +100,12 @@ entries:
   tes-operator:
   - apiVersion: v2
     appVersion: 0.2.1
-    created: "2024-08-06T09:59:21.748363-07:00"
+    created: "2024-08-06T10:11:15.406696-07:00"
     description: Tenable Enclave Security operator
-    digest: 814fefd54b7a0c09cefe3caa109f4416eb05e359301d47f52f18cfb5b5cc3ad7
+    digest: 73f009df496316c2612612e476710184c2b88d518765426442bc81e9070d228e
     name: tes-operator
     type: application
     urls:
     - releases/tes-operator-0.2.1-4.tgz
     version: 0.2.1-4
-generated: "2024-08-06T09:59:21.745642-07:00"
+generated: "2024-08-06T10:11:15.404666-07:00"
