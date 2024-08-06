@@ -9,4 +9,4 @@ tenable/tes-consec-tvdl:1.0.241
 tenable/securitycenter-install:6.4.238-I2074-D240806
 tenable/securitycenter-runtime:6.4.258-I2091-D240806
 tenable/tes-log-scraper:1.0.0
-postgres:latest
+postgres:16.3
