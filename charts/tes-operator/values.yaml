@@ -71,7 +71,7 @@ operator:
     port: 80
 
 tes:
-  version: "1.0.0"
+  version: "1.1.0-11"
   blades:
     securitycenter:
     container-security:
@@ -80,6 +80,7 @@ tes:
       tolerations: [ ]
       affinity:
       url:
+      registry: tenable
 
 serviceAccount:
   # Specifies whether a service account should be created
