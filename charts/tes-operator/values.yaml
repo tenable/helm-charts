@@ -12,9 +12,9 @@ operator:
     pullPolicy: IfNotPresent
     tag: "1.0.0"
     imagePullSecret: ""
-    registry: ""
+    registry: "tenable"
   helm:
-    repo: "local"
+    repo: "tenable"
     username: ""
     password: ""
 
