@@ -14,7 +14,7 @@ operator:
     imagePullSecret: ""
     registry: "tenable"
   helm:
-    repo: "tenable"
+    repo: "local"
     username: ""
     password: ""
 
