@@ -1,3 +1,4 @@
+{{- if .Values.connector.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -5,13 +6,14 @@ metadata:
     {{- include "annotations" . | nindent 4 }}
   labels:
     {{- include "labels" . | nindent 4 }}
-  name: {{ .Values.resourceNamePrefix }}-deployment
+    {{- include "connector.labels" . | nindent 4 }}
+  name: {{ include "connector.resourceNamePrefix" . }}-deployment
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      {{- include "matchLabels" . | nindent 6 }}
+      {{- include "connector.labels" . | nindent 6 }}
   template:
     metadata:
       annotations:
@@ -20,6 +22,7 @@ spec:
         {{- end }}
       labels:
         {{- include "labels" . | nindent 8 }}
+        {{- include "connector.labels" . | nindent 8 }}
         {{- with .Values.pod.labels }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -36,33 +39,25 @@ spec:
           "/var/run/secrets/application/apikeytoken",
           "--api-url",
           {{ .Values.apiUrl | quote }},
-          "--application-version",
-          {{ .Chart.AppVersion | quote }},
-          "--helm-release-name",
-          {{ print .Release.Namespace ":" .Release.Name | quote }},
-          {{- if .Values.configureIdentity }}
+          {{- if .Values.connector.identity }}
           "--identity",
           {{- end}}
           {{- if .Values.name }}
           "--name",
           {{ .Values.name | quote }},
-          {{- end}}
-          {{- if .Values.configureNetwork }}
+          {{- end }}
+          {{- if .Values.connector.network }}
           "--network",
           {{- end}}
           {{- if .Values.proxyUrl }}
           "--proxy-url",
           {{ .Values.proxyUrl | quote }},
           {{- end}}
-          {{- if .Values.accountId }}
-          "--tenant-raw-id",
-          {{ .Values.accountId | quote }}
-          {{- end}}
         ]
         {{- include "environmentVariables" . | nindent 8 }}
-        image: {{ include "containerImagePath" . }}
+        image: {{ .Values.containerImagePath }}
         imagePullPolicy: Always
-        name: {{ .Values.resourceNamePrefix }}-container
+        name: {{ include "connector.resourceNamePrefix" . }}-container
         {{- with .Values.pod.resources }}
         resources:
         {{- toYaml . | nindent 10 }}
@@ -87,12 +82,11 @@ spec:
       securityContext:
         seccompProfile:
           type: RuntimeDefault
-      serviceAccountName: {{ .Values.resourceNamePrefix }}-service-account
+      serviceAccountName: {{ include "connector.resourceNamePrefix" . }}-service-account
       {{- with .Values.pod.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
       {{- include "apiKeyTokenVolume" (dict "name" (print .Values.resourceNamePrefix "-secret") "root" .) | nindent 6 }}
----
-{{ include "apiKeyTokenSecret" (dict "name" (print .Values.resourceNamePrefix "-secret") "root" .) }}
+{{- end }}

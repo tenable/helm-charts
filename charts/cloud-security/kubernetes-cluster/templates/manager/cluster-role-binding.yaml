@@ -1,0 +1,17 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  annotations:
+    {{- include "annotations" . | nindent 4 }}
+  labels:
+    {{- include "labels" . | nindent 4 }}
+    {{- include "manager.labels" . | nindent 4 }}
+  name: {{ include "manager.globalResourceName" (dict "name" "crb" "root" .) }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "manager.globalResourceName" (dict "name" "cr" "root" .) }}
+subjects:
+- kind: ServiceAccount
+  name: {{ include "manager.resourceNamePrefix" . }}-service-account
+  namespace: {{ .Release.Namespace }}

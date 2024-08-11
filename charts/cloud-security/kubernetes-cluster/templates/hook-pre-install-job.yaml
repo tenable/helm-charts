@@ -1,17 +1,16 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: batch/v1
+kind: Job
 metadata:
   annotations:
     {{- include "annotations" . | nindent 4 }}
+    helm.sh/hook: pre-install, pre-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation, hook-succeeded
   labels:
     {{- include "labels" . | nindent 4 }}
-  name: {{ .Values.resourceNamePrefix }}-deployment
+  name: {{ .Values.resourceNamePrefix }}-pre-install-job
   namespace: {{ .Release.Namespace }}
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      {{- include "matchLabels" . | nindent 6 }}
+  backoffLimit: 0
   template:
     metadata:
       annotations:
@@ -19,7 +18,6 @@ spec:
           {{- toYaml . | nindent 8 }}
         {{- end }}
       labels:
-        {{- include "labels" . | nindent 8 }}
         {{- with .Values.pod.labels }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -28,10 +26,9 @@ spec:
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      automountServiceAccountToken: true
       containers:
       - args: [
-          "connector",
+          "release-pre-install",
           "--api-key-token-file-path",
           "/var/run/secrets/application/apikeytoken",
           "--api-url",
@@ -40,15 +37,9 @@ spec:
           {{ .Chart.AppVersion | quote }},
           "--helm-release-name",
           {{ print .Release.Namespace ":" .Release.Name | quote }},
-          {{- if .Values.configureIdentity }}
-          "--identity",
-          {{- end}}
           {{- if .Values.name }}
           "--name",
           {{ .Values.name | quote }},
-          {{- end}}
-          {{- if .Values.configureNetwork }}
-          "--network",
           {{- end}}
           {{- if .Values.proxyUrl }}
           "--proxy-url",
@@ -60,39 +51,41 @@ spec:
           {{- end}}
         ]
         {{- include "environmentVariables" . | nindent 8 }}
-        image: {{ include "containerImagePath" . }}
+        image: {{ .Values.containerImagePath }}
         imagePullPolicy: Always
-        name: {{ .Values.resourceNamePrefix }}-container
-        {{- with .Values.pod.resources }}
-        resources:
-        {{- toYaml . | nindent 10 }}
-        {{- end }}
+        name: {{ .Values.resourceNamePrefix }}-pre-install-container
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
             drop:
-              - ALL
-          runAsNonRoot: true
-          {{- if not (.Capabilities.APIVersions.Has "security.openshift.io/v1/SecurityContextConstraints") }}
-          runAsUser: 1000
-          {{- end }}
+            - ALL
         volumeMounts:
-        - name: {{ .Values.resourceNamePrefix }}-secret
+        - name: {{ .Values.resourceNamePrefix }}-pre-install-secret
           mountPath: "/var/run/secrets/application"
           readOnly: true
       {{- with .Values.containerImagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      restartPolicy: Never
       securityContext:
+        runAsNonRoot: true
+        {{- if not (.Capabilities.APIVersions.Has "security.openshift.io/v1/SecurityContextConstraints") }}
+        runAsUser: 1000
+        {{- end }}
         seccompProfile:
           type: RuntimeDefault
-      serviceAccountName: {{ .Values.resourceNamePrefix }}-service-account
+      serviceAccountName: {{ .Values.resourceNamePrefix }}-pre-install-service-account
       {{- with .Values.pod.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-      {{- include "apiKeyTokenVolume" (dict "name" (print .Values.resourceNamePrefix "-secret") "root" .) | nindent 6 }}
+      {{- include "apiKeyTokenVolume" (dict "name" (print .Values.resourceNamePrefix "-pre-install-secret") "root" .) | nindent 6 }}
 ---
-{{ include "apiKeyTokenSecret" (dict "name" (print .Values.resourceNamePrefix "-secret") "root" .) }}
+{{ $annotations :=
+  list
+  "helm.sh/hook: pre-install, pre-upgrade"
+  "helm.sh/hook-delete-policy: hook-failed, before-hook-creation, hook-succeeded" 
+  "helm.sh/hook-weight: \"-1\"" }}
+{{ include "apiKeyTokenSecret" (dict "name" (print .Values.resourceNamePrefix "-pre-install-secret") "root" . "annotations" $annotations) }}

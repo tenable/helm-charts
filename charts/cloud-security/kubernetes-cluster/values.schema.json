@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "properties": {
+    "accountId": {
+      "type": [
+        "integer",
+        "null",
+        "string"
+      ]
+    },
+    "apiKeyToken": {
+      "type": "string"
+    },
+    "apiKeyTokenSecretName": {
+      "type": "string"
+    },
+    "apiUrl": {
+      "type": "string"
+    },
+    "connector": {
+      "containerImagePath": {
+        "type": "string"
+      },
+      "identity": {
+        "type": "boolean"
+      },
+      "network": {
+        "type": "boolean"
+      },
+      "required": [
+        "containerImagePath",
+        "identity",
+        "network"
+      ],
+      "type": "object"
+    },
+    "manager": {
+      "containerImagePath": {
+        "type": "string"
+      },
+      "required": [
+        "containerImagePath"
+      ],
+      "type": "object"
+    },
+    "proxyUrl": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "apiUrl"
+  ],
+  "type": "object"
+}

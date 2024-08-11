@@ -1,0 +1,15 @@
+{{- if .Values.connector.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  annotations:
+    {{- include "annotations" . | nindent 4 }}
+  labels:
+    {{- include "labels" . | nindent 4 }}
+    {{- include "connector.labels" . | nindent 4 }}
+  name: {{ include "connector.globalResourceName" (dict "name" "cr" "root" .) }}
+rules:
+  - apiGroups: ["*"]
+    resources: ["*"]
+    verbs: ["get", "list", "watch"]
+{{- end }}
