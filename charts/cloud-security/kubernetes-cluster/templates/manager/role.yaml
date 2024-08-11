@@ -1,0 +1,14 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations:
+    {{- include "annotations" . | nindent 4 }}
+  labels:
+    {{- include "labels" . | nindent 4 }}
+    {{- include "manager.labels" . | nindent 4 }}
+  name: {{ include "manager.resourceNamePrefix" . }}-role
+  namespace: {{ .Release.Namespace }}
+rules:
+  - apiGroups: ["*"]
+    resources: ["*"]
+    verbs: ["*"]
