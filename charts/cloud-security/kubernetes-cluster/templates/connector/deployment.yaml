@@ -42,10 +42,6 @@ spec:
           {{- if .Values.connector.identity }}
           "--identity",
           {{- end}}
-          {{- if .Values.name }}
-          "--name",
-          {{ .Values.name | quote }},
-          {{- end }}
           {{- if .Values.connector.network }}
           "--network",
           {{- end}}

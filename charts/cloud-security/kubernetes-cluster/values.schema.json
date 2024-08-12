@@ -18,9 +18,6 @@
       "type": "string"
     },
     "connector": {
-      "containerImagePath": {
-        "type": "string"
-      },
       "identity": {
         "type": "boolean"
       },
@@ -28,18 +25,8 @@
         "type": "boolean"
       },
       "required": [
-        "containerImagePath",
         "identity",
         "network"
-      ],
-      "type": "object"
-    },
-    "manager": {
-      "containerImagePath": {
-        "type": "string"
-      },
-      "required": [
-        "containerImagePath"
       ],
       "type": "object"
     },
