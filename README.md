@@ -28,3 +28,7 @@ helm search repo tenable
 ### Security Center
 
 [Install Security Center](https://docs.tenable.com/quick-reference/container-deployments/Content/security-center-in-kubernetes-install.htm)
+
+### Tenable Enclave Security
+
+[Install Tenable Enclave Security](https://docs.tenable.com/enclave-security/Content/install.htm)
