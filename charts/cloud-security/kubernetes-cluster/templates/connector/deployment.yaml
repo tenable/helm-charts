@@ -66,8 +66,8 @@ spec:
           runAsNonRoot: true
           runAsUser: 1000
         volumeMounts:
-        - name: {{ .Values.resourceNamePrefix }}-secret
-          mountPath: "/var/run/secrets/application"
+        - mountPath: "/var/run/secrets/application"
+          name: {{ .Values.resourceNamePrefix }}-secret
           readOnly: true
       {{- with .Values.containerImagePullSecrets }}
       imagePullSecrets:

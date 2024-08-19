@@ -1,0 +1,21 @@
+{{- if .Values.admissionController.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  annotations:
+    {{- include "annotations" . | nindent 4 }}
+  labels:
+    {{- include "labels" . | nindent 4 }}
+    {{- include "admissionController.labels" . | nindent 4 }}
+  name: {{ include "admissionController.globalResourceName" (dict "name" "cr" "root" .) }}
+rules:
+- apiGroups: ["*"]
+  resources: ["namespaces"]
+  resourceNames: ["kube-system"]
+  verbs: ["get"]
+- apiGroups: ["admissionregistration.k8s.io"]
+  resources: ["validatingwebhookconfigurations"]
+  resourceNames:
+    - {{ include "admissionController.resourceNamePrefix" . }}-vwc
+  verbs: ["*"]
+{{- end }}
