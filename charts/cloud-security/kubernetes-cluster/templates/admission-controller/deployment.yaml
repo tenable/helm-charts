@@ -1,0 +1,114 @@
+{{- if .Values.admissionController.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    {{- include "annotations" . | nindent 4 }}
+  labels:
+    {{- include "labels" . | nindent 4 }}
+    {{- include "admissionController.labels" . | nindent 4 }}
+  name: {{ include "admissionController.resourceNamePrefix" . }}-deployment
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.admissionController.replicas }}
+  selector:
+    matchLabels:
+      {{- include "admissionController.labels" . | nindent 6 }}
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        {{- with .Values.pod.annotations }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "labels" . | nindent 8 }}
+        {{- include "admissionController.labels" . | nindent 8 }}
+        {{- with .Values.pod.labels }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.pod.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      automountServiceAccountToken: true
+      containers:
+      - args: [
+          "--api-key-token-file-path",
+          "/var/run/secrets/application/apikeytoken",
+          "--api-url",
+          {{ .Values.apiUrl | quote }},
+          "--health-server-port",
+          {{ .Values.admissionController.healthPort | quote }},
+          "--validating-admission-configuration-name",
+          {{ include "admissionController.resourceNamePrefix" . }}-vwc,
+          "--webhook-server-certificates-directory-path",
+          "/var/run/secrets/certificates",
+          "--webhook-server-port",
+          {{ .Values.admissionController.webhook.port | quote }}
+        ]
+        {{- include "environmentVariables" . | nindent 8 }}
+        image: {{ .Values.admissionController.containerImagePath }}
+        imagePullPolicy: Always
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: {{ .Values.admissionController.healthPort }}
+          timeoutSeconds: 1
+        name: {{ include "admissionController.resourceNamePrefix" . }}-container
+        ports:
+        - containerPort: {{ .Values.admissionController.webhook.port }}
+          name: webhook-server
+          protocol: TCP
+        - containerPort: {{ .Values.admissionController.healthPort }}
+          name: healthz
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: {{ .Values.admissionController.healthPort }}
+          timeoutSeconds: 1
+        {{- with .Values.pod.resources }}
+        resources:
+        {{- toYaml . | nindent 10 }}
+        {{- end }}
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          runAsGroup: 999
+          runAsNonRoot: true
+          {{- if not (.Capabilities.APIVersions.Has "security.openshift.io/v1/SecurityContextConstraints") }}
+          runAsUser: 1000
+          {{- end }}
+        volumeMounts:
+        - mountPath: "/var/run/secrets/certificates"
+          name: {{ include "admissionController.resourceNamePrefix" . }}-secret
+          readOnly: true
+        - mountPath: "/var/run/secrets/application"
+          name: {{ .Values.resourceNamePrefix }}-secret
+          readOnly: true
+      {{- with .Values.admissionController.containerImagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: {{ include "admissionController.resourceNamePrefix" . }}-service-account
+      terminationGracePeriodSeconds: 60
+      {{- with .Values.pod.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+      - name: {{ include "admissionController.resourceNamePrefix" . }}-secret
+        secret:
+          defaultMode: 420
+          secretName: {{ include "admissionController.resourceNamePrefix" . }}-secret
+      {{- include "apiKeyTokenVolume" (dict "name" (print .Values.resourceNamePrefix "-secret") "root" .) | nindent 6 }}
+{{- end }}

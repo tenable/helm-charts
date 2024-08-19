@@ -1,4 +1,15 @@
 accountId: null
+admissionController:
+  containerImagePath: tenable/cloud-security-kubernetes-cluster-admission-controller
+  containerImagePullSecrets: []
+  enabled: true
+  healthPort: 9090
+  replicas: 3
+  webhook:
+    failurePolicy: Ignore
+    port: 443
+    timeoutSeconds: 3
+  tls: null
 connector:
   enabled: true
   identity: true
