@@ -42,6 +42,8 @@ spec:
           {{ .Chart.AppVersion | quote }},
           "--helm-release-name",
           {{ print .Release.Namespace ":" .Release.Name | quote }},
+          "--image-pull-secret-name",
+          {{ print .Values.resourceNamePrefix "-image-pull-secret" | quote }},
           {{- if .Values.name }}
           "--name",
           {{ .Values.name | quote }},

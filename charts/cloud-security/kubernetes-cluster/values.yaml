@@ -1,4 +1,9 @@
 accountId: null
+agent:
+  containerImagePath: 585051939341.dkr.ecr.us-east-2.amazonaws.com/engserviceimageagentrepository
+  containerImagePullSecrets: []
+  dataPath: "/var/lib/tenable"
+  enabled: false
 connector:
   enabled: true
   identity: true

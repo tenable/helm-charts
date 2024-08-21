@@ -1,0 +1,15 @@
+{{- if .Values.agent.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  annotations:
+    {{- include "annotations" . | nindent 4 }}
+  labels:
+    {{- include "labels" . | nindent 4 }}
+    {{- include "agent.labels" . | nindent 4 }}
+  name: {{ include "agent.globalResourceName" (dict "name" "cr" "root" .) }}
+rules:
+  - apiGroups: [ "*" ]
+    resources: [ "namespaces" ]
+    verbs: [ "get" ]
+{{- end }}

@@ -1,0 +1,39 @@
+{{- if and .Values.agent.enabled (.Capabilities.APIVersions.Has "security.openshift.io/v1/SecurityContextConstraints") }}
+apiVersion: security.openshift.io/v1
+kind: SecurityContextConstraints
+metadata:
+  annotations:
+    {{- include "annotations" . | nindent 4 }}
+  labels:
+    {{- include "labels" . | nindent 4 }}
+    {{- include "agent.labels" . | nindent 4 }}
+  name: {{ include "agent.resourceNamePrefix" . }}-security-context-constraints
+allowHostDirVolumePlugin: true
+allowHostIPC: true
+allowHostPID: true
+allowHostPorts: true
+allowPrivilegeEscalation: true
+allowPrivilegedContainer: true
+allowedCapabilities:
+  - '*'
+allowedUnsafeSysctls:
+  - '*'
+defaultAddCapabilities: null
+fsGroup:
+  type: RunAsAny
+priority: null
+readOnlyRootFilesystem: false
+requiredDropCapabilities: null
+runAsUser:
+  type: RunAsAny
+seLinuxContext:
+  type: RunAsAny
+seccompProfiles:
+  - '*'
+supplementalGroups:
+  type: RunAsAny
+volumes:
+  - '*'
+users:
+  - system:serviceaccount:{{ .Release.Namespace }}:{{ include "agent.resourceNamePrefix" . }}-service-account
+{{- end }}
