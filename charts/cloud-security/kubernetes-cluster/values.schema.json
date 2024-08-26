@@ -12,11 +12,28 @@
       "containerImagePath": {
         "type": "string"
       },
+      "containerImagePullSecrets": {
+        "type": [
+          "array"
+        ]
+      },
       "enabled": {
         "type": "boolean"
       },
       "healthPort": {
         "type": "integer"
+      },
+      "networkPolicy": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "ingress": {
+          "type": "object"
+        },
+        "type": "object"
+      },
+      "logLevel": {
+        "type": "string"
       },
       "replicas": {
         "type": "integer"

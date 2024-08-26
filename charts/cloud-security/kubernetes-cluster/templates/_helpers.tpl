@@ -47,7 +47,7 @@ env:
 {{- end }}
 
 {{- define "imagePullSecretEnabled" -}}
-    {{- if and .Values.sensor.enabled (not .Values.sensor.containerImagePullSecrets) }}
+    {{- if or (and .Values.admissionController.enabled (not .Values.admissionController.containerImagePullSecrets)) (and .Values.sensor.enabled (not .Values.sensor.containerImagePullSecrets)) }}
         {{- print "true"}}
     {{- else }}
         {{- print "false"}}

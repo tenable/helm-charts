@@ -42,6 +42,8 @@ spec:
           {{ .Values.apiUrl | quote }},
           "--health-server-port",
           {{ .Values.admissionController.healthPort | quote }},
+          "--log-level",
+          {{ .Values.admissionController.logLevel }},
           "--validating-admission-configuration-name",
           {{ include "admissionController.resourceNamePrefix" . }}-vwc,
           "--webhook-server-certificates-directory-path",
@@ -95,6 +97,9 @@ spec:
       {{- with .Values.admissionController.containerImagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
+      {{- else}}
+      imagePullSecrets:
+        - name: {{ .Values.resourceNamePrefix }}-image-pull-secret
       {{- end }}
       securityContext:
         seccompProfile:

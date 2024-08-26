@@ -10,11 +10,12 @@ metadata:
   name: {{ include "admissionController.globalResourceName" (dict "name" "cr" "root" .) }}
 rules:
 - apiGroups: ["*"]
-  resources: ["*"]
-  verbs: ["get", "list", "watch"]
+  resources: ["namespaces"]
+  resourceNames: ["kube-system"]
+  verbs: ["get"]
 - apiGroups: ["admissionregistration.k8s.io"]
   resources: ["validatingwebhookconfigurations"]
   resourceNames:
-  - {{ include "admissionController.resourceNamePrefix" . }}-vwc
+    - {{ include "admissionController.resourceNamePrefix" . }}-vwc
   verbs: ["*"]
 {{- end }}

@@ -18,6 +18,9 @@ seccompProfiles:
 volumes:
   - secret
 users:
+  {{- if .Values.admissionController.enabled }}
+  - system:serviceaccount:{{ .Release.Namespace }}:{{ include "admissionController.resourceNamePrefix" . }}-service-account
+  {{- end}}
   {{- if .Values.connector.enabled }}
   - system:serviceaccount:{{ .Release.Namespace }}:{{ include "connector.resourceNamePrefix" . }}-service-account
   {{- end}}
