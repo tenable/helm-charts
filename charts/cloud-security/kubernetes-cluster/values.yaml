@@ -1,9 +1,10 @@
 accountId: null
 admissionController:
-  containerImagePath: tenable/cloud-security-kubernetes-cluster-admission-controller
+  containerImagePath: 585051939341.dkr.ecr.us-east-2.amazonaws.com/cloud-security-kubernetes-cluster-admission-controller
   containerImagePullSecrets: []
-  enabled: true
+  enabled: false
   healthPort: 9090
+  logLevel: "information"
   replicas: 3
   webhook:
     failurePolicy: Ignore

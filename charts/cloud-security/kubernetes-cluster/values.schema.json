@@ -18,6 +18,9 @@
       "healthPort": {
         "type": "integer"
       },
+      "logLevel": {
+        "type": "string"
+      },
       "replicas": {
         "type": "integer"
       },
