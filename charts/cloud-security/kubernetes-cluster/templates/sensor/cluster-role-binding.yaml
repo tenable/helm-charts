@@ -1,0 +1,19 @@
+{{- if .Values.sensor.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  annotations:
+    {{- include "annotations" . | nindent 4 }}
+  labels:
+    {{- include "labels" . | nindent 4 }}
+    {{- include "sensor.labels" . | nindent 4 }}
+  name: {{ include "sensor.globalResourceName" (dict "name" "crb" "root" .) }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "sensor.globalResourceName" (dict "name" "cr" "root" .) }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "sensor.resourceNamePrefix" . }}-service-account
+    namespace: {{ .Release.Namespace }}
+{{- end }}

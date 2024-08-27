@@ -5,13 +5,13 @@ metadata:
     {{- include "annotations" . | nindent 4 }}
   labels:
     {{- include "labels" . | nindent 4 }}
-    {{- include "manager.labels" . | nindent 4 }}
-  name: {{ include "manager.globalResourceName" (dict "name" "crb" "root" .) }}
+    {{- include "updater.labels" . | nindent 4 }}
+  name: {{ include "updater.globalResourceName" (dict "name" "crb" "root" .) }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: {{ include "manager.globalResourceName" (dict "name" "cr" "root" .) }}
+  name: {{ include "updater.globalResourceName" (dict "name" "cr" "root" .) }}
 subjects:
 - kind: ServiceAccount
-  name: {{ include "manager.resourceNamePrefix" . }}-service-account
+  name: {{ include "updater.resourceNamePrefix" . }}-service-account
   namespace: {{ .Release.Namespace }}

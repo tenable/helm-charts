@@ -3,7 +3,7 @@ connector:
   enabled: true
   identity: true
   network: true
-containerImagePath: tenable/cloud-security-kubernetes-cluster
+containerImagePath: tenable/cloud-security-kubernetes-cluster-manager
 containerImagePullSecrets: []
 name: null
 pod:
@@ -13,3 +13,8 @@ pod:
   resources: {}
   tolerations: []
 resourceNamePrefix: kubernetes-cluster
+sensor:
+  containerImagePath: 585051939341.dkr.ecr.us-east-2.amazonaws.com/kubernetes-cluster-sensor
+  containerImagePullSecrets: []
+  dataPath: "/var/lib/tenable"
+  enabled: false

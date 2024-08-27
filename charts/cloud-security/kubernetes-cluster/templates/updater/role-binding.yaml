@@ -5,14 +5,14 @@ metadata:
     {{- include "annotations" . | nindent 4 }}
   labels:
     {{- include "labels" . | nindent 4 }}
-    {{- include "manager.labels" . | nindent 4 }}
-  name: {{ include "manager.resourceNamePrefix" . }}-role-binding
+    {{- include "updater.labels" . | nindent 4 }}
+  name: {{ include "updater.resourceNamePrefix" . }}-role-binding
   namespace: {{ .Release.Namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: {{ include "manager.resourceNamePrefix" . }}-role
+  name: {{ include "updater.resourceNamePrefix" . }}-role
 subjects:
 - kind: ServiceAccount
-  name: {{ include "manager.resourceNamePrefix" . }}-service-account
+  name: {{ include "updater.resourceNamePrefix" . }}-service-account
   namespace: {{ .Release.Namespace }}

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "properties": {
     "accountId": {
       "type": [
@@ -9,33 +9,142 @@
       ]
     },
     "apiKeyToken": {
-      "type": "string"
+      "type": [
+        "string"
+      ]
     },
-    "apiKeyTokenSecretName": {
-      "type": "string"
+    "apiKeyTokenSecretName ": {
+      "type": [
+        "string"
+      ]
     },
     "apiUrl": {
-      "type": "string"
+      "type": [
+        "string"
+      ]
     },
     "connector": {
-      "identity": {
-        "type": "boolean"
-      },
-      "network": {
-        "type": "boolean"
+      "properties": {
+        "enabled": {
+          "type": [
+            "boolean"
+          ]
+        },
+        "identity": {
+          "type": [
+            "boolean"
+          ]
+        },
+        "network": {
+          "type": [
+            "boolean"
+          ]
+        }
       },
       "required": [
+        "enabled",
         "identity",
         "network"
       ],
-      "type": "object"
+      "type": [
+        "object"
+      ]
     },
-    "proxyUrl": {
-      "type": "string"
+    "containerImagePath": {
+      "type": [
+        "string"
+      ]
+    },
+    "containerImagePullSecrets": {
+      "type": [
+        "array"
+      ]
+    },
+    "name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "pod": {
+      "properties": {
+        "affinity": {
+          "properties": {},
+          "type": [
+            "object"
+          ]
+        },
+        "annotations": {
+          "properties": {},
+          "type": [
+            "object"
+          ]
+        },
+        "labels": {
+          "properties": {},
+          "type": [
+            "object"
+          ]
+        },
+        "resources": {
+          "properties": {},
+          "type": [
+            "object"
+          ]
+        },
+        "tolerations": {
+          "type": [
+            "array"
+          ]
+        }
+      },
+      "type": [
+        "object"
+      ]
+    },
+    "resourceNamePrefix": {
+      "type": [
+        "string"
+      ]
+    },
+    "sensor": {
+      "properties": {
+        "containerImagePath": {
+          "type": [
+            "string"
+          ]
+        },
+        "containerImagePullSecrets": {
+          "type": [
+            "array"
+          ]
+        },
+        "dataPath": {
+          "type": [
+            "string"
+          ]
+        },
+        "enabled": {
+          "type": [
+            "boolean"
+          ]
+        }
+      },
+      "required": [
+        "containerImagePath",
+        "dataPath",
+        "enabled"
+      ],
+      "type": [
+        "object"
+      ]
     }
   },
   "required": [
-    "apiUrl"
+    "apiUrl",
+    "containerImagePath"
   ],
-  "type": "object"
+  "type": [
+    "object"
+  ]
 }
