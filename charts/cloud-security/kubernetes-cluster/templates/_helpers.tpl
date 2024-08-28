@@ -46,6 +46,14 @@ env:
   value: Text
 {{- end }}
 
+{{- define "imagePullSecretEnabled" -}}
+    {{- if and .Values.sensor.enabled (not .Values.sensor.containerImagePullSecrets) }}
+        {{- print "true"}}
+    {{- else }}
+        {{- print "false"}}
+    {{- end }}
+{{- end }}
+
 {{- define "globalResourceName" -}}
 {{- print "tenable" "-" .root.Values.resourceNamePrefix "-" .name "-" (trunc 8 (sha256sum (print .root.Release.Namespace ":" .root.Release.Name))) }}
 {{- end }}

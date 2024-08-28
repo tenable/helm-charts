@@ -5,14 +5,14 @@ metadata:
     {{- include "annotations" . | nindent 4 }}
   labels:
     {{- include "labels" . | nindent 4 }}
-    {{- include "manager.labels" . | nindent 4 }}
-  name: {{ include "manager.resourceNamePrefix" . }}-deployment
+    {{- include "updater.labels" . | nindent 4 }}
+  name: {{ include "updater.resourceNamePrefix" . }}-deployment
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      {{- include "manager.labels" . | nindent 6 }}
+      {{- include "updater.labels" . | nindent 6 }}
   template:
     metadata:
       annotations:
@@ -21,7 +21,7 @@ spec:
         {{- end }}
       labels:
         {{- include "labels" . | nindent 8 }}
-        {{- include "manager.labels" . | nindent 8 }}
+        {{- include "updater.labels" . | nindent 8 }}
         {{- with .Values.pod.labels }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -33,7 +33,7 @@ spec:
       automountServiceAccountToken: true
       containers:
       - args: [
-          "manager",
+          "updater",
           "--api-key-token-file-path",
           "/var/run/secrets/application/apikeytoken",
           "--api-url",
@@ -42,6 +42,10 @@ spec:
           {{ .Chart.AppVersion | quote }},
           "--helm-release-name",
           {{ print .Release.Namespace ":" .Release.Name | quote }},
+          {{- if eq (include "imagePullSecretEnabled" .) "true" }}
+          "--image-pull-secret-name",
+          {{ print .Values.resourceNamePrefix "-image-pull-secret" | quote }},
+          {{- end}}
           {{- if .Values.name }}
           "--name",
           {{ .Values.name | quote }},
@@ -58,7 +62,7 @@ spec:
         {{- include "environmentVariables" . | nindent 8 }}
         image: {{ .Values.containerImagePath }}
         imagePullPolicy: Always
-        name: {{ include "manager.resourceNamePrefix" . }}-container
+        name: {{ include "updater.resourceNamePrefix" . }}-container
         {{- with .Values.pod.resources }}
         resources:
         {{- toYaml . | nindent 10 }}
@@ -83,7 +87,7 @@ spec:
       securityContext:
         seccompProfile:
           type: RuntimeDefault
-      serviceAccountName: {{ include "manager.resourceNamePrefix" . }}-service-account
+      serviceAccountName: {{ include "updater.resourceNamePrefix" . }}-service-account
       {{- with .Values.pod.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}

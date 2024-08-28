@@ -5,8 +5,8 @@ metadata:
     {{- include "annotations" . | nindent 4 }}
   labels:
     {{- include "labels" . | nindent 4 }}
-    {{- include "manager.labels" . | nindent 4 }}
-  name: {{ include "manager.globalResourceName" (dict "name" "cr" "root" .) }}
+    {{- include "updater.labels" . | nindent 4 }}
+  name: {{ include "updater.globalResourceName" (dict "name" "cr" "root" .) }}
 rules:
   - apiGroups: ["*"]
     resources: ["namespaces"]

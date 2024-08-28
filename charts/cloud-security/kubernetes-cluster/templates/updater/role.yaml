@@ -5,8 +5,8 @@ metadata:
     {{- include "annotations" . | nindent 4 }}
   labels:
     {{- include "labels" . | nindent 4 }}
-    {{- include "manager.labels" . | nindent 4 }}
-  name: {{ include "manager.resourceNamePrefix" . }}-role
+    {{- include "updater.labels" . | nindent 4 }}
+  name: {{ include "updater.resourceNamePrefix" . }}-role
   namespace: {{ .Release.Namespace }}
 rules:
   - apiGroups: ["*"]

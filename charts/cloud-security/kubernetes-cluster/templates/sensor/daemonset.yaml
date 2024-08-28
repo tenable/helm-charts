@@ -1,0 +1,86 @@
+{{- if .Values.sensor.enabled }}
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  annotations:
+    {{- include "annotations" . | nindent 4 }}
+  labels:
+    {{- include "labels" . | nindent 4 }}
+    {{- include "sensor.labels" . | nindent 4 }}
+  name: {{ include "sensor.resourceNamePrefix" . }}-daemonset
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "sensor.labels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        {{- with .Values.pod.annotations }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "labels" . | nindent 8 }}
+        {{- include "sensor.labels" . | nindent 8 }}
+        {{- with .Values.pod.labels }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.pod.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      automountServiceAccountToken: true
+      containers:
+        - args: [
+            "--api-key-token-file-path",
+            "/var/run/secrets/application/apikeytoken",
+            "--api-url",
+            {{ .Values.apiUrl | quote }},
+            "--data-path",
+            {{ .Values.sensor.dataPath | quote }},
+            "--logs",
+            {{- if .Values.accountId }}
+            "--tenant-raw-id",
+            {{ .Values.accountId | quote }}
+            {{- end}}
+          ]
+          image: {{ .Values.sensor.containerImagePath }}
+          imagePullPolicy: Always
+          name: {{ include "sensor.resourceNamePrefix" . }}-container
+          {{- with .Values.pod.resources }}
+          resources:
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+          securityContext:
+            privileged: true
+            runAsUser: 0
+          volumeMounts:
+            - name: {{ include "sensor.resourceNamePrefix" . }}-data
+              mountPath: {{.Values.sensor.dataPath}}
+            - name: {{ .Values.resourceNamePrefix }}-secret
+              mountPath: "/var/run/secrets/application"
+              readOnly: true
+      hostPID: true
+      {{- with .Values.sensor.containerImagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- else}}
+      imagePullSecrets:
+        - name: {{ .Values.resourceNamePrefix }}-image-pull-secret
+      {{- end }}
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: {{ include "sensor.resourceNamePrefix" . }}-service-account
+      {{- with .Values.pod.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+      - name: {{ include "sensor.resourceNamePrefix" . }}-data
+        hostPath:
+          path: {{ .Values.sensor.dataPath }}
+          type: DirectoryOrCreate
+      {{- include "apiKeyTokenVolume" (dict "name" (print .Values.resourceNamePrefix "-secret") "root" .) | nindent 6 }}
+{{- end }}
