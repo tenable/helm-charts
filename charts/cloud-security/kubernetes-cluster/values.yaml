@@ -14,7 +14,7 @@ pod:
   tolerations: []
 resourceNamePrefix: kubernetes-cluster
 sensor:
-  containerImagePath: 585051939341.dkr.ecr.us-east-2.amazonaws.com/kubernetes-cluster-sensor
+  containerImagePath: 585051939341.dkr.ecr.us-east-2.amazonaws.com/engserviceimagekubernetesclustersensorrepository
   containerImagePullSecrets: []
   dataPath: "/var/lib/tenable"
   enabled: false
