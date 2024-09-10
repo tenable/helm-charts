@@ -73,9 +73,7 @@ spec:
             drop:
               - ALL
           runAsNonRoot: true
-          {{- if not (.Capabilities.APIVersions.Has "security.openshift.io/v1/SecurityContextConstraints") }}
           runAsUser: 1000
-          {{- end }}
         volumeMounts:
         - name: {{ .Values.resourceNamePrefix }}-secret
           mountPath: "/var/run/secrets/application"
