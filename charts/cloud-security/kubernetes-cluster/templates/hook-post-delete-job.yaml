@@ -55,7 +55,9 @@ spec:
       restartPolicy: Never
       securityContext:
         runAsNonRoot: true
+        {{- if not (.Capabilities.APIVersions.Has "security.openshift.io/v1/SecurityContextConstraints") }}
         runAsUser: 1000
+        {{- end }}
         seccompProfile:
           type: RuntimeDefault
       {{- with .Values.containerImagePullSecrets }}
