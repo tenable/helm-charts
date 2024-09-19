@@ -3,7 +3,7 @@
 
 tenable/tes-operator:1.0.2
 tenable/tes-consec-api:1.1.21
-tenable/tes-consec-ui:1.1.19
+tenable/tes-consec-ui:1.1.29
 tenable/tes-consec-scan:1.1.1
 tenable/tes-consec-tvdl:1.1.1
 tenable/securitycenter-install:6.4.5@sha256:sha256:2793f17399c2fd71ad6a75f7757729b0784412ba62bbd149d3accc8398904fc5
