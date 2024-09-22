@@ -4,12 +4,9 @@ kind: SecurityContextConstraints
 metadata:
   annotations:
     {{- include "annotations" . | nindent 4 }}
-    helm.sh/hook: pre-install, pre-upgrade, post-delete
-    helm.sh/hook-delete-policy: before-hook-creation, hook-succeeded
-    helm.sh/hook-weight: "-1"
   labels:
     {{- include "labels" . | nindent 4 }}
-  name: {{ include "globalResourceName" (dict "name" "hook-scc" "root" .) }}
+  name: {{ include "globalResourceName" (dict "name" "scc" "root" .) }}
 runAsUser:
   type: MustRunAsRange
   uidRangeMin: 1000
@@ -21,6 +18,8 @@ seccompProfiles:
 volumes:
   - secret
 users:
-  - system:serviceaccount:{{ .Release.Namespace }}:{{ .Values.resourceNamePrefix }}-post-delete-service-account
-  - system:serviceaccount:{{ .Release.Namespace }}:{{ .Values.resourceNamePrefix }}-pre-install-service-account
+  {{- if .Values.connector.enabled }}
+  - system:serviceaccount:{{ .Release.Namespace }}:{{ include "connector.resourceNamePrefix" . }}-service-account
+  {{- end}}
+  - system:serviceaccount:{{ .Release.Namespace }}:{{ include "updater.resourceNamePrefix" . }}-service-account
 {{- end }}
