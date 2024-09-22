@@ -84,6 +84,6 @@ spec:
 {{ $annotations :=
   list
   "helm.sh/hook: pre-install, pre-upgrade"
-  "helm.sh/hook-delete-policy: hook-failed, before-hook-creation, hook-succeeded" 
+  "helm.sh/hook-delete-policy: before-hook-creation, hook-failed, hook-succeeded" 
   "helm.sh/hook-weight: \"-1\"" }}
 {{ include "apiKeyTokenSecret" (dict "name" (print .Values.resourceNamePrefix "-pre-install-secret") "root" . "annotations" $annotations) }}
