@@ -1,0 +1,25 @@
+{{- if .Capabilities.APIVersions.Has "security.openshift.io/v1/SecurityContextConstraints" }}
+apiVersion: security.openshift.io/v1
+kind: SecurityContextConstraints
+metadata:
+  annotations:
+    {{- include "annotations" . | nindent 4 }}
+  labels:
+    {{- include "labels" . | nindent 4 }}
+  name: {{ include "globalResourceName" (dict "name" "scc" "root" .) }}
+runAsUser:
+  type: MustRunAsRange
+  uidRangeMin: 1000
+  uidRangeMax: 1000
+seLinuxContext:
+  type: RunAsAny
+seccompProfiles:
+  - '*'
+volumes:
+  - secret
+users:
+  {{- if .Values.connector.enabled }}
+  - system:serviceaccount:{{ .Release.Namespace }}:{{ include "connector.resourceNamePrefix" . }}-service-account
+  {{- end}}
+  - system:serviceaccount:{{ .Release.Namespace }}:{{ include "updater.resourceNamePrefix" . }}-service-account
+{{- end }}

@@ -7,7 +7,7 @@ metadata:
   labels:
     {{- include "labels" . | nindent 4 }}
     {{- include "sensor.labels" . | nindent 4 }}
-  name: {{ include "sensor.resourceNamePrefix" . }}-scc
+  name: {{ include "sensor.globalResourceName" (dict "name" "scc" "root" .) }}
 allowHostDirVolumePlugin: true
 allowHostIPC: true
 allowHostPID: true
