@@ -8,5 +8,5 @@ maintainers:
   - name: Tenable SecurityCenter
     email: securitycenter@tenable.com
 name: securitycenter
-appVersion: "6.4.0"
-version: 1.2.0
+appVersion: "6.4.5"
+version: 1.3.0
