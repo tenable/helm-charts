@@ -3,7 +3,7 @@ kind: StatefulSet
 metadata:
   name: tenable-security-center
   {{- if eq .Release.Namespace "default" }}
-  {{ fail "Installation to default namespace is not supported. Please review Tenable installation documentation." }}
+  {{ fail "Installation to default namespace is not supported.  Please review Tenable installation documentation." }}
   {{- else }}
   namespace: {{ .Release.Namespace  }}
   {{- end}}
@@ -26,18 +26,21 @@ spec:
 {{ .Values.affinity | toYaml | indent 8}}
       {{- end }}
 
+      securityContext:
+        # Change group that owns files to tns
+        fsGroup: 250
+
       # This container is run during pod initialization
       initContainers:
       - name: sc-install-container
-        image: "{{ .Values.image.repository }}/{{ .Values.image.installImageName }}:{{ .Values.image.tag }}"
+        image: "{{ .Values.image.repository }}/{{ .Values.image.installImageName }}:{{ .Values.image.installImageTag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         volumeMounts:
           - mountPath: "/opt"
             name: sc-app-data
-
       containers:
       - name: sc-runtime-container
-        image: "{{ .Values.image.repository }}/{{ .Values.image.runtimeImageName }}:{{ .Values.image.tag }}"
+        image: "{{ .Values.image.repository }}/{{ .Values.image.runtimeImageName }}:{{ .Values.image.runtimeImageTag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         resources:
           requests:
@@ -70,6 +73,7 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: status.podIP
+
 
       volumes:
         - name: sc-app-data
