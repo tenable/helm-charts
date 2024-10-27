@@ -33,6 +33,7 @@ webhooks:
       name: {{ include "admissionController.resourceNamePrefix" . }}-service
       namespace: {{ .Release.Namespace }}
       path: /v1/admit
+      port: 443
   failurePolicy: {{ .Values.admissionController.webhook.failurePolicy }}
   matchPolicy: Exact
   name: validation.tenable.com

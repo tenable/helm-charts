@@ -12,7 +12,7 @@ metadata:
 spec:
   ports:
   - name: {{ include "admissionController.resourceNamePrefix" . }}-port
-    port: {{ .Values.admissionController.webhook.port }}
+    port: 443
     targetPort: webhook-server
   type: ClusterIP
   selector:
