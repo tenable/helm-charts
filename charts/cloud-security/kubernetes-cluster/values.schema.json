@@ -13,7 +13,7 @@
         "string"
       ]
     },
-    "apiKeyTokenSecretName ": {
+    "apiKeyTokenSecretName": {
       "type": [
         "string"
       ]
@@ -100,6 +100,12 @@
       },
       "type": [
         "object"
+      ]
+    },
+    "proxyUrl": {
+      "type": [
+        "null",
+        "string"
       ]
     },
     "resourceNamePrefix": {
