@@ -6,7 +6,7 @@ tenable/tes-consec-api:1.2.78
 tenable/tes-consec-ui:1.2.59
 tenable/tes-consec-scan:1.2.17
 tenable/tes-consec-tvdl:1.2.17
-tenable/securitycenter-install:6.4.5@sha256:sha256:2793f17399c2fd71ad6a75f7757729b0784412ba62bbd149d3accc8398904fc5
-tenable/securitycenter-runtime:6.4.5@sha256:sha256:ab852dc8c538bdb53de0467c4028e22c03c8f13ba718cedb9d7787e7c9322918
+tenable/securitycenter-install:6.4.5@sha256:2793f17399c2fd71ad6a75f7757729b0784412ba62bbd149d3accc8398904fc5
+tenable/securitycenter-runtime:6.4.5@sha256:ab852dc8c538bdb53de0467c4028e22c03c8f13ba718cedb9d7787e7c9322918
 tenable/tes-log-scraper:1.1.0
 postgres:16.3
