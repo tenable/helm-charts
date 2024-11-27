@@ -50,7 +50,7 @@ spec:
           name: {{ include "sensor.resourceNamePrefix" . }}-container
           {{- with .Values.pod.resources }}
           resources:
-          {{- toYaml . | nindent 10 }}
+          {{- toYaml . | nindent 12 }}
           {{- end }}
           securityContext:
             privileged: true
