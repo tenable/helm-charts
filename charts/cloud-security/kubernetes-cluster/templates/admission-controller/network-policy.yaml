@@ -10,17 +10,13 @@ metadata:
   name: {{ include "admissionController.resourceNamePrefix" . }}-network-policy
   namespace: {{ .Release.Namespace }}
 spec:
+  ingress:
+  {{- with .Values.admissionController.networkPolicy.ingress }}
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
   podSelector:
     matchLabels:
       {{- include "admissionController.labels" . | nindent 6 }}
   policyTypes:
     - Ingress
-  ingress:
-    {{- with .Values.admissionController.networkPolicy.ingress.from }}
-    - from:
-        {{- toYaml . | nindent 8 }}
-    {{- end }}
-      ports:
-        - protocol: TCP
-          port: {{ .Values.admissionController.webhook.port }}  
 {{- end }}

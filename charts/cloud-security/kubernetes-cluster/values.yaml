@@ -6,14 +6,7 @@ admissionController:
   healthPort: 9090
   networkPolicy:
     enabled: false
-    ingress:
-      from:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: kube-system
-          podSelector:
-            matchLabels:
-              component: kube-apiserver
+    ingress: {}
   logLevel: "information"
   replicas: 3
   webhook:
