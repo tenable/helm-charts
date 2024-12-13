@@ -18,11 +18,10 @@ image:
   pullPolicy: Always
   installImageName: securitycenter-install
   runtimeImageName: securitycenter-runtime
-  installImageTag: 6.4.5
-  runtimeImageTag: 6.4.5
+  installImageTag: 6.5.1
+  runtimeImageTag: 6.5.1
 
 service:
   name: tenable-sc
   port: 443
-  targetPort: 443
-  type: LoadBalancer
+  sensorPort: 8837
