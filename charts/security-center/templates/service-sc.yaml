@@ -11,6 +11,10 @@ spec:
   selector:
     app: sc-pod
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: {{ .Values.service.targetPort }}
-  type: {{ .Values.service.type }}
+    - name: https
+      port: {{ .Values.service.port }}
+      targetPort: https
+    - name: sensor-port
+      port: {{ .Values.service.sensorPort | default 8837 }}
+      targetPort: sensor-port
+  type: LoadBalancer

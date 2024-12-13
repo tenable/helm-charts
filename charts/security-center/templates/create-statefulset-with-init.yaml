@@ -38,6 +38,44 @@ spec:
         volumeMounts:
           - mountPath: "/opt"
             name: sc-app-data
+        env:
+          # PostgresDB configuration for externally managed database server
+          - name: SC_PG_HOST
+            valueFrom:
+              secretKeyRef:
+                name: pg-secrets
+                key: pg_host
+                optional: true
+          - name: SC_PG_PORT
+            valueFrom:
+              secretKeyRef:
+                name: pg-secrets
+                key: pg_port
+                optional: true
+          - name: SC_PG_USER
+            valueFrom:
+              secretKeyRef:
+                name: pg-secrets
+                key: pg_user
+                optional: true
+          - name: SC_PG_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: pg-secrets
+                key: pg_password
+                optional: true
+          - name: SC_PG_DATABASE
+            valueFrom:
+              secretKeyRef:
+                name: pg-secrets
+                key: pg_database
+                optional: true
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+
+      # This container runs the Security Center application
       containers:
       - name: sc-runtime-container
         image: "{{ .Values.image.repository }}/{{ .Values.image.runtimeImageName }}:{{ .Values.image.runtimeImageTag }}"
@@ -51,6 +89,9 @@ spec:
             memory: {{ .Values.resources.limits.memory }}
         ports:
         - containerPort: 443
+          name: https
+        - containerPort: 8837
+          name: sensor-port
         volumeMounts:
           - mountPath: "/opt"
             name: sc-app-data
@@ -73,7 +114,37 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: status.podIP
-
+          # PostgresDB configuration for externally managed database server
+          - name: SC_PG_HOST
+            valueFrom:
+              secretKeyRef:
+                name: pg-secrets
+                key: pg_host
+                optional: true
+          - name: SC_PG_PORT
+            valueFrom:
+              secretKeyRef:
+                name: pg-secrets
+                key: pg_port
+                optional: true
+          - name: SC_PG_USER
+            valueFrom:
+              secretKeyRef:
+                name: pg-secrets
+                key: pg_user
+                optional: true
+          - name: SC_PG_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: pg-secrets
+                key: pg_password
+                optional: true
+          - name: SC_PG_DATABASE
+            valueFrom:
+              secretKeyRef:
+                name: pg-secrets
+                key: pg_database
+                optional: true
 
       volumes:
         - name: sc-app-data
