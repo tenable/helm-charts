@@ -10,7 +10,12 @@ pod:
   affinity: {}
   annotations: {}
   labels: {}
-  resources: {}
+  resources:
+    limits:
+      cpu: "100m"
+      memory: "256Mi"
+    requests:
+      memory: "150Mi"
   tolerations: []
 resourceNamePrefix: kubernetes-cluster
 sensor:
@@ -18,3 +23,16 @@ sensor:
   containerImagePullSecrets: []
   dataPath: "/var/lib/tenable"
   enabled: false
+  pod:
+    affinity: {}
+    annotations: {}
+    labels: {}
+    resources:
+      limits:
+        cpu: "1"
+        memory: "1Gi"
+      requests:
+        cpu: "300m"
+        memory: "256Mi"
+    tolerations: []
+
