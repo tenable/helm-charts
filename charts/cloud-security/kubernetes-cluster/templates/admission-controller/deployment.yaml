@@ -43,7 +43,7 @@ spec:
           "--health-server-port",
           {{ .Values.admissionController.healthPort | quote }},
           "--log-level",
-          {{ .Values.admissionController.logLevel }},
+          "{{ .Values.admissionController.logLevel }}",
           "--validating-admission-configuration-name",
           {{ include "admissionController.resourceNamePrefix" . }}-vwc,
           "--webhook-server-certificates-directory-path",
@@ -55,10 +55,14 @@ spec:
         image: {{ .Values.admissionController.containerImagePath }}
         imagePullPolicy: Always
         livenessProbe:
+          failureThreshold: 3
           httpGet:
             path: /healthz
             port: {{ .Values.admissionController.healthPort }}
-          timeoutSeconds: 1
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 3
         name: {{ include "admissionController.resourceNamePrefix" . }}-container
         ports:
         - containerPort: {{ .Values.admissionController.webhook.port }}
@@ -68,10 +72,14 @@ spec:
           name: healthz
           protocol: TCP
         readinessProbe:
+          failureThreshold: 3
           httpGet:
             path: /readyz
-            port: {{ .Values.admissionController.healthPort }}
-          timeoutSeconds: 1
+            port: {{ .Values.admissionController.healthPort }}          
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 3
         {{- with .Values.pod.resources }}
         resources:
         {{- toYaml . | nindent 10 }}
@@ -80,13 +88,9 @@ spec:
           allowPrivilegeEscalation: false
           capabilities:
             drop:
-            - ALL
-          readOnlyRootFilesystem: true
-          runAsGroup: 999
+              - ALL
           runAsNonRoot: true
-          {{- if not (.Capabilities.APIVersions.Has "security.openshift.io/v1/SecurityContextConstraints") }}
           runAsUser: 1000
-          {{- end }}
         volumeMounts:
         - mountPath: "/var/run/secrets/certificates"
           name: {{ include "admissionController.resourceNamePrefix" . }}-secret
@@ -113,7 +117,7 @@ spec:
       volumes:
       - name: {{ include "admissionController.resourceNamePrefix" . }}-secret
         secret:
-          defaultMode: 420
+          defaultMode: 0444
           secretName: {{ include "admissionController.resourceNamePrefix" . }}-secret
       {{- include "apiKeyTokenVolume" (dict "name" (print .Values.resourceNamePrefix "-secret") "root" .) | nindent 6 }}
 {{- end }}
