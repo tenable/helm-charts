@@ -4,10 +4,16 @@ admissionController:
   containerImagePullSecrets: []
   enabled: false
   healthPort: 9090
+  logLevel: "information"
   networkPolicy:
     enabled: false
     ingress: {}
-  logLevel: "information"
+  pod:
+    affinity: {}
+    annotations: {}
+    labels: {}
+    resources: {}
+    tolerations: []
   replicas: 3
   webhook:
     failurePolicy: Ignore
