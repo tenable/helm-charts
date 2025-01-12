@@ -35,6 +35,42 @@
       "logLevel": {
         "type": "string"
       },
+      "pod": {
+        "properties": {
+          "affinity": {
+            "properties": {},
+            "type": [
+              "object"
+            ]
+          },
+          "annotations": {
+            "properties": {},
+            "type": [
+              "object"
+            ]
+          },
+          "labels": {
+            "properties": {},
+            "type": [
+              "object"
+            ]
+          },
+          "resources": {
+            "properties": {},
+            "type": [
+              "object"
+            ]
+          },
+          "tolerations": {
+            "type": [
+              "array"
+            ]
+          }
+        },
+        "type": [
+          "object"
+        ]
+      },
       "replicas": {
         "type": "integer"
       },
