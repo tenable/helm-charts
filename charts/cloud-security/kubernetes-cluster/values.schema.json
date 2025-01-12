@@ -23,6 +23,9 @@
       "healthPort": {
         "type": "integer"
       },
+      "logLevel": {
+        "type": "string"
+      },
       "networkPolicy": {
         "enabled": {
           "type": "boolean"
@@ -32,8 +35,41 @@
         },
         "type": "object"
       },
-      "logLevel": {
-        "type": "string"
+      "pod": {
+        "properties": {
+          "affinity": {
+            "properties": {},
+            "type": [
+              "object"
+            ]
+          },
+          "annotations": {
+            "properties": {},
+            "type": [
+              "object"
+            ]
+          },
+          "labels": {
+            "properties": {},
+            "type": [
+              "object"
+            ]
+          },
+          "resources": {
+            "properties": {},
+            "type": [
+              "object"
+            ]
+          },
+          "tolerations": {
+            "type": [
+              "array"
+            ]
+          }
+        },
+        "type": [
+          "object"
+        ]
       },
       "replicas": {
         "type": "integer"
@@ -189,6 +225,42 @@
         "enabled": {
           "type": [
             "boolean"
+          ]
+        },
+        "pod": {
+          "properties": {
+            "affinity": {
+              "properties": {},
+              "type": [
+                "object"
+              ]
+            },
+            "annotations": {
+              "properties": {},
+              "type": [
+                "object"
+              ]
+            },
+            "labels": {
+              "properties": {},
+              "type": [
+                "object"
+              ]
+            },
+            "resources": {
+              "properties": {},
+              "type": [
+                "object"
+              ]
+            },
+            "tolerations": {
+              "type": [
+                "array"
+              ]
+            }
+          },
+          "type": [
+            "object"
           ]
         }
       },

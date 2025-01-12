@@ -19,17 +19,17 @@ spec:
   template:
     metadata:
       annotations:
-        {{- with .Values.pod.annotations }}
+        {{- with .Values.admissionController.pod.annotations }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
       labels:
         {{- include "labels" . | nindent 8 }}
         {{- include "admissionController.labels" . | nindent 8 }}
-        {{- with .Values.pod.labels }}
+        {{- with .Values.admissionController.pod.labels }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
-      {{- with .Values.pod.affinity }}
+      {{- with .Values.admissionController.pod.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -80,7 +80,7 @@ spec:
           periodSeconds: 10
           successThreshold: 1
           timeoutSeconds: 3
-        {{- with .Values.pod.resources }}
+        {{- with .Values.admissionController.pod.resources }}
         resources:
         {{- toYaml . | nindent 10 }}
         {{- end }}
@@ -110,7 +110,7 @@ spec:
           type: RuntimeDefault
       serviceAccountName: {{ include "admissionController.resourceNamePrefix" . }}-service-account
       terminationGracePeriodSeconds: 60
-      {{- with .Values.pod.tolerations }}
+      {{- with .Values.admissionController.pod.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
