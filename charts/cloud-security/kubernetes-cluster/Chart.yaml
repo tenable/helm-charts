@@ -3,4 +3,4 @@ appVersion: 1.0.0
 description: Tenable Cloud Security Kubernetes cluster
 name: cloud-security-kubernetes-cluster
 type: application
-version: 1.0.2
+version: 1.0.3
