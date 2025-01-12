@@ -1,4 +1,19 @@
 accountId: null
+admissionController:
+  containerImagePath: 585051939341.dkr.ecr.us-east-2.amazonaws.com/engserviceimagekubernetesclusteradmissioncontrollerrepository
+  containerImagePullSecrets: []
+  enabled: false
+  healthPort: 9090
+  networkPolicy:
+    enabled: false
+    ingress: {}
+  logLevel: "information"
+  replicas: 3
+  webhook:
+    failurePolicy: Ignore
+    port: 8443
+    timeoutSeconds: 3
+  tls: null
 connector:
   enabled: true
   identity: true

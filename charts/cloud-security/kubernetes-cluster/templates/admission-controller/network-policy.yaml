@@ -1,0 +1,22 @@
+{{- if .Values.admissionController.networkPolicy.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  annotations:
+    {{- include "annotations" . | nindent 4 }}
+  labels:
+    {{- include "labels" . | nindent 4 }}
+    {{- include "admissionController.labels" . | nindent 4 }}
+  name: {{ include "admissionController.resourceNamePrefix" . }}-network-policy
+  namespace: {{ .Release.Namespace }}
+spec:
+  ingress:
+  {{- with .Values.admissionController.networkPolicy.ingress }}
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+  podSelector:
+    matchLabels:
+      {{- include "admissionController.labels" . | nindent 6 }}
+  policyTypes:
+    - Ingress
+{{- end }}

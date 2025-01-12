@@ -8,6 +8,62 @@
         "string"
       ]
     },
+    "admissionController": {
+      "containerImagePath": {
+        "type": "string"
+      },
+      "containerImagePullSecrets": {
+        "type": [
+          "array"
+        ]
+      },
+      "enabled": {
+        "type": "boolean"
+      },
+      "healthPort": {
+        "type": "integer"
+      },
+      "networkPolicy": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "ingress": {
+          "type": "object"
+        },
+        "type": "object"
+      },
+      "logLevel": {
+        "type": "string"
+      },
+      "replicas": {
+        "type": "integer"
+      },
+      "webhook": {
+        "failurePolicy": {
+          "type": "string"
+        },
+        "port": {
+          "type": "integer"
+        },
+        "timeoutSeconds": {
+          "type": "integer"
+        },
+        "type": "object"
+      },
+      "tls": {
+        "serverCertificateBase64": {
+          "type": "string"
+        },
+        "serverCertificateAuthorityCertificateBase64": {
+          "type": "string"
+        },
+        "serverCertificateKeyBase64": {
+          "type": "string"
+        },
+        "type": "object"
+      },
+      "type": "object"
+    },
     "apiKeyToken": {
       "type": [
         "string"
