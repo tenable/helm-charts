@@ -23,6 +23,9 @@
       "healthPort": {
         "type": "integer"
       },
+      "logLevel": {
+        "type": "string"
+      },
       "networkPolicy": {
         "enabled": {
           "type": "boolean"
@@ -31,9 +34,6 @@
           "type": "object"
         },
         "type": "object"
-      },
-      "logLevel": {
-        "type": "string"
       },
       "pod": {
         "properties": {
