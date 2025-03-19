@@ -1,0 +1,96 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  annotations:
+    {{- include "annotations" . | nindent 4 }}
+  labels:
+    {{- include "labels" . | nindent 4 }}
+    {{- include "updater.labels" . | nindent 4 }}
+  name: {{ include "updater.resourceNamePrefix" . }}-cronjob
+  namespace: {{ .Release.Namespace }}
+spec:
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      activeDeadlineSeconds: 300
+      backoffLimit: 3
+      template:
+        metadata:
+          annotations:
+            {{- with .Values.pod.annotations }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+          labels:
+            {{- include "labels" . | nindent 12 }}
+            {{- include "updater.labels" . | nindent 12 }}
+            {{- with .Values.pod.labels }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+        spec:
+          {{- with .Values.pod.affinity }}
+          affinity:
+            {{- toYaml . | nindent 14 }}
+          {{- end }}
+          automountServiceAccountToken: true
+          restartPolicy: Never
+          containers:
+            - args: [
+              "updater",
+              "--api-key-token-file-path",
+              "/var/run/secrets/application/apikeytoken",
+              "--api-url",
+                {{ .Values.apiUrl | quote }},
+              "--application-version",
+                {{ .Chart.AppVersion | quote }},
+              "--helm-release-name",
+                {{ print .Release.Namespace ":" .Release.Name | quote }},
+                {{- if .Values.name }}
+              "--name",
+                {{ .Values.name | quote }},
+                {{- end}}
+                {{- if .Values.proxyUrl }}
+              "--proxy-url",
+                {{ .Values.proxyUrl | quote }},
+                {{- end}}
+                {{- if .Values.accountId }}
+              "--tenant-raw-id",
+                {{ .Values.accountId | quote }}
+                {{- end}}
+            ]
+              {{- include "environmentVariables" . | nindent 14 }}
+              image: {{ include "containerImage" . }}
+              imagePullPolicy: Always
+              name: {{ include "updater.resourceNamePrefix" . }}-container
+              {{- with .Values.pod.resources }}
+              resources:
+              {{- toYaml . | nindent 16 }}
+              {{- end }}
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+                runAsNonRoot: true
+                runAsUser: 1000
+              volumeMounts:
+                - name: {{ .Values.resourceNamePrefix }}-secret
+                  mountPath: "/var/run/secrets/application"
+                  readOnly: true
+          imagePullSecrets:
+            {{- with .Values.containerImage.pullSecrets }}
+              {{- toYaml . | nindent 12 }}
+            {{- else }}
+            - name: {{ .Values.resourceNamePrefix }}-image-pull-secret
+            {{- end }}
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+          serviceAccountName: {{ include "updater.resourceNamePrefix" . }}-service-account
+          {{- with .Values.pod.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          volumes:
+          {{- include "apiKeyTokenVolume" (dict "name" (print .Values.resourceNamePrefix "-secret") "root" .) | nindent 12 }}
+      ttlSecondsAfterFinished: 7200
+  schedule: "0 * * * *"

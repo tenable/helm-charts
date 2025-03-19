@@ -15,6 +15,10 @@ spec:
     matchLabels:
       {{- include "admissionController.labels" . | nindent 6 }}
   strategy:
+    rollingUpdate:
+      {{- with .Values.admissionController.strategy.rollingUpdate }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
     type: RollingUpdate
   template:
     metadata:
@@ -35,76 +39,75 @@ spec:
       {{- end }}
       automountServiceAccountToken: true
       containers:
-      - args: [
-          "--api-key-token-file-path",
-          "/var/run/secrets/application/apikeytoken",
-          "--api-url",
-          {{ .Values.apiUrl | quote }},
-          "--health-server-port",
-          {{ .Values.admissionController.healthPort | quote }},
-          "--log-level",
-          "{{ .Values.admissionController.logLevel }}",
-          "--validating-admission-configuration-name",
-          {{ include "admissionController.resourceNamePrefix" . }}-vwc,
-          "--webhook-server-certificates-directory-path",
-          "/var/run/secrets/certificates",
-          "--webhook-server-port",
-          {{ .Values.admissionController.webhook.port | quote }}
-        ]
-        {{- include "environmentVariables" . | nindent 8 }}
-        image: {{ .Values.admissionController.containerImagePath }}
-        imagePullPolicy: Always
-        livenessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /healthz
-            port: {{ .Values.admissionController.healthPort }}
-          initialDelaySeconds: 10
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 3
-        name: {{ include "admissionController.resourceNamePrefix" . }}-container
-        ports:
-        - containerPort: {{ .Values.admissionController.webhook.port }}
-          name: webhook-server
-          protocol: TCP
-        - containerPort: {{ .Values.admissionController.healthPort }}
-          name: healthz
-          protocol: TCP
-        readinessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /readyz
-            port: {{ .Values.admissionController.healthPort }}          
-          initialDelaySeconds: 10
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 3
+        - args: [
+            "--api-key-token-file-path",
+            "/var/run/secrets/application/apikeytoken",
+            "--api-url",
+            {{ .Values.apiUrl | quote }},
+            "--health-server-port",
+            {{ .Values.admissionController.healthPort | quote }},
+            "--log-level",
+            "{{ .Values.admissionController.logLevel }}",
+            "--validating-admission-configuration-name",
+            {{ include "admissionController.resourceNamePrefix" . }}-vwc,
+            "--webhook-server-certificates-directory-path",
+            "/var/run/secrets/certificates",
+            "--webhook-server-port",
+            {{ .Values.admissionController.webhook.port | quote }}
+          ]
+          {{- include "environmentVariables" . | nindent 10 }}
+          image: {{ include "admissionController.containerImage" . }}
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: {{ .Values.admissionController.healthPort }}
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 3
+          name: {{ include "admissionController.resourceNamePrefix" . }}-container
+          ports:
+            - containerPort: {{ .Values.admissionController.webhook.port }}
+              name: webhook-server
+              protocol: TCP
+            - containerPort: {{ .Values.admissionController.healthPort }}
+              name: healthz
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /readyz
+              port: {{ .Values.admissionController.healthPort }}
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 3
         {{- with .Values.admissionController.pod.resources }}
-        resources:
-        {{- toYaml . | nindent 10 }}
+          resources:
+        {{- toYaml . | nindent 12 }}
         {{- end }}
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-              - ALL
-          runAsNonRoot: true
-          runAsUser: 1000
-        volumeMounts:
-        - mountPath: "/var/run/secrets/certificates"
-          name: {{ include "admissionController.resourceNamePrefix" . }}-secret
-          readOnly: true
-        - mountPath: "/var/run/secrets/application"
-          name: {{ .Values.resourceNamePrefix }}-secret
-          readOnly: true
-      {{- with .Values.admissionController.containerImagePullSecrets }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+            runAsUser: 1000
+          volumeMounts:
+            - mountPath: "/var/run/secrets/certificates"
+              name: {{ include "admissionController.resourceNamePrefix" . }}-secret
+              readOnly: true
+            - mountPath: "/var/run/secrets/application"
+              name: {{ .Values.resourceNamePrefix }}-secret
+              readOnly: true
       imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- else}}
-      imagePullSecrets:
+        {{- with .Values.containerImage.pullSecrets }}
+          {{- toYaml . | nindent 8 }}
+        {{- else }}
         - name: {{ .Values.resourceNamePrefix }}-image-pull-secret
-      {{- end }}
+        {{- end }}
       securityContext:
         seccompProfile:
           type: RuntimeDefault
@@ -115,9 +118,9 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-      - name: {{ include "admissionController.resourceNamePrefix" . }}-secret
-        secret:
-          defaultMode: 0444
-          secretName: {{ include "admissionController.resourceNamePrefix" . }}-secret
-      {{- include "apiKeyTokenVolume" (dict "name" (print .Values.resourceNamePrefix "-secret") "root" .) | nindent 6 }}
+        - name: {{ include "admissionController.resourceNamePrefix" . }}-secret
+          secret:
+            defaultMode: 0444
+            secretName: {{ include "admissionController.resourceNamePrefix" . }}-secret
+      {{- include "apiKeyTokenVolume" (dict "name" (print .Values.resourceNamePrefix "-secret") "root" .) | nindent 8 }}
 {{- end }}

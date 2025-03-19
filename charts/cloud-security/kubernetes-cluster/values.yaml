@@ -1,7 +1,8 @@
 accountId: null
 admissionController:
-  containerImagePath: 585051939341.dkr.ecr.us-east-2.amazonaws.com/engserviceimagekubernetesclusteradmissioncontrollerrepository
-  containerImagePullSecrets: []
+  containerImage:
+    repository: cloud-security/kubernetes-cluster-admission-controller
+    tag: null
   enabled: false
   healthPort: 9090
   logLevel: "information"
@@ -15,17 +16,28 @@ admissionController:
     resources: {}
     tolerations: []
   replicas: 3
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  tls: {}
   webhook:
     failurePolicy: Ignore
     port: 8443
     timeoutSeconds: 3
-  tls: null
+apiKeyToken: ""
+apiUrl: ""
 connector:
   enabled: true
   identity: true
   network: true
-containerImagePath: tenable/cloud-security-kubernetes-cluster-manager
-containerImagePullSecrets: []
+containerImage:
+  pullSecrets: []
+  registry: containers.tenable.com
+  registryPassword: null
+  registryUsername: null
+  repository: cloud-security/kubernetes-cluster-manager
+  tag: null
 name: null
 pod:
   affinity: {}
@@ -40,8 +52,9 @@ pod:
   tolerations: []
 resourceNamePrefix: kubernetes-cluster
 sensor:
-  containerImagePath: 585051939341.dkr.ecr.us-east-2.amazonaws.com/engserviceimagekubernetesclustersensorrepository
-  containerImagePullSecrets: []
+  containerImage:
+    repository: cloud-security/kubernetes-cluster-sensor
+    tag: null
   dataPath: "/var/lib/tenable"
   enabled: false
   pod:

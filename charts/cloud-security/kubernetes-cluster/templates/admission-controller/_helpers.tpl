@@ -1,3 +1,7 @@
+{{- define "admissionController.containerImage" -}}
+{{- print .Values.containerImage.registry "/" .Values.admissionController.containerImage.repository ":" (coalesce .Values.admissionController.containerImage.tag .Values.containerImage.tag | default .Chart.AppVersion)}}
+{{- end }}
+
 {{- define "admissionController.globalResourceName" -}}
 {{- print "tenable" "-" (include "admissionController.resourceNamePrefix" .root) "-" .name "-" (trunc 8 (sha256sum (print .root.Release.Namespace ":" .root.Release.Name))) }}
 {{- end }}
