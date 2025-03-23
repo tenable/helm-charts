@@ -45,7 +45,7 @@ spec:
             {{ .Values.proxyUrl | quote }},
             {{- end}}
           ]
-          image: {{ .Values.sensor.containerImagePath }}
+          image: {{ include "sensor.containerImage" . }}
           imagePullPolicy: Always
           name: {{ include "sensor.resourceNamePrefix" . }}-container
           {{- with .Values.sensor.pod.resources }}
@@ -57,18 +57,17 @@ spec:
             runAsUser: 0
           volumeMounts:
             - name: {{ include "sensor.resourceNamePrefix" . }}-data
-              mountPath: {{.Values.sensor.dataPath}}
+              mountPath: {{ .Values.sensor.dataPath }}
             - name: {{ .Values.resourceNamePrefix }}-secret
               mountPath: "/var/run/secrets/application"
               readOnly: true
       hostPID: true
-      {{- with .Values.sensor.containerImagePullSecrets }}
       imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- else}}
-      imagePullSecrets:
+        {{- with .Values.containerImage.pullSecrets }}
+          {{- toYaml . | nindent 8 }}
+        {{- else }}
         - name: {{ .Values.resourceNamePrefix }}-image-pull-secret
-      {{- end }}
+        {{- end }}
       securityContext:
         seccompProfile:
           type: RuntimeDefault
@@ -83,4 +82,9 @@ spec:
           path: {{ .Values.sensor.dataPath }}
           type: DirectoryOrCreate
       {{- include "apiKeyTokenVolume" (dict "name" (print .Values.resourceNamePrefix "-secret") "root" .) | nindent 6 }}
+  updateStrategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 100%
+    type: RollingUpdate
 {{- end }}

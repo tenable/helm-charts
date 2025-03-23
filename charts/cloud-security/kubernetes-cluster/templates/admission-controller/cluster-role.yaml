@@ -9,9 +9,9 @@ metadata:
     {{- include "admissionController.labels" . | nindent 4 }}
   name: {{ include "admissionController.globalResourceName" (dict "name" "cr" "root" .) }}
 rules:
-- apiGroups: ["*"]
-  resources: ["namespaces"]
+- apiGroups: [""]
   resourceNames: ["kube-system"]
+  resources: ["namespaces"]
   verbs: ["get"]
 - apiGroups: ["admissionregistration.k8s.io"]
   resources: ["validatingwebhookconfigurations"]

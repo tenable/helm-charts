@@ -27,46 +27,48 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
-      - args: [
-          "release-pre-install",
-          "--api-key-token-file-path",
-          "/var/run/secrets/application/apikeytoken",
-          "--api-url",
-          {{ .Values.apiUrl | quote }},
-          "--application-version",
-          {{ .Chart.AppVersion | quote }},
-          "--helm-release-name",
-          {{ print .Release.Namespace ":" .Release.Name | quote }},
-          {{- if .Values.name }}
-          "--name",
-          {{ .Values.name | quote }},
-          {{- end}}
-          {{- if .Values.proxyUrl }}
-          "--proxy-url",
-          {{ .Values.proxyUrl | quote }},
-          {{- end}}
-          {{- if .Values.accountId }}
-          "--tenant-raw-id",
-          {{ .Values.accountId | quote }}
-          {{- end}}
-        ]
-        {{- include "environmentVariables" . | nindent 8 }}
-        image: {{ .Values.containerImagePath }}
-        imagePullPolicy: Always
-        name: {{ .Values.resourceNamePrefix }}-pre-install-container
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-            - ALL
-        volumeMounts:
-        - name: {{ .Values.resourceNamePrefix }}-pre-install-secret
-          mountPath: "/var/run/secrets/application"
-          readOnly: true
-      {{- with .Values.containerImagePullSecrets }}
+        - args: [
+            "release-pre-install",
+            "--api-key-token-file-path",
+            "/var/run/secrets/application/apikeytoken",
+            "--api-url",
+              {{ .Values.apiUrl | quote }},
+            "--application-version",
+              {{ .Chart.AppVersion | quote }},
+            "--helm-release-name",
+              {{ print .Release.Namespace ":" .Release.Name | quote }},
+              {{- if .Values.name }}
+            "--name",
+              {{ .Values.name | quote }},
+              {{- end }}
+              {{- if .Values.proxyUrl }}
+            "--proxy-url",
+              {{ .Values.proxyUrl | quote }},
+              {{- end }}
+              {{- if .Values.accountId }}
+            "--tenant-raw-id",
+              {{ .Values.accountId | quote }}
+              {{- end }}
+          ]
+          {{- include "environmentVariables" . | nindent 10 }}
+          image: {{ include "containerImage" . }}
+          imagePullPolicy: Always
+          name: {{ .Values.resourceNamePrefix }}-pre-install-container
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: {{ .Values.resourceNamePrefix }}-pre-install-secret
+              mountPath: "/var/run/secrets/application"
+              readOnly: true
       imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- with .Values.containerImage.pullSecrets }}
+          {{- toYaml . | nindent 8 }}
+        {{- else }}
+        - name: {{ .Values.resourceNamePrefix }}-pre-install-image-pull-secret
+        {{- end }}
       restartPolicy: Never
       securityContext:
         runAsNonRoot: true
@@ -79,11 +81,18 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-      {{- include "apiKeyTokenVolume" (dict "name" (print .Values.resourceNamePrefix "-pre-install-secret") "root" .) | nindent 6 }}
+      {{- include "apiKeyTokenVolume" (dict "name" (print .Values.resourceNamePrefix "-pre-install-secret") "root" .) | nindent 8 }}
 ---
-{{ $annotations :=
+{{ $apiKeyTokenSecretAnnotations :=
   list
   "helm.sh/hook: pre-install, pre-upgrade"
   "helm.sh/hook-delete-policy: before-hook-creation, hook-failed, hook-succeeded" 
   "helm.sh/hook-weight: \"-1\"" }}
-{{ include "apiKeyTokenSecret" (dict "name" (print .Values.resourceNamePrefix "-pre-install-secret") "root" . "annotations" $annotations) }}
+{{ include "apiKeyTokenSecret" (dict "name" (print .Values.resourceNamePrefix "-pre-install-secret") "root" . "annotations" $apiKeyTokenSecretAnnotations) }}
+---
+{{ $containerImagePullSecretAnnotations :=
+  list
+  "helm.sh/hook: pre-install, pre-upgrade"
+  "helm.sh/hook-delete-policy: before-hook-creation, hook-failed, hook-succeeded" 
+  "helm.sh/hook-weight: \"-10\"" }}
+{{ include "containerImagePullSecret" (dict "name" (print .Values.resourceNamePrefix "-pre-install-image-pull-secret") "root" . "annotations" $containerImagePullSecretAnnotations) }}

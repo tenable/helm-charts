@@ -9,7 +9,8 @@ metadata:
     {{- include "sensor.labels" . | nindent 4 }}
   name: {{ include "sensor.globalResourceName" (dict "name" "cr" "root" .) }}
 rules:
-  - apiGroups: ["*"]
+  - apiGroups: [""]
+    resourceNames: ["kube-system"]
     resources: ["namespaces"]
     verbs: ["get"]
 {{- end }}

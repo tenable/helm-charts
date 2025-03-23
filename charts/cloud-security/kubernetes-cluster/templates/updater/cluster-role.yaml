@@ -8,6 +8,7 @@ metadata:
     {{- include "updater.labels" . | nindent 4 }}
   name: {{ include "updater.globalResourceName" (dict "name" "cr" "root" .) }}
 rules:
-  - apiGroups: ["*"]
+  - apiGroups: [""]
+    resourceNames: ["kube-system"]
     resources: ["namespaces"]
     verbs: ["get"]

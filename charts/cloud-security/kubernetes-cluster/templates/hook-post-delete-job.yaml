@@ -28,51 +28,60 @@ spec:
       {{- end }}
       automountServiceAccountToken: true
       containers:
-      - args: [
-          "release-post-delete",
-          "--api-key-token-file-path",
-          "/var/run/secrets/application/apikeytoken",
-          "--api-url",
-          {{ .Values.apiUrl | quote }},
-          {{- if .Values.proxyUrl }}
-          "--proxy-url",
-          {{ .Values.proxyUrl | quote }},
-          {{- end}}
-        ]
-        {{- include "environmentVariables" . | nindent 8 }}
-        image: {{ .Values.containerImagePath }}
-        imagePullPolicy: Always
-        name: {{ .Values.resourceNamePrefix }}-post-delete-container
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-            - ALL
-        volumeMounts:
-        - name: {{ .Values.resourceNamePrefix }}-post-delete-secret
-          mountPath: "/var/run/secrets/application"
-          readOnly: true
+        - args: [
+            "release-post-delete",
+            "--api-key-token-file-path",
+            "/var/run/secrets/application/apikeytoken",
+            "--api-url",
+              {{ .Values.apiUrl | quote }},
+              {{- if .Values.proxyUrl }}
+            "--proxy-url",
+              {{ .Values.proxyUrl | quote }},
+              {{- end }}
+          ]
+          {{- include "environmentVariables" . | nindent 10 }}
+          image: {{ include "containerImage" . }}
+          imagePullPolicy: Always
+          name: {{ .Values.resourceNamePrefix }}-post-delete-container
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: {{ .Values.resourceNamePrefix }}-post-delete-secret
+              mountPath: "/var/run/secrets/application"
+              readOnly: true
+      imagePullSecrets:
+        {{- with .Values.containerImage.pullSecrets }}
+          {{- toYaml . | nindent 8 }}
+        {{- else }}
+        - name: {{ .Values.resourceNamePrefix }}-post-delete-image-pull-secret
+        {{- end }}
       restartPolicy: Never
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
         seccompProfile:
           type: RuntimeDefault
-      {{- with .Values.containerImagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
       serviceAccountName: {{ .Values.resourceNamePrefix }}-post-delete-service-account
       {{- with .Values.pod.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-      {{- include "apiKeyTokenVolume" (dict "name" (print .Values.resourceNamePrefix "-post-delete-secret") "root" .) | nindent 6 }}
+      {{- include "apiKeyTokenVolume" (dict "name" (print .Values.resourceNamePrefix "-post-delete-secret") "root" .) | nindent 8 }}
 ---
-{{ $annotations := 
+{{ $apiKeyTokenSecretAnnotations := 
   list 
   "helm.sh/hook: post-delete"
   "helm.sh/hook-delete-policy: before-hook-creation, hook-failed, hook-succeeded"
   "helm.sh/hook-weight: \"-1\"" }}
-{{ include "apiKeyTokenSecret" (dict "name" (print .Values.resourceNamePrefix "-post-delete-secret") "root" . "annotations" $annotations) }}
+{{ include "apiKeyTokenSecret" (dict "name" (print .Values.resourceNamePrefix "-post-delete-secret") "root" . "annotations" $apiKeyTokenSecretAnnotations) }}
+---
+{{ $containerImagePullSecretAnnotations :=
+  list
+  "helm.sh/hook: post-delete"
+  "helm.sh/hook-delete-policy: before-hook-creation, hook-failed, hook-succeeded" 
+  "helm.sh/hook-weight: \"-10\"" }}
+{{ include "containerImagePullSecret" (dict "name" (print .Values.resourceNamePrefix "-post-delete-image-pull-secret") "root" . "annotations" $containerImagePullSecretAnnotations) }}
