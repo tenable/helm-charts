@@ -1,0 +1,19 @@
+{{- if .Capabilities.APIVersions.Has "security.openshift.io/v1/SecurityContextConstraints" }}
+kind: SecurityContextConstraints
+apiVersion: security.openshift.io/v1
+metadata:
+  name: {{ .Values.name }}-scc
+  namespace: {{ .Release.Namespace }}
+allowPrivilegedContainer: false
+runAsUser:
+  type: MustRunAsRange
+  uidRangeMin: {{ .Values.securityContext.runAsUser }}
+  uidRangeMax: {{ .Values.securityContext.runAsUser }}
+seLinuxContext:
+  type: MustRunAs
+supplementalGroups:
+  type: MustRunAs
+  ranges:
+  - min: {{ .Values.securityContext.runAsGroup }}
+    max: {{ .Values.securityContext.runAsGroup }}
+{{- end }}

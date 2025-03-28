@@ -1,0 +1,90 @@
+name: tes-deployment-assessment
+image:
+  registry: tenable
+  pullPolicy: IfNotPresent
+  tag: "1.0.0"
+
+replicaCount: 1
+
+service:
+  https:
+    containerPort: 8091
+  
+validatingWebhook:
+  # timeoutSeconds Must be between 1 and 30
+  timeoutSeconds: 15
+  # Possible values for failurePolicy:
+  # - Ignore : means that an error calling the webhook is ignored and the API request is allowed to continue.
+  # - Fail : means that an error calling the webhook causes the admission to fail and the API request to be rejected.
+  failurePolicy: Ignore
+  path: /api/v1/validate-webhook
+  # Namespaces to exclude from assessment.
+  # release namespace is excluded by default to allow the 
+  # webhook pod to be deployed.
+  excludeNamespaces:
+    - kube-system
+  # Namespaces to include in the assessment
+  # includeNamespaces:
+  #   - vc-apps
+
+# To be supplied via the tes-config.yaml file that
+# must be downloaded from the tenable enclave security.
+# deployment scanners page
+# tesConfig:
+#   clusterName: ""
+#   scannerId: ""
+#   url: ""
+#   token: ""
+
+# Override app config, like enable debug logging.
+# appConfig:
+#   tesDeploymentAssessment:
+#     logLevel: "debug"
+
+livenessProbe:
+  initialDelaySeconds: 5
+  timeoutSeconds: 2
+  periodSeconds: 10 # keep periodSeconds > timeoutSeconds
+  httpGet:
+    scheme: HTTPS
+    path: /api/v1/healthz
+    port: 8091
+
+readinessProbe:
+  initialDelaySeconds: 5
+  timeoutSeconds: 2
+  periodSeconds: 10 # keep periodSeconds > timeoutSeconds
+  httpGet:
+    scheme: HTTPS
+    path: /api/v1/healthz
+    port: 8091
+
+# Sample to supply env vars if required.
+# env:
+#   - name: TLS
+#     value: "true"
+
+resources:
+  requests:
+    memory: "500Mi"
+    cpu: "500m"
+  limits:
+    memory: "1Gi"
+    cpu: "1000m"
+
+securityContext:
+  runAsUser: 2001
+  runAsGroup: 3000
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 85
+  targetMemoryUtilizationPercentage: 85
+
+podAnnotations:
+
+nodeSelector: {}
+
+tolerations: []

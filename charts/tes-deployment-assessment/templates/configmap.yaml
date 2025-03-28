@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.name }}-configmap
+data:
+{{- with .Values.appConfig }}
+  app-config-override.yaml: |
+  {{- toYaml . | nindent 4 }}
+{{ end }}
+{{- with .Values.tesConfig | required "Please provide a valid tesConfig.yaml which can be downloaded from Tenable Enclave Security - Deployment Scanners page." }}
+  tes-config.yaml: |
+  {{- toYaml . | nindent 4 }}
+{{ end }}

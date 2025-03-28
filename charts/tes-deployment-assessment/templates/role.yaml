@@ -1,0 +1,18 @@
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: {{ .Release.Namespace  }}
+  name: {{ .Values.name }}-role
+{{- if .Capabilities.APIVersions.Has "security.openshift.io/v1/SecurityContextConstraints" }}
+rules:
+- apiGroups:
+  - security.openshift.io
+  resourceNames:
+  - {{ .Values.name }}-scc
+  resources:
+  - securitycontextconstraints
+  verbs:
+  - use
+{{ else }}
+rules: []
+{{ end }}
