@@ -1,0 +1,12 @@
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ .Release.Name }}-{{ .Release.Namespace }}-rolebinding-clusterid
+subjects:
+- kind: ServiceAccount
+  name: {{ .Values.name }}-service-account
+  namespace: {{ .Release.Namespace  }}
+roleRef:
+  kind: ClusterRole
+  name: {{ .Release.Name }}-{{ .Release.Namespace }}-read-image-pull-secrets-role
+  apiGroup: rbac.authorization.k8s.io
