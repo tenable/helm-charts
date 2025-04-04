@@ -1,0 +1,112 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.name }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Values.name }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app.kubernetes.io/name: {{ .Values.name }}
+    spec:
+      securityContext:
+        runAsUser: {{ .Values.securityContext.runAsUser }}
+        runAsGroup: {{ .Values.securityContext.runAsGroup }}
+        runAsNonRoot: true
+      preemptionPolicy: PreemptLowerPriority
+      priorityClassName: system-cluster-critical
+      volumes:
+      {{- if .Values.disableCertManagerCsiDriver }}
+        - name: tls
+          secret:
+            secretName: {{ .Values.name }}-tls
+      {{- else }}
+        - name: tls
+          csi:
+            readOnly: true
+            driver: csi.cert-manager.io
+            volumeAttributes:
+                  csi.cert-manager.io/issuer-name: {{ if .Values.useCustomCA }} {{ .Values.customCAIssuerName }} {{ else }} {{ .Release.Namespace }}-tes-deployment-assessment-ca-issuer {{ end }}
+                  csi.cert-manager.io/dns-names: {{ .Values.name }},{{ .Values.name }}.{{ .Release.Namespace }},{{ .Values.name }}.{{ .Release.Namespace }}.svc,{{ .Values.name }}.{{ .Release.Namespace }}.svc.cluster.local
+                  csi.cert-manager.io/fs-group: {{ .Values.securityContext.runAsGroup | quote}}
+      {{- end }}
+        - name: properties
+          configMap:
+            items:
+            {{- if .Values.appConfig }}
+            - key: app-config-override.yaml
+              path: app-config-override.yaml
+            {{- end }}
+            - key: tes-config.yaml
+              path: tes-config.yaml
+            name: {{ .Values.name }}-configmap
+      serviceAccountName: {{ .Values.name }}-service-account
+      containers:
+        - name: {{ .Values.name }}
+          image: "{{ .Values.image.registry }}/{{ .Values.name }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: https
+              containerPort: {{ .Values.service.https.containerPort }}
+              protocol: TCP
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          env:
+            - name: SERVICE_NAME
+              value: {{ .Chart.Name | quote }}
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          {{- range .Values.env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+          {{- end }}
+          volumeMounts:
+            - mountPath: "/tls"
+              name: tls
+              readOnly: true
+          {{- if .Values.appConfig }}
+            - mountPath: "/app/properties/app-config-override.yaml"
+              subPath: app-config-override.yaml
+              name: properties
+              readOnly: true
+          {{- end }}
+            - mountPath: "/app/properties/tes-config.yaml"
+              subPath: tes-config.yaml
+              name: properties
+              readOnly: true
+          livenessProbe:
+              {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+              {{- toYaml .Values.readinessProbe | nindent 12 }}
+          resources:
+              {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.image.imagePullSecrets }}
+      imagePullSecrets:
+          {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+          {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+          {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
