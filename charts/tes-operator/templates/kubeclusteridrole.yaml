@@ -1,3 +1,4 @@
+{{ if not .Values.tes.blades.global.useNamespaceId }}
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -13,4 +14,5 @@ rules:
 - apiGroups: ["security.openshift.io"]
   resources: ["securitycontextconstraints"]
   verbs: ["create", "get", "delete", "patch"]
+{{ end }}
 {{ end }}
