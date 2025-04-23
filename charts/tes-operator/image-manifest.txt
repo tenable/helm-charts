@@ -2,10 +2,10 @@
 # plan to use your own internal docker registry, you will need these images
 
 tenable/tes-operator:1.5.0
-tenable/tes-consec-api:1.5.0
+tenable/tes-consec-api:1.5.1
 tenable/tes-consec-ui:1.5.100
-tenable/tes-consec-scan:1.5.0
-tenable/tes-consec-tvdl:1.5.0
+tenable/tes-consec-scan:1.5.1
+tenable/tes-consec-tvdl:1.5.1
 tenable/tes-consec-policy:1.5.2
 tenable/securitycenter-install:6.6.0@sha256:5c1adf2b0c75f46dccfb432456592dcd9e06634a9e58024105dc08d3e6a683f5
 tenable/securitycenter-runtime:6.6.0@sha256:f9e3fcf38b986efb0711ca56709ecce9f38a1016eb6fe4d9006601a9ecc48454
