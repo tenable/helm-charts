@@ -47,6 +47,9 @@ pod:
     limits:
       cpu: "100m"
       memory: "256Mi"
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
   tolerations: []
 resourceNamePrefix: kubernetes-cluster
 runAsUser: 1000
