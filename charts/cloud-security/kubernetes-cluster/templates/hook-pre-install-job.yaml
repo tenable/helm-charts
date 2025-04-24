@@ -79,6 +79,10 @@ spec:
         runAsUser: {{ .Values.runAsUser }}
         seccompProfile:
           type: RuntimeDefault
+      {{- with .Values.pod.resources }}
+      resources:
+      {{- toYaml . | nindent 12 }}
+      {{- end }}
       serviceAccountName: {{ .Values.resourceNamePrefix }}-pre-install-service-account
       {{- with .Values.pod.tolerations }}
       tolerations:

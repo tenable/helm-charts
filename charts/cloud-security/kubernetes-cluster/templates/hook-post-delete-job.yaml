@@ -43,6 +43,10 @@ spec:
           image: {{ include "containerImage" . }}
           imagePullPolicy: Always
           name: {{ .Values.resourceNamePrefix }}-post-delete-container
+          {{- with .Values.pod.resources }}
+          resources:
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
