@@ -47,10 +47,9 @@ pod:
     limits:
       cpu: "100m"
       memory: "256Mi"
-    requests:
-      memory: "150Mi"
   tolerations: []
 resourceNamePrefix: kubernetes-cluster
+runAsUser: 1000
 sensor:
   containerImage:
     repository: cloud-security/kubernetes-cluster-sensor
@@ -69,4 +68,3 @@ sensor:
         cpu: "300m"
         memory: "256Mi"
     tolerations: []
-

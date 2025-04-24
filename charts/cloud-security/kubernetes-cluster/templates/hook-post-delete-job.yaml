@@ -61,7 +61,7 @@ spec:
       restartPolicy: Never
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1000
+        runAsUser: {{ .Values.runAsUser }}
         seccompProfile:
           type: RuntimeDefault
       serviceAccountName: {{ .Values.resourceNamePrefix }}-post-delete-service-account

@@ -8,15 +8,11 @@ metadata:
     {{- include "labels" . | nindent 4 }}
   name: {{ include "globalResourceName" (dict "name" "scc" "root" .) }}
 runAsUser:
-  type: MustRunAsRange
-  uidRangeMin: 1000
-  uidRangeMax: 1000
-seLinuxContext:
-  type: RunAsAny
+  type: MustRunAsNonRoot
 seccompProfiles:
   - '*'
-volumes:
-  - secret
+seLinuxContext:
+  type: RunAsAny
 users:
   {{- if .Values.admissionController.enabled }}
   - system:serviceaccount:{{ .Release.Namespace }}:{{ include "admissionController.resourceNamePrefix" . }}-service-account
@@ -25,4 +21,8 @@ users:
   - system:serviceaccount:{{ .Release.Namespace }}:{{ include "connector.resourceNamePrefix" . }}-service-account
   {{- end}}
   - system:serviceaccount:{{ .Release.Namespace }}:{{ include "updater.resourceNamePrefix" . }}-service-account
+volumes:
+  - csi
+  - emptyDir
+  - secret
 {{- end }}
