@@ -71,7 +71,7 @@ spec:
                   drop:
                     - ALL
                 runAsNonRoot: true
-                runAsUser: 1000
+                runAsUser: {{ .Values.runAsUser }}
               volumeMounts:
                 - name: {{ .Values.resourceNamePrefix }}-secret
                   mountPath: "/var/run/secrets/application"

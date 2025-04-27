@@ -45,6 +45,7 @@ spec:
             {{ .Values.proxyUrl | quote }},
             {{- end}}
           ]
+          {{- include "environmentVariables" . | nindent 10 }}
           image: {{ include "sensor.containerImage" . }}
           imagePullPolicy: Always
           name: {{ include "sensor.resourceNamePrefix" . }}-container

@@ -11,16 +11,16 @@ metadata:
     {{- include "labels" . | nindent 4 }}
   name: {{ include "globalResourceName" (dict "name" "hook-scc" "root" .) }}
 runAsUser:
-  type: MustRunAsRange
-  uidRangeMin: 1000
-  uidRangeMax: 1000
-seLinuxContext:
-  type: RunAsAny
+  type: MustRunAsNonRoot
 seccompProfiles:
   - '*'
-volumes:
-  - secret
+seLinuxContext:
+  type: RunAsAny
 users:
   - system:serviceaccount:{{ .Release.Namespace }}:{{ .Values.resourceNamePrefix }}-post-delete-service-account
   - system:serviceaccount:{{ .Release.Namespace }}:{{ .Values.resourceNamePrefix }}-pre-install-service-account
+volumes:
+  - csi
+  - emptyDir
+  - secret
 {{- end }}

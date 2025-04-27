@@ -94,7 +94,7 @@ spec:
               drop:
                 - ALL
             runAsNonRoot: true
-            runAsUser: 1000
+            runAsUser: {{ .Values.runAsUser }}
           volumeMounts:
             - mountPath: "/var/run/secrets/certificates"
               name: {{ include "admissionController.resourceNamePrefix" . }}-secret
