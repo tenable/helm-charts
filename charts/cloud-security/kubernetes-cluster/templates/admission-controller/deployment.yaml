@@ -41,7 +41,7 @@ spec:
       containers:
         - args: [
             "--api-key-token-file-path",
-            "/var/run/secrets/application/apikeytoken",
+            {{ include "apiKeyTokenFilePath" . | quote }},
             "--api-url",
             {{ .Values.apiUrl | quote }},
             "--health-server-port",
@@ -55,7 +55,7 @@ spec:
             "--validating-admission-configuration-name",
             {{ include "admissionController.resourceNamePrefix" . }}-vwc,
             "--webhook-server-certificates-directory-path",
-            "/var/run/secrets/certificates",
+            {{ include "admissionController.certificateVolumeMountPath" . | quote }},
             "--webhook-server-port",
             {{ .Values.admissionController.webhook.port | quote }}
           ]
@@ -98,14 +98,14 @@ spec:
               drop:
                 - ALL
             runAsNonRoot: true
-            runAsUser: {{ .Values.runAsUser }}
+            runAsUser: {{ .Values.admissionController.pod.containers.securityContext.runAsUser }}
           volumeMounts:
-            - mountPath: "/var/run/secrets/certificates"
+            {{- if .Values.admissionController.certificateSecret.enabled }}
+            - mountPath: {{ include "admissionController.certificateVolumeMountPath" .}}
               name: {{ include "admissionController.resourceNamePrefix" . }}-secret
               readOnly: true
-            - mountPath: "/var/run/secrets/application"
-              name: {{ .Values.resourceNamePrefix }}-secret
-              readOnly: true
+            {{- end }}
+            {{- include "containerSecretsVolumeMount" . | nindent 12 }}
       imagePullSecrets:
         {{- with .Values.containerImage.pullSecrets }}
           {{- toYaml . | nindent 8 }}
@@ -122,9 +122,15 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
+        {{- if .Values.admissionController.certificateSecret.enabled }}
         - name: {{ include "admissionController.resourceNamePrefix" . }}-secret
           secret:
             defaultMode: 0444
+            {{- if .Values.admissionController.certificateSecret.name }}
+            secretName: {{ .Values.admissionController.certificateSecret.name }}
+            {{- else }}
             secretName: {{ include "admissionController.resourceNamePrefix" . }}-secret
-      {{- include "apiKeyTokenVolume" (dict "name" (print .Values.resourceNamePrefix "-secret") "root" .) | nindent 8 }}
+            {{- end }}
+        {{- end }}
+        {{- include "containerSecretsVolume" . | nindent 8 }}
 {{- end }}

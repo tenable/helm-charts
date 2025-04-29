@@ -37,7 +37,7 @@ spec:
             - args: [
               "updater",
               "--api-key-token-file-path",
-              "/var/run/secrets/application/apikeytoken",
+                {{ include "apiKeyTokenFilePath" . | quote }},
               "--api-url",
                 {{ .Values.apiUrl | quote }},
               "--application-version",
@@ -71,11 +71,9 @@ spec:
                   drop:
                     - ALL
                 runAsNonRoot: true
-                runAsUser: {{ .Values.runAsUser }}
+                runAsUser: {{ .Values.pod.containers.securityContext.runAsUser }}
               volumeMounts:
-                - name: {{ .Values.resourceNamePrefix }}-secret
-                  mountPath: "/var/run/secrets/application"
-                  readOnly: true
+                {{- include "containerSecretsVolumeMount" . | nindent 16 }}
           imagePullSecrets:
             {{- with .Values.containerImage.pullSecrets }}
               {{- toYaml . | nindent 12 }}
@@ -91,6 +89,6 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           volumes:
-          {{- include "apiKeyTokenVolume" (dict "name" (print .Values.resourceNamePrefix "-secret") "root" .) | nindent 12 }}
+            {{- include "containerSecretsVolume" . | nindent 12 }}
       ttlSecondsAfterFinished: 7200
   schedule: "0 * * * *"
