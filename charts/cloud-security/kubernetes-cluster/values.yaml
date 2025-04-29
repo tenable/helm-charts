@@ -1,5 +1,9 @@
 accountId: null
 admissionController:
+  certificateSecret:
+    enabled: true
+    name: null
+    volumeMountPath: "/var/run/secrets/certificates"
   containerImage:
     repository: cloud-security/kubernetes-cluster-admission-controller
     tag: null
@@ -12,6 +16,9 @@ admissionController:
   pod:
     affinity: {}
     annotations: {}
+    containers:
+      securityContext:
+        runAsUser: 1000
     labels: {}
     resources: {}
     tolerations: []
@@ -28,6 +35,7 @@ admissionController:
 apiKeyToken: ""
 apiUrl: ""
 connector:
+  clusterRoleExplicitPermissions: false
   enabled: true
   identity: true
   network: true
@@ -38,10 +46,17 @@ containerImage:
   registryUsername: null
   repository: cloud-security/kubernetes-cluster-manager
   tag: null
+containerSecrets:
+  apiKeyTokenName: null
+  enabled: true
+  volumeMountPath: "/var/run/secrets/application"
 name: null
 pod:
   affinity: {}
   annotations: {}
+  containers:
+    securityContext:
+      runAsUser: 1000
   labels: {}
   resources:
     limits:
@@ -52,7 +67,6 @@ pod:
       memory: "256Mi"
   tolerations: []
 resourceNamePrefix: kubernetes-cluster
-runAsUser: 1000
 sensor:
   containerImage:
     repository: cloud-security/kubernetes-cluster-sensor

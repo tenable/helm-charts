@@ -38,7 +38,7 @@ spec:
         - args: [
             "connector",
             "--api-key-token-file-path",
-            "/var/run/secrets/application/apikeytoken",
+            {{ include "apiKeyTokenFilePath" . | quote }},
             "--api-url",
             {{ .Values.apiUrl | quote }},
             {{- if .Values.connector.identity }}
@@ -66,11 +66,9 @@ spec:
               drop:
                 - ALL
             runAsNonRoot: true
-            runAsUser: {{ .Values.runAsUser }}
+            runAsUser: {{ .Values.pod.containers.securityContext.runAsUser }}
           volumeMounts:
-            - mountPath: "/var/run/secrets/application"
-              name: {{ .Values.resourceNamePrefix }}-secret
-              readOnly: true
+            {{- include "containerSecretsVolumeMount" . | nindent 12 }}
       imagePullSecrets:
         {{- with .Values.containerImage.pullSecrets }}
           {{- toYaml . | nindent 8 }}
@@ -86,5 +84,5 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-      {{- include "apiKeyTokenVolume" (dict "name" (print .Values.resourceNamePrefix "-secret") "root" .) | nindent 8 }}
+        {{- include "containerSecretsVolume" . | nindent 8 }}
 {{- end }}

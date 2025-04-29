@@ -14,6 +14,10 @@ app.kubernetes.io/component: admission-controller
 {{- print .Values.resourceNamePrefix "-admission-controller" }}
 {{- end }}
 
+{{- define "admissionController.certificateVolumeMountPath" -}}
+{{ .Values.admissionController.certificateSecret.volumeMountPath -}}
+{{- end }}
+
 {{- define "admissionController.tls" -}}
 {{- if .Values.admissionController.tls }}
 {{- .Values.admissionController.tls | toYaml }}

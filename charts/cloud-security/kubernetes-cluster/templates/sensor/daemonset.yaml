@@ -34,7 +34,7 @@ spec:
       containers:
         - args: [
             "--api-key-token-file-path",
-            "/var/run/secrets/application/apikeytoken",
+              {{ include "apiKeyTokenFilePath" . | quote }},
             "--api-url",
             {{ .Values.apiUrl | quote }},
             "--data-path",
@@ -51,7 +51,7 @@ spec:
           name: {{ include "sensor.resourceNamePrefix" . }}-container
           {{- with .Values.sensor.pod.resources }}
           resources:
-          {{- toYaml . | nindent 12 }}
+            {{- toYaml . | nindent 12 }}
           {{- end }}
           securityContext:
             privileged: true
@@ -59,9 +59,7 @@ spec:
           volumeMounts:
             - name: {{ include "sensor.resourceNamePrefix" . }}-data
               mountPath: {{ .Values.sensor.dataPath }}
-            - name: {{ .Values.resourceNamePrefix }}-secret
-              mountPath: "/var/run/secrets/application"
-              readOnly: true
+            {{- include "containerSecretsVolumeMount" . | nindent 12 }}
       hostPID: true
       imagePullSecrets:
         {{- with .Values.containerImage.pullSecrets }}
@@ -82,7 +80,7 @@ spec:
         hostPath:
           path: {{ .Values.sensor.dataPath }}
           type: DirectoryOrCreate
-      {{- include "apiKeyTokenVolume" (dict "name" (print .Values.resourceNamePrefix "-secret") "root" .) | nindent 6 }}
+      {{- include "containerSecretsVolume" . | nindent 6 }}
   updateStrategy:
     rollingUpdate:
       maxSurge: 0
