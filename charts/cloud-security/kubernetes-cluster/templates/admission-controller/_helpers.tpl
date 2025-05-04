@@ -1,3 +1,7 @@
+{{- define "admissionController.caCertificateSecretName" -}}
+{{ .Values.admissionController.caCertificate.secretName | default (printf "%s-ca-secret" (include "admissionController.resourceNamePrefix" .)) }} 
+{{- end }}
+
 {{- define "admissionController.containerImage" -}}
 {{- print .Values.containerImage.registry "/" .Values.admissionController.containerImage.repository ":" (coalesce .Values.admissionController.containerImage.tag .Values.containerImage.tag | default .Chart.AppVersion)}}
 {{- end }}
@@ -14,19 +18,17 @@ app.kubernetes.io/component: admission-controller
 {{- print .Values.resourceNamePrefix "-admission-controller" }}
 {{- end }}
 
-{{- define "admissionController.certificateVolumeMountPath" -}}
-{{ .Values.admissionController.certificateSecret.volumeMountPath -}}
-{{- end }}
-
 {{- define "admissionController.tls" -}}
-{{- if .Values.admissionController.tls }}
-{{- .Values.admissionController.tls | toYaml }}
+{{- if .Values.admissionController.caCertificate.embeddedTls }}
+{{- .Values.admissionController.caCertificate.embeddedTls | toYaml }}
 {{ else }}
-{{- $serverCertificateAuthorityCertificate := genCA (printf "%s-ca" (include "admissionController.resourceNamePrefix" .)) 1095 -}}
-{{- $serverCertificateHostname := (printf "%s-service.%s.svc" (include "admissionController.resourceNamePrefix" .) .Release.Namespace) }}
-{{- $serverCertificate := genSignedCert $serverCertificateHostname nil (list $serverCertificateHostname) 1095 $serverCertificateAuthorityCertificate -}}
+{{ $serverCertificateAuthorityCertificate := genCA (printf "%s-ca" (include "admissionController.resourceNamePrefix" .)) 1095 -}}
+{{ $serverCertificateHostname := (printf "%s-service.%s.svc" (include "admissionController.resourceNamePrefix" .) .Release.Namespace) }}
+{{ $serverCertificate := genSignedCert $serverCertificateHostname nil (list $serverCertificateHostname) 1095 $serverCertificateAuthorityCertificate -}}
 serverCertificateBase64: {{ $serverCertificate.Cert | b64enc }}
 serverCertificateAuthorityCertificateBase64: {{ $serverCertificateAuthorityCertificate.Cert | b64enc }}
 serverCertificateKeyBase64: {{ $serverCertificate.Key | b64enc }}
 {{- end }}
 {{- end }}
+
+

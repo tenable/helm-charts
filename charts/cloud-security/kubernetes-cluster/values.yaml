@@ -1,8 +1,13 @@
 accountId: null
 admissionController:
-  certificateSecret:
-    enabled: true
-    name: null
+  caCertificate:
+    createSelfSigned: true
+    embeddedTls:
+      serverCertificateAuthorityCertificateBase64: null
+      serverCertificateBase64: null
+      serverCertificateKeyBase64: null
+    injectExternally: false
+    secretName: null
     volumeMountPath: "/var/run/secrets/certificates"
   containerImage:
     repository: cloud-security/kubernetes-cluster-admission-controller
@@ -29,6 +34,7 @@ admissionController:
       maxUnavailable: 0
   tls: {}
   webhook:
+    annotations: {}
     failurePolicy: Ignore
     port: 8443
     timeoutSeconds: 3
