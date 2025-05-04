@@ -62,12 +62,9 @@ spec:
             {{- include "containerSecretsVolumeMount" . | nindent 12 }}
       hostPID: true
       imagePullSecrets:
-        {{- with .Values.containerImage.pullSecrets }}
-          {{- toYaml . | nindent 8 }}
-        {{- else }}
-        - name: {{ .Values.resourceNamePrefix }}-image-pull-secret
-        {{- end }}
-      {{- include "podSecurityContext" . | nindent 8 }}
+        {{- include "containerImagePullSecretNames" (dict "root" .) | nindent 8 }}
+      securityContext:   
+        {{- include "podSecurityContext" . | nindent 8 }}
       serviceAccountName: {{ include "sensor.resourceNamePrefix" . }}-service-account
       {{- with .Values.sensor.pod.tolerations }}
       tolerations:
