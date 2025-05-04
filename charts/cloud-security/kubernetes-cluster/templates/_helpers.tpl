@@ -29,7 +29,13 @@ type: Opaque
 {{- end }}
 {{- end }}
 
-{{- define "apiKeyTokenSecretName"}}
+{{- define "containerEnvironmentVariables" -}}
+env:
+  - name: SIL_LogFormat
+    value: Text
+{{- end }}
+
+{{- define "apiKeyTokenSecretName" -}}
 {{- .Values.containerSecrets.apiKeyTokenName | default (print .Values.resourceNamePrefix "-secret" ) }}
 {{- end }}
 
@@ -77,10 +83,13 @@ type: kubernetes.io/dockerconfigjson
 {{- end }}
 {{- end }}
 
-{{- define "environmentVariables" -}}
-env:
-  - name: SIL_LogFormat
-    value: Text
+{{- define "containerSecurityContext" -}}
+allowPrivilegeEscalation: false
+capabilities:
+  drop:
+    - ALL
+runAsNonRoot: true
+runAsUser: {{ .securityContext.runAsUser }}
 {{- end }}
 
 {{- define "globalResourceName" -}}
@@ -92,5 +101,10 @@ app.kubernetes.io/instance: {{ .Release.Name | trunc 63 | trimSuffix "-" }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 app.kubernetes.io/name: {{ .Chart.Name | trunc 63 | trimSuffix "-" }}
 app.kubernetes.io/version: {{ .Chart.Version }}
+helm.sh/chart: {{ printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
+{{- define "podSecurityContext" -}}
+seccompProfile:
+  type: RuntimeDefault
+{{- end }}

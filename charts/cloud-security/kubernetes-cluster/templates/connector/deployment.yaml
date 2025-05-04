@@ -52,7 +52,7 @@ spec:
             {{ .Values.proxyUrl | quote }},
             {{- end}}
           ]
-          {{- include "environmentVariables" . | nindent 10 }}
+          {{- include "containerEnvironmentVariables" . | nindent 10 }}
           image: {{ include "containerImage" . }}
           imagePullPolicy: Always
           name: {{ include "connector.resourceNamePrefix" . }}-container
@@ -61,12 +61,7 @@ spec:
           {{- toYaml . | nindent 12 }}
           {{- end }}
           securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            runAsNonRoot: true
-            runAsUser: {{ .Values.pod.containers.securityContext.runAsUser }}
+            {{- include "containerSecurityContext" (dict "securityContext" .Values.pod.containers.securityContext) | nindent 12 }}
           volumeMounts:
             {{- include "containerSecretsVolumeMount" . | nindent 12 }}
       imagePullSecrets:
@@ -76,8 +71,7 @@ spec:
         - name: {{ .Values.resourceNamePrefix }}-image-pull-secret
         {{- end }}
       securityContext:
-        seccompProfile:
-          type: RuntimeDefault
+        {{- include "podSecurityContext" . | nindent 8 }}
       serviceAccountName: {{ include "connector.resourceNamePrefix" . }}-service-account
       {{- with .Values.pod.tolerations }}
       tolerations:

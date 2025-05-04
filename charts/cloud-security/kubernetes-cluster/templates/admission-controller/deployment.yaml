@@ -55,7 +55,7 @@ spec:
             "--webhook-server-port",
             {{ .Values.admissionController.webhook.port | quote }}
           ]
-          {{- include "environmentVariables" . | nindent 10 }}
+          {{- include "containerEnvironmentVariables" . | nindent 10 }}
           image: {{ include "admissionController.containerImage" . }}
           imagePullPolicy: Always
           livenessProbe:
@@ -88,13 +88,8 @@ spec:
           resources:
         {{- toYaml . | nindent 12 }}
         {{- end }}
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            runAsNonRoot: true
-            runAsUser: {{ .Values.admissionController.pod.containers.securityContext.runAsUser }}
+          securityContext:  
+          {{- include "containerSecurityContext" (dict "securityContext" .Values.admissionController.pod.containers.securityContext) | nindent 12 }}
           volumeMounts:
             {{- if .Values.admissionController.certificateSecret.enabled }}
             - mountPath: {{ include "admissionController.certificateVolumeMountPath" .}}
@@ -109,8 +104,7 @@ spec:
         - name: {{ .Values.resourceNamePrefix }}-image-pull-secret
         {{- end }}
       securityContext:
-        seccompProfile:
-          type: RuntimeDefault
+        {{- include "podSecurityContext" . }}
       serviceAccountName: {{ include "admissionController.resourceNamePrefix" . }}-service-account
       terminationGracePeriodSeconds: 60
       {{- with .Values.admissionController.pod.tolerations }}
