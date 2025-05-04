@@ -10,6 +10,55 @@
     },
     "admissionController": {
       "properties": {
+        "caCertificate": {
+          "properties": {
+            "createSelfSigned": {
+              "type": "boolean"
+            },
+            "embeddedTls": {
+              "properties": {
+                "serverCertificateAuthorityCertificateBase64": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "serverCertificateBase64": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "serverCertificateKeyBase64": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                }
+              },
+              "type": "object"
+            },
+            "injectExternally": {
+              "type": "boolean"
+            },
+            "secretName": {
+              "type": [
+                "null",
+                "string"
+              ]
+            },
+            "volumeMountPath": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "createSelfSigned",
+            "embeddedTls",
+            "injectExternally",
+            "volumeMountPath"
+          ],
+          "type": "object"
+        },
         "containerImage": {
           "properties": {
             "repository": {
@@ -37,12 +86,18 @@
           "type": "string"
         },
         "networkPolicy": {
-          "enabled": {
-            "type": "boolean"
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "ingress": {
+              "type": "object"
+            }
           },
-          "ingress": {
-            "type": "object"
-          },
+          "required": [
+            "enabled",
+            "ingress"
+          ],
           "type": "object"
         },
         "pod": {
@@ -80,6 +135,14 @@
               "type": "array"
             }
           },
+          "required": [
+            "affinity",
+            "annotations",
+            "containers",
+            "labels",
+            "resources",
+            "tolerations"
+          ],
           "type": "object"
         },
         "replicas": {
@@ -108,20 +171,12 @@
           ],
           "type": "object"
         },
-        "tls": {
-          "serverCertificateAuthorityCertificateBase64": {
-            "type": "string"
-          },
-          "serverCertificateBase64": {
-            "type": "string"
-          },
-          "serverCertificateKeyBase64": {
-            "type": "string"
-          },
-          "type": "object"
-        },
         "webhook": {
           "properties": {
+            "annotations": {
+              "properties": {},
+              "type": "object"
+            },
             "failurePolicy": {
               "type": "string"
             },
@@ -133,17 +188,22 @@
             }
           },
           "required": [
+            "annotations",
             "failurePolicy",
-            "port"
+            "port",
+            "timeoutSeconds"
           ],
           "type": "object"
         }
       },
       "required": [
+        "caCertificate",
         "containerImage",
         "enabled",
         "healthPort",
         "logLevel",
+        "networkPolicy",
+        "pod",
         "replicas",
         "strategy",
         "webhook"
@@ -216,8 +276,30 @@
         }
       },
       "required": [
+        "pullSecrets",
         "registry",
         "repository"
+      ],
+      "type": "object"
+    },
+    "containerSecrets": {
+      "properties": {
+        "apiKeyTokenName": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "volumeMountPath": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "enabled",
+        "volumeMountPath"
       ],
       "type": "object"
     },
@@ -255,20 +337,57 @@
           "type": "object"
         },
         "resources": {
-          "properties": {},
+          "properties": {
+            "limits": {
+              "properties": {
+                "cpu": {
+                  "type": "string"
+                },
+                "memory": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "cpu",
+                "memory"
+              ],
+              "type": "object"
+            },
+            "requests": {
+              "properties": {
+                "cpu": {
+                  "type": "string"
+                },
+                "memory": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "cpu",
+                "memory"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "limits",
+            "requests"
+          ],
           "type": "object"
         },
         "tolerations": {
           "type": "array"
         }
       },
+      "required": [
+        "affinity",
+        "annotations",
+        "containers",
+        "labels",
+        "resources",
+        "tolerations"
+      ],
       "type": "object"
-    },
-    "proxyUrl": {
-      "type": [
-        "null",
-        "string"
-      ]
     },
     "resourceNamePrefix": {
       "type": "string"
@@ -313,20 +432,63 @@
               "type": "object"
             },
             "resources": {
-              "properties": {},
+              "properties": {
+                "limits": {
+                  "properties": {
+                    "cpu": {
+                      "type": "string"
+                    },
+                    "memory": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "cpu",
+                    "memory"
+                  ],
+                  "type": "object"
+                },
+                "requests": {
+                  "properties": {
+                    "cpu": {
+                      "type": "string"
+                    },
+                    "memory": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "cpu",
+                    "memory"
+                  ],
+                  "type": "object"
+                }
+              },
+              "required": [
+                "limits",
+                "requests"
+              ],
               "type": "object"
             },
             "tolerations": {
               "type": "array"
             }
           },
+          "required": [
+            "affinity",
+            "annotations",
+            "labels",
+            "resources",
+            "tolerations"
+          ],
           "type": "object"
         }
       },
       "required": [
         "containerImage",
         "dataPath",
-        "enabled"
+        "enabled",
+        "pod"
       ],
       "type": "object"
     }
@@ -337,6 +499,8 @@
     "apiUrl",
     "connector",
     "containerImage",
+    "containerSecrets",
+    "pod",
     "resourceNamePrefix",
     "sensor"
   ]
