@@ -29,7 +29,7 @@ spec:
         spec:
           {{- with .Values.pod.affinity }}
           affinity:
-            {{- toYaml . | nindent 14 }}
+            {{- toYaml . | nindent 12 }}
           {{- end }}
           automountServiceAccountToken: true
           restartPolicy: Never
@@ -70,13 +70,9 @@ spec:
               volumeMounts:
                 {{- include "containerSecretsVolumeMount" . | nindent 16 }}
           imagePullSecrets:
-            {{- with .Values.containerImage.pullSecrets }}
-              {{- toYaml . | nindent 12 }}
-            {{- else }}
-            - name: {{ .Values.resourceNamePrefix }}-image-pull-secret
-            {{- end }}
+            {{- include "containerImagePullSecretNames" (dict "root" .) | nindent 12 }}
           securityContext:
-            {{- include "podSecurityContext" . | nindent 8 }}
+            {{- include "podSecurityContext" . | nindent 12 }}
           serviceAccountName: {{ include "updater.resourceNamePrefix" . }}-service-account
           {{- with .Values.pod.tolerations }}
           tolerations:

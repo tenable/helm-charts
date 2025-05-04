@@ -64,6 +64,17 @@ type: kubernetes.io/dockerconfigjson
 {{- end }}
 {{- end }}
 
+{{- define "containerImagePullSecretNames" -}}
+{{- if .root.Values.containerImage.pullSecrets }}
+  {{- toYaml .root.Values.containerImage.pullSecrets | nindent 0 }}
+{{- else -}}
+    {{- if and .root.Values.containerImage.registryUsername .root.Values.containerImage.registryPassword -}}
+- name: {{ .name | default (print .root.Values.resourceNamePrefix "-image-pull-secret") }}
+    {{- end }}
+{{- end }}
+{{- end }}
+
+
 {{- define "containerSecretsVolume" -}}
 {{- if .Values.containerSecrets.enabled -}}
 - name: {{ print .Values.resourceNamePrefix "-secret" }}
