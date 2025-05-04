@@ -39,7 +39,7 @@ spec:
             {{ .Values.proxyUrl | quote }},
             {{- end }}
           ]
-          {{- include "environmentVariables" . | nindent 10 }}
+          {{- include "containerEnvironmentVariables" . | nindent 10 }}
           image: {{ include "containerImage" . }}
           imagePullPolicy: Always
           name: {{ .Values.resourceNamePrefix }}-post-delete-container
@@ -48,10 +48,7 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
+            {{- include "containerSecurityContext" (dict "securityContext" .Values.pod.containers.securityContext) | nindent 12 }}
           volumeMounts:
             {{- include "containerSecretsVolumeMount" . | nindent 10 }}
       imagePullSecrets:
@@ -62,10 +59,7 @@ spec:
         {{- end }}
       restartPolicy: Never
       securityContext:
-        runAsNonRoot: true
-        runAsUser: {{ .Values.pod.containers.securityContext.runAsUser }}
-        seccompProfile:
-          type: RuntimeDefault
+        {{- include "podSecurityContext" . | nindent 8 }}
       serviceAccountName: {{ .Values.resourceNamePrefix }}-post-delete-service-account
       {{- with .Values.pod.tolerations }}
       tolerations:
