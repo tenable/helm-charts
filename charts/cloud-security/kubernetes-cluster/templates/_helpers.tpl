@@ -8,8 +8,7 @@ meta.helm.sh/release-namespace: {{ .Release.Namespace }}
 {{- end }}
 
 {{- define "apiKeyTokenSecret" -}}
-{{- if .root.Values.containerSecrets.enabled }}
-{{- if not .root.Values.containerSecrets.apiKeyTokenName }}
+{{- if and .root.Values.containerSecrets.createWithMount (not .root.Values.containerSecrets.apiKeyTokenName) }}
 apiVersion: v1
 kind: Secret
 metadata:
@@ -25,7 +24,6 @@ metadata:
 stringData:
   API_KEY_TOKEN: {{ .root.Values.apiKeyToken }}
 type: Opaque
-{{- end }}
 {{- end }}
 {{- end }}
 
