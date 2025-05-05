@@ -9,7 +9,7 @@ metadata:
     helm.sh/hook-weight: "-5"
 ---
 {{ $tls := include "admissionController.tls" . | fromYaml }}
-{{- if or .Values.admissionController.caCertificate.createSelfSigned .Values.admissionController.caCertificate.embeddedTls }}
+{{- if not .Values.admissionController.certificates.injectExternally }}
 apiVersion: v1
 kind: Secret 
 type: kubernetes.io/tls
@@ -43,7 +43,7 @@ webhooks:
   - v1
   - v1beta1
   clientConfig:
-    {{- if not .Values.admissionController.caCertificate.injectExternally }}
+    {{- if not .Values.admissionController.certificates.injectExternally }}
     caBundle: {{ $tls.serverCertificateAuthorityCertificateBase64 }}
     {{- end }}
     service:

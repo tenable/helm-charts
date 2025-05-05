@@ -76,7 +76,7 @@ type: kubernetes.io/dockerconfigjson
 
 
 {{- define "containerSecretsVolume" -}}
-{{- if .Values.containerSecrets.enabled -}}
+{{- if .Values.containerSecrets.createWithMount -}}
 - name: {{ print .Values.resourceNamePrefix "-secret" }}
   secret:
     items:
@@ -87,7 +87,7 @@ type: kubernetes.io/dockerconfigjson
 {{- end }}
 
 {{- define "containerSecretsVolumeMount" -}}
-{{- if .Values.containerSecrets.enabled -}}
+{{- if .Values.containerSecrets.createWithMount -}}
 - mountPath: {{ .Values.containerSecrets.volumeMountPath | quote }}
   name: {{ print .Values.resourceNamePrefix "-secret" }}
   readOnly: true
