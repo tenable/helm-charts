@@ -1,5 +1,5 @@
 {{- define "admissionController.caCertificateSecretName" -}}
-{{ .Values.admissionController.caCertificate.secretName | default (printf "%s-ca-secret" (include "admissionController.resourceNamePrefix" .)) }} 
+{{ .Values.admissionController.certificates.secretName | default (printf "%s-cert-secret" (include "admissionController.resourceNamePrefix" .)) }} 
 {{- end }}
 
 {{- define "admissionController.containerImage" -}}
@@ -19,8 +19,8 @@ app.kubernetes.io/component: admission-controller
 {{- end }}
 
 {{- define "admissionController.tls" -}}
-{{- if .Values.admissionController.caCertificate.embeddedTls }}
-{{- .Values.admissionController.caCertificate.embeddedTls | toYaml }}
+{{- if .Values.admissionController.certificates.embeddedTls }}
+{{- .Values.admissionController.certificates.embeddedTls | toYaml }}
 {{ else }}
 {{ $serverCertificateAuthorityCertificate := genCA (printf "%s-ca" (include "admissionController.resourceNamePrefix" .)) 1095 -}}
 {{ $serverCertificateHostname := (printf "%s-service.%s.svc" (include "admissionController.resourceNamePrefix" .) .Release.Namespace) }}

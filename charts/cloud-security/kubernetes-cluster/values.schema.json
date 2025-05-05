@@ -10,7 +10,7 @@
     },
     "admissionController": {
       "properties": {
-        "caCertificate": {
+        "certificates": {
           "properties": {
             "createSelfSigned": {
               "type": "boolean"
@@ -197,7 +197,7 @@
         }
       },
       "required": [
-        "caCertificate",
+        "certificates",
         "containerImage",
         "enabled",
         "healthPort",
@@ -284,7 +284,7 @@
             "string"
           ]
         },
-        "enabled": {
+        "createWithMount": {
           "type": "boolean"
         },
         "volumeMountPath": {
@@ -292,7 +292,7 @@
         }
       },
       "required": [
-        "enabled",
+        "createWithMount",
         "volumeMountPath"
       ],
       "type": "object"

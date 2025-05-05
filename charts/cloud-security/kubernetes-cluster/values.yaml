@@ -1,6 +1,6 @@
 accountId: null
 admissionController:
-  caCertificate:
+  certificates:
     createSelfSigned: true
     embeddedTls:
       serverCertificateAuthorityCertificateBase64: null
@@ -54,7 +54,7 @@ containerImage:
   tag: null
 containerSecrets:
   apiKeyTokenName: null
-  enabled: true
+  createWithMount: true
   volumeMountPath: "/var/run/secrets/application"
 name: null
 pod:

@@ -51,7 +51,7 @@ spec:
             "--validating-admission-configuration-name",
             {{ include "admissionController.resourceNamePrefix" . }}-vwc,
             "--webhook-server-certificates-directory-path",
-            {{ .Values.admissionController.caCertificate.volumeMountPath | quote }},
+            {{ .Values.admissionController.certificates.volumeMountPath | quote }},
             "--webhook-server-port",
             {{ .Values.admissionController.webhook.port | quote }}
           ]
@@ -91,8 +91,8 @@ spec:
           securityContext:  
           {{- include "containerSecurityContext" (dict "securityContext" .Values.admissionController.pod.containers.securityContext) | nindent 12 }}
           volumeMounts:
-            {{- if not .Values.admissionController.caCertificate.injectExternally }}
-            - mountPath: {{ .Values.admissionController.caCertificate.volumeMountPath }}
+            {{- if not .Values.admissionController.certificates.injectExternally }}
+            - mountPath: {{ .Values.admissionController.certificates.volumeMountPath }}
               name: {{ include "admissionController.resourceNamePrefix" . }}-certificate-volume
               readOnly: true
             {{- end }}
@@ -108,7 +108,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-        {{- if not .Values.admissionController.caCertificate.injectExternally }}
+        {{- if not .Values.admissionController.certificates.injectExternally }}
         - name: {{ include "admissionController.resourceNamePrefix" . }}-certificate-volume
           secret:
             defaultMode: 0444
