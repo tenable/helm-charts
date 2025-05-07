@@ -36,10 +36,10 @@ spec:
               {{ .Values.apiUrl | quote }},
             "--application-version",
               {{ .Chart.AppVersion | quote }},
-              {{- if .Values.clusterId }}
+            {{- if .Values.clusterId }}
             "--cluster-raw-id",
               {{ .Values.clusterId | quote }},
-              {{- end }}
+            {{- end }}
             "--helm-release-name",
               {{ print .Release.Namespace ":" .Release.Name | quote }},
               {{- if .Values.name }}

@@ -1,5 +1,5 @@
-{{- define "admissionController.caCertificateSecretName" -}}
-{{ .Values.admissionController.certificates.secretName | default (printf "%s-cert-secret" (include "admissionController.resourceNamePrefix" .)) }} 
+{{- define "admissionController.certificateSecretName" -}}
+{{ include "admissionController.resourceNamePrefix" . }}-certificate-secret
 {{- end }}
 
 {{- define "admissionController.containerImage" -}}
@@ -19,16 +19,10 @@ app.kubernetes.io/component: admission-controller
 {{- end }}
 
 {{- define "admissionController.tls" -}}
-{{- if .Values.admissionController.certificates.embeddedTls }}
-{{- .Values.admissionController.certificates.embeddedTls | toYaml }}
-{{ else }}
-{{ $serverCertificateAuthorityCertificate := genCA (printf "%s-ca" (include "admissionController.resourceNamePrefix" .)) 1095 -}}
+{{ $serverCaCertificate := genCA (printf "%s-ca" (include "admissionController.resourceNamePrefix" .)) 1095 -}}
 {{ $serverCertificateHostname := (printf "%s-service.%s.svc" (include "admissionController.resourceNamePrefix" .) .Release.Namespace) }}
-{{ $serverCertificate := genSignedCert $serverCertificateHostname nil (list $serverCertificateHostname) 1095 $serverCertificateAuthorityCertificate -}}
+{{ $serverCertificate := genSignedCert $serverCertificateHostname nil (list $serverCertificateHostname) 1095 $serverCaCertificate -}}
+serverCaCertificateBase64: {{ $serverCaCertificate.Cert | b64enc }}
 serverCertificateBase64: {{ $serverCertificate.Cert | b64enc }}
-serverCertificateAuthorityCertificateBase64: {{ $serverCertificateAuthorityCertificate.Cert | b64enc }}
 serverCertificateKeyBase64: {{ $serverCertificate.Key | b64enc }}
 {{- end }}
-{{- end }}
-
-

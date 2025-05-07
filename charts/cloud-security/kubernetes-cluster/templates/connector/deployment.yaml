@@ -36,22 +36,22 @@ spec:
       automountServiceAccountToken: true
       containers:
         - args: [
-            "connector",
-            "--api-key-token-file-path",
+          "connector",
+          "--api-key-token-file-path",
             {{ include "apiKeyTokenFilePath" . | quote }},
-            "--api-url",
+          "--api-url",
             {{ .Values.apiUrl | quote }},
-            {{- if .Values.connector.identity }}
-            "--identity",
-            {{- end}}
-            {{- if .Values.connector.network }}
-            "--network",
-            {{- end}}
-            {{- if .Values.proxyUrl }}
-            "--proxy-url",
+          {{- if .Values.connector.identity }}
+          "--identity",
+          {{- end }}
+          {{- if .Values.connector.network }}
+          "--network",
+          {{- end }}
+          {{- if .Values.proxyUrl }}
+          "--proxy-url",
             {{ .Values.proxyUrl | quote }},
-            {{- end}}
-          ]
+          {{- end }}
+        ]
           {{- include "containerEnvironmentVariables" . | nindent 10 }}
           image: {{ include "containerImage" . }}
           imagePullPolicy: Always

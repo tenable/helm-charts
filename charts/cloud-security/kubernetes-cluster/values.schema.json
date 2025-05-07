@@ -10,55 +10,6 @@
     },
     "admissionController": {
       "properties": {
-        "certificates": {
-          "properties": {
-            "createSelfSigned": {
-              "type": "boolean"
-            },
-            "embeddedTls": {
-              "properties": {
-                "serverCertificateAuthorityCertificateBase64": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
-                },
-                "serverCertificateBase64": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
-                },
-                "serverCertificateKeyBase64": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
-                }
-              },
-              "type": "object"
-            },
-            "injectExternally": {
-              "type": "boolean"
-            },
-            "secretName": {
-              "type": [
-                "null",
-                "string"
-              ]
-            },
-            "volumeMountPath": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "createSelfSigned",
-            "embeddedTls",
-            "injectExternally",
-            "volumeMountPath"
-          ],
-          "type": "object"
-        },
         "containerImage": {
           "properties": {
             "repository": {
@@ -118,9 +69,15 @@
                       "type": "integer"
                     }
                   },
+                  "required": [
+                    "runAsUser"
+                  ],
                   "type": "object"
                 }
               },
+              "required": [
+                "securityContext"
+              ],
               "type": "object"
             },
             "labels": {
@@ -173,10 +130,6 @@
         },
         "webhook": {
           "properties": {
-            "annotations": {
-              "properties": {},
-              "type": "object"
-            },
             "failurePolicy": {
               "type": "string"
             },
@@ -188,7 +141,6 @@
             }
           },
           "required": [
-            "annotations",
             "failurePolicy",
             "port",
             "timeoutSeconds"
@@ -197,7 +149,6 @@
         }
       },
       "required": [
-        "certificates",
         "containerImage",
         "enabled",
         "healthPort",
@@ -290,7 +241,7 @@
             "string"
           ]
         },
-        "createWithMount": {
+        "injectExternally": {
           "type": "boolean"
         },
         "volumeMountPath": {
@@ -298,7 +249,7 @@
         }
       },
       "required": [
-        "createWithMount",
+        "injectExternally",
         "volumeMountPath"
       ],
       "type": "object"
@@ -327,9 +278,15 @@
                   "type": "integer"
                 }
               },
+              "required": [
+                "runAsUser"
+              ],
               "type": "object"
             }
           },
+          "required": [
+            "securityContext"
+          ],
           "type": "object"
         },
         "labels": {
@@ -388,6 +345,12 @@
         "tolerations"
       ],
       "type": "object"
+    },
+    "proxyUrl": {
+      "type": [
+        "null",
+        "string"
+      ]
     },
     "resourceNamePrefix": {
       "type": "string"

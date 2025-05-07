@@ -47,6 +47,7 @@ spec:
             "--health-server-port",
             {{ .Values.admissionController.healthPort | quote }},
             "--log-level",
+            {{ .Values.admissionController.logLevel | quote }},
             "{{ .Values.admissionController.logLevel }}",
             {{- if .Values.proxyUrl }}
             "--proxy-url",
