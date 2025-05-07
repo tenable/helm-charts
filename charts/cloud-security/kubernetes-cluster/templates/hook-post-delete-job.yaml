@@ -29,16 +29,16 @@ spec:
       automountServiceAccountToken: true
       containers:
         - args: [
-            "release-post-delete",
-            "--api-key-token-file-path",
+          "release-post-delete",
+          "--api-key-token-file-path",
             {{ include "apiKeyTokenFilePath" . | quote }},
-            "--api-url",
+          "--api-url",
             {{ .Values.apiUrl | quote }},
-            {{- if .Values.proxyUrl }}
-            "--proxy-url",
+          {{- if .Values.proxyUrl }}
+          "--proxy-url",
             {{ .Values.proxyUrl | quote }},
-            {{- end }}
-          ]
+          {{- end }}
+        ]
           {{- include "containerEnvironmentVariables" . | nindent 10 }}
           image: {{ include "containerImage" . }}
           imagePullPolicy: Always
@@ -70,7 +70,6 @@ spec:
   "helm.sh/hook-delete-policy: before-hook-creation, hook-failed, hook-succeeded"
   "helm.sh/hook-weight: \"-1\"" }}
 {{ include "apiKeyTokenSecret" (dict "name" (include "apiKeyTokenSecretName" .) "root" . "annotations" $apiKeyTokenSecretAnnotations) }}
-
 ---
 {{ $containerImagePullSecretAnnotations :=
   list

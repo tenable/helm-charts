@@ -29,28 +29,28 @@ spec:
       {{- end }}
       containers:
         - args: [
-            "release-pre-install",
-            "--api-key-token-file-path",
-              {{ include "apiKeyTokenFilePath" . | quote }},
-            "--api-url",
-              {{ .Values.apiUrl | quote }},
-            "--application-version",
-              {{ .Chart.AppVersion | quote }},
-            "--helm-release-name",
-              {{ print .Release.Namespace ":" .Release.Name | quote }},
-              {{- if .Values.name }}
-            "--name",
-              {{ .Values.name | quote }},
-              {{- end }}
-              {{- if .Values.proxyUrl }}
-            "--proxy-url",
-              {{ .Values.proxyUrl | quote }},
-              {{- end }}
-              {{- if .Values.accountId }}
-            "--tenant-raw-id",
-              {{ .Values.accountId | quote }}
-              {{- end }}
-          ]
+          "release-pre-install",
+          "--api-key-token-file-path",
+            {{ include "apiKeyTokenFilePath" . | quote }},
+          "--api-url",
+            {{ .Values.apiUrl | quote }},
+          "--application-version",
+            {{ .Chart.AppVersion | quote }},
+          "--helm-release-name",
+            {{ print .Release.Namespace ":" .Release.Name | quote }},
+          {{- if .Values.name }}
+          "--name",
+            {{ .Values.name | quote }},
+          {{- end }}
+          {{- if .Values.proxyUrl }}
+          "--proxy-url",
+            {{ .Values.proxyUrl | quote }},
+          {{- end }}
+          {{- if .Values.accountId }}
+          "--tenant-raw-id",
+            {{ .Values.accountId | quote }}
+          {{- end }}
+        ]
           {{- include "containerEnvironmentVariables" . | nindent 10 }}
           image: {{ include "containerImage" . }}
           imagePullPolicy: Always
@@ -75,7 +75,6 @@ spec:
       {{- end }}
       volumes:
         {{- include "containerSecretsVolume" . | nindent 8 }}
-
 ---
 {{ $apiKeyTokenSecretAnnotations :=
   list
@@ -83,7 +82,6 @@ spec:
   "helm.sh/hook-delete-policy: before-hook-creation, hook-failed, hook-succeeded" 
   "helm.sh/hook-weight: \"-2\"" }}
 {{ include "apiKeyTokenSecret" (dict "name" ( include "apiKeyTokenSecretName" .) "root" . "annotations" $apiKeyTokenSecretAnnotations) }}
-
 ---
 {{ $containerImagePullSecretAnnotations :=
   list

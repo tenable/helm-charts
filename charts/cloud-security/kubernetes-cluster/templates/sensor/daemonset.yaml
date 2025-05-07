@@ -33,18 +33,18 @@ spec:
       automountServiceAccountToken: true
       containers:
         - args: [
-            "--api-key-token-file-path",
+          "--api-key-token-file-path",
               {{ include "apiKeyTokenFilePath" . | quote }},
-            "--api-url",
+          "--api-url",
             {{ .Values.apiUrl | quote }},
-            "--data-path",
+          "--data-path",
             {{ .Values.sensor.dataPath | quote }},
-            "--logs",
-            {{- if .Values.proxyUrl }}
-            "--proxy-url",
+          "--logs",
+          {{- if .Values.proxyUrl }}
+          "--proxy-url",
             {{ .Values.proxyUrl | quote }},
-            {{- end}}
-          ]
+          {{- end }}
+        ]
           {{- include "containerEnvironmentVariables" . | nindent 10 }}
           image: {{ include "sensor.containerImage" . }}
           imagePullPolicy: Always
@@ -63,7 +63,7 @@ spec:
       hostPID: true
       imagePullSecrets:
         {{- include "containerImagePullSecretNames" (dict "root" .) | nindent 8 }}
-      securityContext:   
+      securityContext:
         {{- include "podSecurityContext" . | nindent 8 }}
       serviceAccountName: {{ include "sensor.resourceNamePrefix" . }}-service-account
       {{- with .Values.sensor.pod.tolerations }}
@@ -71,10 +71,10 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-      - name: {{ include "sensor.resourceNamePrefix" . }}-data
-        hostPath:
-          path: {{ .Values.sensor.dataPath }}
-          type: DirectoryOrCreate
+        - name: {{ include "sensor.resourceNamePrefix" . }}-data
+          hostPath:
+            path: {{ .Values.sensor.dataPath }}
+            type: DirectoryOrCreate
       {{- include "containerSecretsVolume" . | nindent 6 }}
   updateStrategy:
     rollingUpdate:

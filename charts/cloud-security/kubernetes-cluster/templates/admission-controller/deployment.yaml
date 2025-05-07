@@ -47,11 +47,11 @@ spec:
             "--health-server-port",
             {{ .Values.admissionController.healthPort | quote }},
             "--log-level",
-            "{{ .Values.admissionController.logLevel }}",
+            {{ .Values.admissionController.logLevel | quote }},
             "--validating-admission-configuration-name",
             {{ include "admissionController.resourceNamePrefix" . }}-vwc,
             "--webhook-server-certificates-directory-path",
-            {{ .Values.admissionController.certificates.volumeMountPath | quote }},
+            "/var/run/secrets/certificates",
             "--webhook-server-port",
             {{ .Values.admissionController.webhook.port | quote }}
           ]
@@ -91,11 +91,9 @@ spec:
           securityContext:  
           {{- include "containerSecurityContext" (dict "securityContext" .Values.admissionController.pod.containers.securityContext) | nindent 12 }}
           volumeMounts:
-            {{- if not .Values.admissionController.certificates.injectExternally }}
-            - mountPath: {{ .Values.admissionController.certificates.volumeMountPath }}
-              name: {{ include "admissionController.resourceNamePrefix" . }}-certificate-volume
+            - mountPath: "/var/run/secrets/certificates"
+              name: {{ include "admissionController.resourceNamePrefix" . }}-certificate
               readOnly: true
-            {{- end }}
             {{- include "containerSecretsVolumeMount" . | nindent 12 }}
       imagePullSecrets:
         {{- include "containerImagePullSecretNames" (dict "root" .) | nindent 8 }}
@@ -108,11 +106,9 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-        {{- if not .Values.admissionController.certificates.injectExternally }}
-        - name: {{ include "admissionController.resourceNamePrefix" . }}-certificate-volume
+        - name: {{ include "admissionController.resourceNamePrefix" . }}-certificate
           secret:
             defaultMode: 0444
-            secretName: {{ include "admissionController.caCertificateSecretName" . }}
-        {{- end }}
+            secretName: {{ include "admissionController.certificateSecretName" . }}
         {{- include "containerSecretsVolume" . | nindent 8 }}
 {{- end }}

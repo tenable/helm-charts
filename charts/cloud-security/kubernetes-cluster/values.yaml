@@ -1,14 +1,5 @@
 accountId: null
 admissionController:
-  certificates:
-    createSelfSigned: true
-    embeddedTls:
-      serverCertificateAuthorityCertificateBase64: null
-      serverCertificateBase64: null
-      serverCertificateKeyBase64: null
-    injectExternally: false
-    secretName: null
-    volumeMountPath: "/var/run/secrets/certificates"
   containerImage:
     repository: cloud-security/kubernetes-cluster-admission-controller
     tag: null
@@ -32,9 +23,7 @@ admissionController:
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 0
-  tls: {}
   webhook:
-    annotations: {}
     failurePolicy: Ignore
     port: 8443
     timeoutSeconds: 3
@@ -54,7 +43,7 @@ containerImage:
   tag: null
 containerSecrets:
   apiKeyTokenName: null
-  createWithMount: true
+  injectExternally: false
   volumeMountPath: "/var/run/secrets/application"
 name: null
 pod:
@@ -72,6 +61,7 @@ pod:
       cpu: "100m"
       memory: "256Mi"
   tolerations: []
+proxyUrl: null
 resourceNamePrefix: kubernetes-cluster
 sensor:
   containerImage:

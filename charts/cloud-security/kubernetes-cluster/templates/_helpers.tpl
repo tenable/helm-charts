@@ -8,7 +8,7 @@ meta.helm.sh/release-namespace: {{ .Release.Namespace }}
 {{- end }}
 
 {{- define "apiKeyTokenSecret" -}}
-{{- if and .root.Values.containerSecrets.createWithMount (not .root.Values.containerSecrets.apiKeyTokenName) }}
+{{- if and (not .root.Values.containerSecrets.injectExternally) (not .root.Values.containerSecrets.apiKeyTokenName) }}
 apiVersion: v1
 kind: Secret
 metadata:
@@ -27,14 +27,14 @@ type: Opaque
 {{- end }}
 {{- end }}
 
+{{- define "apiKeyTokenSecretName" -}}
+{{- .Values.containerSecrets.apiKeyTokenName | default (print .Values.resourceNamePrefix "-secret" ) }}
+{{- end }}
+
 {{- define "containerEnvironmentVariables" -}}
 env:
   - name: SIL_LogFormat
     value: Text
-{{- end }}
-
-{{- define "apiKeyTokenSecretName" -}}
-{{- .Values.containerSecrets.apiKeyTokenName | default (print .Values.resourceNamePrefix "-secret" ) }}
 {{- end }}
 
 {{- define "containerImage" -}}
@@ -74,7 +74,7 @@ type: kubernetes.io/dockerconfigjson
 
 
 {{- define "containerSecretsVolume" -}}
-{{- if .Values.containerSecrets.createWithMount -}}
+{{- if not .Values.containerSecrets.injectExternally -}}
 - name: {{ print .Values.resourceNamePrefix "-secret" }}
   secret:
     items:
@@ -85,7 +85,7 @@ type: kubernetes.io/dockerconfigjson
 {{- end }}
 
 {{- define "containerSecretsVolumeMount" -}}
-{{- if .Values.containerSecrets.createWithMount -}}
+{{- if not .Values.containerSecrets.injectExternally -}}
 - mountPath: {{ .Values.containerSecrets.volumeMountPath | quote }}
   name: {{ print .Values.resourceNamePrefix "-secret" }}
   readOnly: true

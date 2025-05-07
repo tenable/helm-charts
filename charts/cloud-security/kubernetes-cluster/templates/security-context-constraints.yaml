@@ -16,10 +16,10 @@ seLinuxContext:
 users:
   {{- if .Values.admissionController.enabled }}
   - system:serviceaccount:{{ .Release.Namespace }}:{{ include "admissionController.resourceNamePrefix" . }}-service-account
-  {{- end}}
+  {{- end }}
   {{- if .Values.connector.enabled }}
   - system:serviceaccount:{{ .Release.Namespace }}:{{ include "connector.resourceNamePrefix" . }}-service-account
-  {{- end}}
+  {{- end }}
   - system:serviceaccount:{{ .Release.Namespace }}:{{ include "updater.resourceNamePrefix" . }}-service-account
 volumes:
   - csi
