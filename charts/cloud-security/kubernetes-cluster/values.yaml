@@ -12,6 +12,9 @@ admissionController:
   pod:
     affinity: {}
     annotations: {}
+    containers:
+      securityContext:
+        runAsUser: 1000
     labels: {}
     resources: {}
     tolerations: []
@@ -20,7 +23,6 @@ admissionController:
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 0
-  tls: {}
   webhook:
     failurePolicy: Ignore
     port: 8443
@@ -28,6 +30,7 @@ admissionController:
 apiKeyToken: ""
 apiUrl: ""
 connector:
+  clusterRoleExplicitPermissions: false
   enabled: true
   identity: true
   network: true
@@ -38,10 +41,17 @@ containerImage:
   registryUsername: null
   repository: cloud-security/kubernetes-cluster-manager
   tag: null
+containerSecrets:
+  apiKeyTokenName: null
+  injectExternally: false
+  volumeMountPath: "/var/run/secrets/application"
 name: null
 pod:
   affinity: {}
   annotations: {}
+  containers:
+    securityContext:
+      runAsUser: 1000
   labels: {}
   resources:
     limits:
@@ -51,8 +61,8 @@ pod:
       cpu: "100m"
       memory: "256Mi"
   tolerations: []
+proxyUrl: null
 resourceNamePrefix: kubernetes-cluster
-runAsUser: 1000
 sensor:
   containerImage:
     repository: cloud-security/kubernetes-cluster-sensor

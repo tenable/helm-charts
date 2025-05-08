@@ -41,13 +41,13 @@ spec:
       containers:
         - args: [
             "--api-key-token-file-path",
-            "/var/run/secrets/application/apikeytoken",
+            {{ include "apiKeyTokenFilePath" . | quote }},
             "--api-url",
             {{ .Values.apiUrl | quote }},
             "--health-server-port",
             {{ .Values.admissionController.healthPort | quote }},
             "--log-level",
-            "{{ .Values.admissionController.logLevel }}",
+            {{ .Values.admissionController.logLevel | quote }},
             "--validating-admission-configuration-name",
             {{ include "admissionController.resourceNamePrefix" . }}-vwc,
             "--webhook-server-certificates-directory-path",
@@ -55,7 +55,7 @@ spec:
             "--webhook-server-port",
             {{ .Values.admissionController.webhook.port | quote }}
           ]
-          {{- include "environmentVariables" . | nindent 10 }}
+          {{- include "containerEnvironmentVariables" . | nindent 10 }}
           image: {{ include "admissionController.containerImage" . }}
           imagePullPolicy: Always
           livenessProbe:
@@ -88,29 +88,17 @@ spec:
           resources:
         {{- toYaml . | nindent 12 }}
         {{- end }}
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            runAsNonRoot: true
-            runAsUser: {{ .Values.runAsUser }}
+          securityContext:  
+          {{- include "containerSecurityContext" (dict "securityContext" .Values.admissionController.pod.containers.securityContext) | nindent 12 }}
           volumeMounts:
             - mountPath: "/var/run/secrets/certificates"
-              name: {{ include "admissionController.resourceNamePrefix" . }}-secret
+              name: {{ include "admissionController.resourceNamePrefix" . }}-certificate
               readOnly: true
-            - mountPath: "/var/run/secrets/application"
-              name: {{ .Values.resourceNamePrefix }}-secret
-              readOnly: true
+            {{- include "containerSecretsVolumeMount" . | nindent 12 }}
       imagePullSecrets:
-        {{- with .Values.containerImage.pullSecrets }}
-          {{- toYaml . | nindent 8 }}
-        {{- else }}
-        - name: {{ .Values.resourceNamePrefix }}-image-pull-secret
-        {{- end }}
+        {{- include "containerImagePullSecretNames" (dict "root" .) | nindent 8 }}
       securityContext:
-        seccompProfile:
-          type: RuntimeDefault
+        {{- include "podSecurityContext" . | nindent 8 }}
       serviceAccountName: {{ include "admissionController.resourceNamePrefix" . }}-service-account
       terminationGracePeriodSeconds: 60
       {{- with .Values.admissionController.pod.tolerations }}
@@ -118,9 +106,9 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-        - name: {{ include "admissionController.resourceNamePrefix" . }}-secret
+        - name: {{ include "admissionController.resourceNamePrefix" . }}-certificate
           secret:
             defaultMode: 0444
-            secretName: {{ include "admissionController.resourceNamePrefix" . }}-secret
-      {{- include "apiKeyTokenVolume" (dict "name" (print .Values.resourceNamePrefix "-secret") "root" .) | nindent 8 }}
+            secretName: {{ include "admissionController.certificateSecretName" . }}
+        {{- include "containerSecretsVolume" . | nindent 8 }}
 {{- end }}

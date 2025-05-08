@@ -9,7 +9,72 @@ metadata:
     {{- include "connector.labels" . | nindent 4 }}
   name: {{ include "connector.globalResourceName" (dict "name" "cr" "root" .) }}
 rules:
+  {{- if .Values.connector.clusterRoleExplicitPermissions }}
+  - apiGroups: [""]
+    resources:
+      - bindings
+      - componentstatuses
+      - configmaps
+      - endpoints
+      - events
+      - limitranges
+      - namespaces
+      - nodes
+      - nodes/status
+      - persistentvolumeclaims
+      - persistentvolumes
+      - pods
+      - podtemplates
+      - replicationcontrollers
+      - resourcequotas
+      - serviceaccounts
+      - services
+      - services/status
+    verbs: ["get", "list", "watch"]
+  - apiGroups:
+      - admissionregistration.k8s.io
+      - apiextensions.k8s.io
+      - apiregistration.k8s.io
+      - apiserver.openshift.io
+      - apps
+      - apps.openshift.io
+      - authorization.openshift.io
+      - autoscaling
+      - batch
+      - build.openshift.io
+      - cloudcredential.openshift.io
+      - compliance.openshift.io
+      - config.openshift.io
+      - console.openshift.io
+      - discovery.k8s.io
+      - events.k8s.io
+      - extensions
+      - image.openshift.io
+      - ingress.operator.openshift.io
+      - machine.openshift.io
+      - machineconfiguration.openshift.io
+      - metal3.io
+      - monitoring.coreos.com
+      - network.openshift.io
+      - networking.k8s.io
+      - oauth.openshift.io
+      - operator.openshift.io
+      - operators.coreos.com
+      - policy
+      - project.openshift.io
+      - quota.openshift.io
+      - rbac.authorization.k8s.io
+      - route.openshift.io
+      - security.openshift.io
+      - storage.k8s.io
+      - template.openshift.io
+      - tuned.openshift.io
+      - user.openshift.io
+    resources: ["*"]
+    verbs: ["get", "list", "watch"]
+  {{- else }}
   - apiGroups: ["*"]
     resources: ["*"]
     verbs: ["get", "list", "watch"]
+  {{- end }}
 {{- end }}

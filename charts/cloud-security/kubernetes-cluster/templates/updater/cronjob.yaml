@@ -29,7 +29,7 @@ spec:
         spec:
           {{- with .Values.pod.affinity }}
           affinity:
-            {{- toYaml . | nindent 14 }}
+            {{- toYaml . | nindent 12 }}
           {{- end }}
           automountServiceAccountToken: true
           restartPolicy: Never
@@ -37,27 +37,27 @@ spec:
             - args: [
               "updater",
               "--api-key-token-file-path",
-              "/var/run/secrets/application/apikeytoken",
+                {{ include "apiKeyTokenFilePath" . | quote }},
               "--api-url",
                 {{ .Values.apiUrl | quote }},
               "--application-version",
                 {{ .Chart.AppVersion | quote }},
               "--helm-release-name",
                 {{ print .Release.Namespace ":" .Release.Name | quote }},
-                {{- if .Values.name }}
+              {{- if .Values.name }}
               "--name",
                 {{ .Values.name | quote }},
-                {{- end}}
-                {{- if .Values.proxyUrl }}
+              {{- end }}
+              {{- if .Values.proxyUrl }}
               "--proxy-url",
                 {{ .Values.proxyUrl | quote }},
-                {{- end}}
-                {{- if .Values.accountId }}
+              {{- end }}
+              {{- if .Values.accountId }}
               "--tenant-raw-id",
                 {{ .Values.accountId | quote }}
-                {{- end}}
+              {{- end }}
             ]
-              {{- include "environmentVariables" . | nindent 14 }}
+              {{- include "containerEnvironmentVariables" . | nindent 14 }}
               image: {{ include "containerImage" . }}
               imagePullPolicy: Always
               name: {{ include "updater.resourceNamePrefix" . }}-container
@@ -66,31 +66,19 @@ spec:
               {{- toYaml . | nindent 16 }}
               {{- end }}
               securityContext:
-                allowPrivilegeEscalation: false
-                capabilities:
-                  drop:
-                    - ALL
-                runAsNonRoot: true
-                runAsUser: {{ .Values.runAsUser }}
+                {{- include "containerSecurityContext" (dict "securityContext" .Values.pod.containers.securityContext) | nindent 16 }}
               volumeMounts:
-                - name: {{ .Values.resourceNamePrefix }}-secret
-                  mountPath: "/var/run/secrets/application"
-                  readOnly: true
+                {{- include "containerSecretsVolumeMount" . | nindent 16 }}
           imagePullSecrets:
-            {{- with .Values.containerImage.pullSecrets }}
-              {{- toYaml . | nindent 12 }}
-            {{- else }}
-            - name: {{ .Values.resourceNamePrefix }}-image-pull-secret
-            {{- end }}
+            {{- include "containerImagePullSecretNames" (dict "root" .) | nindent 12 }}
           securityContext:
-            seccompProfile:
-              type: RuntimeDefault
+            {{- include "podSecurityContext" . | nindent 12 }}
           serviceAccountName: {{ include "updater.resourceNamePrefix" . }}-service-account
           {{- with .Values.pod.tolerations }}
           tolerations:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           volumes:
-          {{- include "apiKeyTokenVolume" (dict "name" (print .Values.resourceNamePrefix "-secret") "root" .) | nindent 12 }}
+            {{- include "containerSecretsVolume" . | nindent 12 }}
       ttlSecondsAfterFinished: 7200
   schedule: "0 * * * *"

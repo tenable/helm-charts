@@ -33,25 +33,25 @@ spec:
       automountServiceAccountToken: true
       containers:
         - args: [
-            "--api-key-token-file-path",
-            "/var/run/secrets/application/apikeytoken",
-            "--api-url",
+          "--api-key-token-file-path",
+              {{ include "apiKeyTokenFilePath" . | quote }},
+          "--api-url",
             {{ .Values.apiUrl | quote }},
-            "--data-path",
+          "--data-path",
             {{ .Values.sensor.dataPath | quote }},
-            "--logs",
-            {{- if .Values.proxyUrl }}
-            "--proxy-url",
+          "--logs",
+          {{- if .Values.proxyUrl }}
+          "--proxy-url",
             {{ .Values.proxyUrl | quote }},
-            {{- end}}
-          ]
-          {{- include "environmentVariables" . | nindent 10 }}
+          {{- end }}
+        ]
+          {{- include "containerEnvironmentVariables" . | nindent 10 }}
           image: {{ include "sensor.containerImage" . }}
           imagePullPolicy: Always
           name: {{ include "sensor.resourceNamePrefix" . }}-container
           {{- with .Values.sensor.pod.resources }}
           resources:
-          {{- toYaml . | nindent 12 }}
+            {{- toYaml . | nindent 12 }}
           {{- end }}
           securityContext:
             privileged: true
@@ -59,30 +59,23 @@ spec:
           volumeMounts:
             - name: {{ include "sensor.resourceNamePrefix" . }}-data
               mountPath: {{ .Values.sensor.dataPath }}
-            - name: {{ .Values.resourceNamePrefix }}-secret
-              mountPath: "/var/run/secrets/application"
-              readOnly: true
+            {{- include "containerSecretsVolumeMount" . | nindent 12 }}
       hostPID: true
       imagePullSecrets:
-        {{- with .Values.containerImage.pullSecrets }}
-          {{- toYaml . | nindent 8 }}
-        {{- else }}
-        - name: {{ .Values.resourceNamePrefix }}-image-pull-secret
-        {{- end }}
+        {{- include "containerImagePullSecretNames" (dict "root" .) | nindent 8 }}
       securityContext:
-        seccompProfile:
-          type: RuntimeDefault
+        {{- include "podSecurityContext" . | nindent 8 }}
       serviceAccountName: {{ include "sensor.resourceNamePrefix" . }}-service-account
       {{- with .Values.sensor.pod.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-      - name: {{ include "sensor.resourceNamePrefix" . }}-data
-        hostPath:
-          path: {{ .Values.sensor.dataPath }}
-          type: DirectoryOrCreate
-      {{- include "apiKeyTokenVolume" (dict "name" (print .Values.resourceNamePrefix "-secret") "root" .) | nindent 6 }}
+        - name: {{ include "sensor.resourceNamePrefix" . }}-data
+          hostPath:
+            path: {{ .Values.sensor.dataPath }}
+            type: DirectoryOrCreate
+      {{- include "containerSecretsVolume" . | nindent 6 }}
   updateStrategy:
     rollingUpdate:
       maxSurge: 0
