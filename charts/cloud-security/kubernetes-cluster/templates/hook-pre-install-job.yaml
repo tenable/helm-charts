@@ -37,6 +37,10 @@ spec:
               {{ .Chart.AppVersion | quote }},
             "--helm-release-name",
               {{ print .Release.Namespace ":" .Release.Name | quote }},
+              {{- if .Values.ocid }}
+            "--ocid",
+              {{ .Values.ocid | quote }},
+              {{- end }}
               {{- if .Values.name }}
             "--name",
               {{ .Values.name | quote }},

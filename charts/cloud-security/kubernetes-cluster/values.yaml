@@ -39,6 +39,7 @@ containerImage:
   repository: cloud-security/kubernetes-cluster-manager
   tag: null
 name: null
+ocid: null
 pod:
   affinity: {}
   annotations: {}

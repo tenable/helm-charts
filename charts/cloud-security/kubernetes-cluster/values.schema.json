@@ -204,6 +204,12 @@
         "string"
       ]
     },
+    "ocid": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
     "pod": {
       "properties": {
         "affinity": {
