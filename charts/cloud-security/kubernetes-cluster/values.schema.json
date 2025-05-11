@@ -143,6 +143,12 @@
     "apiUrl": {
       "type": "string"
     },
+    "clusterId": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
     "connector": {
       "properties": {
         "enabled": {

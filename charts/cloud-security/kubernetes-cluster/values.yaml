@@ -27,6 +27,7 @@ admissionController:
     timeoutSeconds: 3
 apiKeyToken: ""
 apiUrl: ""
+clusterId: null
 connector:
   enabled: true
   identity: true
