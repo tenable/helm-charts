@@ -17,17 +17,17 @@ spec:
       template:
         metadata:
           annotations:
-            {{- with .Values.pod.annotations }}
+            {{- with .Values.updater.pod.annotations }}
               {{- toYaml . | nindent 12 }}
             {{- end }}
           labels:
             {{- include "labels" . | nindent 12 }}
             {{- include "updater.labels" . | nindent 12 }}
-            {{- with .Values.pod.labels }}
+            {{- with .Values.updater.pod.labels }}
               {{- toYaml . | nindent 12 }}
             {{- end }}
         spec:
-          {{- with .Values.pod.affinity }}
+          {{- with .Values.updater.pod.affinity }}
           affinity:
             {{- toYaml . | nindent 12 }}
           {{- end }}
@@ -61,12 +61,12 @@ spec:
               image: {{ include "containerImage" . }}
               imagePullPolicy: Always
               name: {{ include "updater.resourceNamePrefix" . }}-container
-              {{- with .Values.pod.resources }}
+              {{- with .Values.updater.pod.resources }}
               resources:
               {{- toYaml . | nindent 16 }}
               {{- end }}
               securityContext:
-                {{- include "containerSecurityContext" (dict "securityContext" .Values.pod.containers.securityContext) | nindent 16 }}
+                {{- include "containerSecurityContext" (dict "securityContext" .Values.updater.pod.containers.securityContext) | nindent 16 }}
               volumeMounts:
                 {{- include "containerSecretsVolumeMount" . | nindent 16 }}
           imagePullSecrets:
@@ -74,7 +74,7 @@ spec:
           securityContext:
             {{- include "podSecurityContext" . | nindent 12 }}
           serviceAccountName: {{ include "updater.resourceNamePrefix" . }}-service-account
-          {{- with .Values.pod.tolerations }}
+          {{- with .Values.updater.pod.tolerations }}
           tolerations:
             {{- toYaml . | nindent 12 }}
           {{- end }}

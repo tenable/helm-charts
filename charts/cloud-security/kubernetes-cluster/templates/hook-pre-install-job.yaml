@@ -15,15 +15,15 @@ spec:
   template:
     metadata:
       annotations:
-        {{- with .Values.pod.annotations }}
+        {{- with .Values.hooks.pod.annotations }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
       labels:
-        {{- with .Values.pod.labels }}
+        {{- with .Values.hooks.pod.labels }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
-      {{- with .Values.pod.affinity }}
+      {{- with .Values.hooks.pod.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -55,12 +55,12 @@ spec:
           image: {{ include "containerImage" . }}
           imagePullPolicy: Always
           name: {{ .Values.resourceNamePrefix }}-pre-install-container
-          {{- with .Values.pod.resources }}
+          {{- with .Values.hooks.pod.resources }}
           resources:
           {{- toYaml . | nindent 12 }}
           {{- end }}
           securityContext:
-            {{- include "containerSecurityContext" (dict "securityContext" .Values.pod.containers.securityContext) | nindent 12 }}
+            {{- include "containerSecurityContext" (dict "securityContext" .Values.hooks.pod.containers.securityContext) | nindent 12 }}
           volumeMounts:
           {{- include "containerSecretsVolumeMount" . | nindent 10 }}
       imagePullSecrets:
@@ -69,7 +69,7 @@ spec:
       securityContext:
         {{- include "podSecurityContext" . | nindent 8 }}
       serviceAccountName: {{ .Values.resourceNamePrefix }}-pre-install-service-account
-      {{- with .Values.pod.tolerations }}
+      {{- with .Values.hooks.pod.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
