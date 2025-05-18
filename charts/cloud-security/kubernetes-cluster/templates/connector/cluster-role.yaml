@@ -58,6 +58,7 @@ rules:
       - network.openshift.io
       - networking.k8s.io
       - oauth.openshift.io
+      - observability.openshift.io
       - operator.openshift.io
       - operators.coreos.com
       - policy
