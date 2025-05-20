@@ -227,6 +227,24 @@
       ],
       "type": "object"
     },
+    "containerEnvironmentVariables": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name", 
+          "value"
+        ]
+      }
+    },
     "containerSecrets": {
       "properties": {
         "apiKeyTokenName": {
@@ -456,6 +474,7 @@
     "apiUrl",
     "connector",
     "containerImage",
+    "containerEnvironmentVariables",
     "containerSecrets",
     "pod",
     "resourceNamePrefix",

@@ -43,6 +43,7 @@ connector:
     labels: {}
     resources: {}
     tolerations: []
+containerEnvironmentVariables: []
 containerImage:
   pullSecrets: []
   registry: containers.tenable.com
