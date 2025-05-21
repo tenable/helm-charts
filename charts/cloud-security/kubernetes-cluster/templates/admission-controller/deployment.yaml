@@ -48,6 +48,10 @@ spec:
             {{ .Values.admissionController.healthPort | quote }},
             "--log-level",
             "{{ .Values.admissionController.logLevel }}",
+            {{- if .Values.proxyUrl }}
+            "--proxy-url",
+            {{ .Values.proxyUrl | quote }},
+            {{- end }}
             "--validating-admission-configuration-name",
             {{ include "admissionController.resourceNamePrefix" . }}-vwc,
             "--webhook-server-certificates-directory-path",

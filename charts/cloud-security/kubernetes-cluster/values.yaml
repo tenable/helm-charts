@@ -27,6 +27,7 @@ admissionController:
     timeoutSeconds: 3
 apiKeyToken: ""
 apiUrl: ""
+clusterId: null
 connector:
   enabled: true
   identity: true
@@ -51,6 +52,7 @@ pod:
       cpu: "100m"
       memory: "256Mi"
   tolerations: []
+proxyUrl: null
 resourceNamePrefix: kubernetes-cluster
 runAsUser: 1000
 sensor:
