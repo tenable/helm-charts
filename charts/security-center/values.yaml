@@ -18,8 +18,8 @@ image:
   pullPolicy: Always
   installImageName: securitycenter-install
   runtimeImageName: securitycenter-runtime
-  installImageTag: 6.5.1
-  runtimeImageTag: 6.5.1
+  installImageTag: 6.6.1
+  runtimeImageTag: 6.6.1
 
 service:
   name: tenable-sc
