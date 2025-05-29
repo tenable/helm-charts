@@ -95,6 +95,7 @@ Create the name of the service account to use
   deploy_trigger: "{{ $cmap.data.deploy_trigger }}"
   user_values: {{ sha256sum (toJson .Values) }}
   tes_url: "{{ .Values.tes.blades.global.url }}"
+  scope_cluster: "{{ .Values.tes.blades.global.scopeCluster | default true }}"
 {{- else -}}
 {{/*
     Generate new data
@@ -107,5 +108,6 @@ Create the name of the service account to use
   deploy_trigger: "1"
   user_values: {{ sha256sum (toJson .Values) }}
   tes_url: "{{ .Values.tes.blades.global.url }}"
+  scope_cluster: "{{ .Values.tes.blades.global.scopeCluster | default true }}"
 {{- end -}}
 {{- end -}}
