@@ -76,10 +76,10 @@ pod:
   resources:
     limits:
       cpu: "100m"
-      memory: "256Mi"
+      memory: "512Mi"
     requests:
       cpu: "100m"
-      memory: "256Mi"
+      memory: "512Mi"
   tolerations: []
 proxyUrl: null
 resourceNamePrefix: kubernetes-cluster
@@ -112,8 +112,8 @@ updater:
     resources:
       limits:
         cpu: "100m"
-        memory: "256Mi"
+        memory: "512Mi"
       requests:
         cpu: "100m"
-        memory: "256Mi"
+        memory: "512Mi"
     tolerations: []
