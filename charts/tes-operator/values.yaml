@@ -55,16 +55,11 @@ operator:
   podAnnotations: { }
   podLabels: { }
 
-  podSecurityContext: { }
-  # fsGroup: 2000
-
-  securityContext: { }
-    # capabilities:
-    #   drop:
-    #   - ALL
-    # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
 
   service:
     type: ClusterIP
@@ -78,6 +73,9 @@ tes:
     global:
       # scopeCluster: true for backwards compatibility with existing deployments
       scopeCluster: true
+      useCustomCA: false
+      # customCAIssuerName: {custom cert-manager issuer name}
+      customCAIssuerKind: Issuer
       nodeSelector: { }
       tolerations: [ ]
       affinity:
@@ -110,3 +108,7 @@ ingress:
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
+
+securityContext:
+  runAsUser: 2001
+  runAsGroup: 3000

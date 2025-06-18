@@ -28,16 +28,18 @@ spec:
       {{- end }}
       serviceAccountName: {{ include "tes-operator.serviceAccountName" . }}
       securityContext:
-        {{- toYaml .Values.operator.podSecurityContext | nindent 8 }}
+        runAsUser: {{ .Values.securityContext.runAsUser }}
+        runAsGroup: {{ .Values.securityContext.runAsGroup }}
+        runAsNonRoot: true
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
-            {{- toYaml .Values.operator.securityContext | nindent 12 }}
-          {{ if .Values.operator.image.registry }}
+            {{- toYaml .Values.operator.containerSecurityContext | nindent 12 }}
+          {{- if .Values.operator.image.registry }}
           image: "{{.Values.operator.image.registry}}/{{ .Values.operator.image.name }}:{{ .Values.operator.image.tag }}"
-          {{ else }}
+          {{- else }}
           image: "{{ .Values.operator.image.name }}:{{ .Values.operator.image.tag }}"
-          {{ end }}
+          {{- end }}
           imagePullPolicy: {{ .Values.operator.image.pullPolicy }}
           ports:
             - name: http
