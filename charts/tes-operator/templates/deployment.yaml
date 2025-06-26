@@ -22,9 +22,9 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
-      {{- with .Values.operator.image.imagePullSecret }}
+      {{- if .Values.operator.image.imagePullSecret }}
       imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
+        - name: {{ .Values.operator.image.imagePullSecret }}
       {{- end }}
       serviceAccountName: {{ include "tes-operator.serviceAccountName" . }}
       securityContext:
