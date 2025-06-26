@@ -168,9 +168,9 @@ entries:
   tes-operator:
   - apiVersion: v2
     appVersion: 1.5.1-ea
-    created: "2025-06-19T00:46:42.064263+01:00"
+    created: "2025-06-26T02:46:49.949952+01:00"
     description: Tenable Enclave Security operator
-    digest: d957f33a2b8b86bd1e41faef26837410fd1cd538ae4b09f1227fa2cda6bcf9c6
+    digest: 2d66ee98e9076532c9d62a347cd9341009cf45cd11ab84443978f15beb168d3d
     name: tes-operator
     type: application
     urls:
