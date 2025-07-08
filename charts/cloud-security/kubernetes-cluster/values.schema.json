@@ -175,9 +175,6 @@
     },
     "connector": {
       "properties": {
-        "clusterRoleExplicitPermissions": {
-          "type": "boolean"
-        },
         "enabled": {
           "type": "boolean"
         },
@@ -189,7 +186,6 @@
         }
       },
       "required": [
-        "clusterRoleExplicitPermissions",
         "enabled",
         "identity",
         "network"
@@ -232,6 +228,24 @@
         "repository"
       ],
       "type": "object"
+    },
+    "containerEnvironmentVariables": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name", 
+          "value"
+        ]
+      }
     },
     "containerSecrets": {
       "properties": {
@@ -462,6 +476,7 @@
     "apiUrl",
     "connector",
     "containerImage",
+    "containerEnvironmentVariables",
     "containerSecrets",
     "pod",
     "resourceNamePrefix",

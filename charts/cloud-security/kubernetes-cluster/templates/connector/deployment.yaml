@@ -19,17 +19,17 @@ spec:
   template:
     metadata:
       annotations:
-        {{- with .Values.pod.annotations }}
+        {{- with (default .Values.pod.annotations .Values.connector.pod.annotations) }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
       labels:
         {{- include "labels" . | nindent 8 }}
         {{- include "connector.labels" . | nindent 8 }}
-        {{- with .Values.pod.labels }}
+        {{- with (default .Values.pod.labels .Values.connector.pod.labels) }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
-      {{- with .Values.pod.affinity }}
+      {{- with (default .Values.pod.affinity .Values.connector.pod.affinity) }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -56,12 +56,12 @@ spec:
           image: {{ include "containerImage" . }}
           imagePullPolicy: Always
           name: {{ include "connector.resourceNamePrefix" . }}-container
-          {{- with .Values.pod.resources }}
+          {{- with (default .Values.pod.resources .Values.connector.pod.resources) }}
           resources:
           {{- toYaml . | nindent 12 }}
           {{- end }}
           securityContext:
-            {{- include "containerSecurityContext" (dict "securityContext" .Values.pod.containers.securityContext) | nindent 12 }}
+            {{- include "containerSecurityContext" (dict "securityContext" (default .Values.pod.containers.securityContext .Values.connector.pod.containers.securityContext)) | nindent 12 }}
           volumeMounts:
             {{- include "containerSecretsVolumeMount" . | nindent 12 }}
       imagePullSecrets:
@@ -69,7 +69,7 @@ spec:
       securityContext:
         {{- include "podSecurityContext" . | nindent 8 }}
       serviceAccountName: {{ include "connector.resourceNamePrefix" . }}-service-account
-      {{- with .Values.pod.tolerations }}
+      {{- with (default .Values.pod.tolerations .Values.connector.pod.tolerations) }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}

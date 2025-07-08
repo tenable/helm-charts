@@ -15,15 +15,15 @@ spec:
   template:
     metadata:
       annotations:
-        {{- with .Values.pod.annotations }}
+        {{- with (default .Values.pod.annotations .Values.hooks.pod.annotations) }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
       labels:
-        {{- with .Values.pod.labels }}
+        {{- with (default .Values.pod.labels .Values.hooks.pod.labels) }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
-      {{- with .Values.pod.affinity }}
+      {{- with (default .Values.pod.affinity .Values.hooks.pod.affinity) }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -59,21 +59,21 @@ spec:
           image: {{ include "containerImage" . }}
           imagePullPolicy: Always
           name: {{ .Values.resourceNamePrefix }}-pre-install-container
-          {{- with .Values.pod.resources }}
+          {{- with (default .Values.pod.resources .Values.hooks.pod.resources) }}
           resources:
-          {{- toYaml . | nindent 12 }}
+            {{- toYaml . | nindent 12 }}
           {{- end }}
           securityContext:
-            {{- include "containerSecurityContext" (dict "securityContext" .Values.pod.containers.securityContext) | nindent 12 }}
+            {{- include "containerSecurityContext" (dict "securityContext" (default .Values.pod.containers.securityContext .Values.hooks.pod.containers.securityContext)) | nindent 12 }}
           volumeMounts:
-          {{- include "containerSecretsVolumeMount" . | nindent 10 }}
+            {{- include "containerSecretsVolumeMount" . | nindent 10 }}
       imagePullSecrets:
         {{- include "containerImagePullSecretNames" (dict "name" (print .Values.resourceNamePrefix "-pre-install-image-pull-secret") "root" .) | nindent 8 }}
       restartPolicy: Never
       securityContext:
         {{- include "podSecurityContext" . | nindent 8 }}
       serviceAccountName: {{ .Values.resourceNamePrefix }}-pre-install-service-account
-      {{- with .Values.pod.tolerations }}
+      {{- with (default .Values.pod.tolerations .Values.hooks.pod.tolerations) }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}

@@ -33,6 +33,7 @@ type: Opaque
 
 {{- define "containerEnvironmentVariables" -}}
 env:
+{{- include .Values.containerEnvironmentVariables | nindent 2 }}
   - name: SIL_LogFormat
     value: Text
 {{- end }}

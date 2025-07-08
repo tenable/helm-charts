@@ -31,10 +31,18 @@ apiKeyToken: ""
 apiUrl: ""
 clusterId: null
 connector:
-  clusterRoleExplicitPermissions: false
   enabled: true
   identity: true
   network: true
+  pod:
+    affinity: {}
+    annotations: {}
+    containers:
+      securityContext: null
+    labels: {}
+    resources: {}
+    tolerations: []
+containerEnvironmentVariables: []
 containerImage:
   pullSecrets: []
   registry: containers.tenable.com
@@ -46,6 +54,15 @@ containerSecrets:
   apiKeyTokenName: null
   injectExternally: false
   volumeMountPath: "/var/run/secrets/application"
+hooks:
+  pod:
+    affinity: {}
+    annotations: {}
+    containers:
+      securityContext: null
+    labels: {}
+    resources: {}
+    tolerations: []
 name: null
 pod:
   affinity: {}
@@ -57,10 +74,10 @@ pod:
   resources:
     limits:
       cpu: "100m"
-      memory: "256Mi"
+      memory: "512Mi"
     requests:
       cpu: "100m"
-      memory: "256Mi"
+      memory: "512Mi"
   tolerations: []
 proxyUrl: null
 resourceNamePrefix: kubernetes-cluster
@@ -81,4 +98,19 @@ sensor:
       requests:
         cpu: "300m"
         memory: "256Mi"
+    tolerations: []
+updater:
+  pod:
+    affinity: {}
+    annotations: {}
+    containers:
+      securityContext: null
+    labels: {}
+    resources:
+      limits:
+        cpu: "100m"
+        memory: "512Mi"
+      requests:
+        cpu: "100m"
+        memory: "512Mi"
     tolerations: []
