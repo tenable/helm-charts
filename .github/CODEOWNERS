@@ -1,6 +1,6 @@
 # CODEOWNERS
 * @michaeldolinsky @bkizer-tenable @ap-ten
-cloud-security/* @ornisan @Eran-BenSharar @kkiminkitenb @michaeldolinsky
+cloud-security/* @ornisan @Eran-BenShahar @kkiminkitenb @michaeldolinsky
 security-center/* @qash-tenable @schhadia-tenable @ahughes-tenable @kkiminkitenb @michaeldolinsky @bkizer-tenable
 tes-deployment-assessment/* @tlikhar @kkiminkitenb @ashutosh-tenable @bhollowed-tenable @virenchhabria-tenable @michaeldolinsky @bkizer-tenable
 tes-operator/* @kkiminkitenb @michaeldolinsky @virenchhabria-tenable @bkizer-tenable
