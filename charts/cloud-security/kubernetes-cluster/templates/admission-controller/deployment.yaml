@@ -56,7 +56,7 @@ spec:
             "--validating-admission-configuration-name",
             {{ include "admissionController.resourceNamePrefix" . }}-vwc,
             "--webhook-server-certificates-directory-path",
-            {{ .Values.admissionController.certificates.volumeMountPath | quote }},
+            "/var/run/secrets/certificates",
             "--webhook-server-port",
             {{ .Values.admissionController.webhook.port | quote }}
           ]
