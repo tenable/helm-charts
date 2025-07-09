@@ -69,9 +69,6 @@
                       "type": "integer"
                     }
                   },
-                  "required": [
-                    "runAsUser"
-                  ],
                   "type": "object"
                 }
               },
@@ -183,12 +180,61 @@
         },
         "network": {
           "type": "boolean"
+        },
+        "pod": {
+          "properties": {
+            "affinity": {
+              "properties": {},
+              "type": "object"
+            },
+            "annotations": {
+              "properties": {},
+              "type": "object"
+            },
+            "containers": {
+              "properties": {
+                "securityContext": {
+                  "properties": {
+                    "runAsUser": {
+                      "type": "integer"
+                    }
+                  },
+                  "type": "object"
+                }
+              },
+              "required": [
+                "securityContext"
+              ],
+              "type": "object"
+            },
+            "labels": {
+              "properties": {},
+              "type": "object"
+            },
+            "resources": {
+              "properties": {},
+              "type": "object"
+            },
+            "tolerations": {
+              "type": "array"
+            }
+          },
+          "required": [
+            "affinity",
+            "annotations",
+            "containers",
+            "labels",
+            "resources",
+            "tolerations"
+          ],
+          "type": "object"
         }
       },
       "required": [
         "enabled",
         "identity",
-        "network"
+        "network",
+        "pod"
       ],
       "type": "object"
     },
@@ -242,7 +288,7 @@
           }
         },
         "required": [
-          "name", 
+          "name",
           "value"
         ]
       }
@@ -273,6 +319,62 @@
         "null",
         "string"
       ]
+    },
+    "hooks": {
+      "properties": {
+        "pod": {
+          "properties": {
+            "affinity": {
+              "properties": {},
+              "type": "object"
+            },
+            "annotations": {
+              "properties": {},
+              "type": "object"
+            },
+            "containers": {
+              "properties": {
+                "securityContext": {
+                  "properties": {
+                    "runAsUser": {
+                      "type": "integer"
+                    }
+                  },
+                  "type": "object"
+                }
+              },
+              "required": [
+                "securityContext"
+              ],
+              "type": "object"
+            },
+            "labels": {
+              "properties": {},
+              "type": "object"
+            },
+            "resources": {
+              "properties": {},
+              "type": "object"
+            },
+            "tolerations": {
+              "type": "array"
+            }
+          },
+          "required": [
+            "affinity",
+            "annotations",
+            "containers",
+            "labels",
+            "resources",
+            "tolerations"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "pod"
+      ],
+      "type": "object"
     },
     "pod": {
       "properties": {
@@ -468,6 +570,62 @@
         "pod"
       ],
       "type": "object"
+    },
+    "updater": {
+      "properties": {
+        "pod": {
+          "properties": {
+            "affinity": {
+              "properties": {},
+              "type": "object"
+            },
+            "annotations": {
+              "properties": {},
+              "type": "object"
+            },
+            "containers": {
+              "properties": {
+                "securityContext": {
+                  "properties": {
+                    "runAsUser": {
+                      "type": "integer"
+                    }
+                  },
+                  "type": "object"
+                }
+              },
+              "required": [
+                "securityContext"
+              ],
+              "type": "object"
+            },
+            "labels": {
+              "properties": {},
+              "type": "object"
+            },
+            "resources": {
+              "properties": {},
+              "type": "object"
+            },
+            "tolerations": {
+              "type": "array"
+            }
+          },
+          "required": [
+            "affinity",
+            "annotations",
+            "containers",
+            "labels",
+            "resources",
+            "tolerations"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "pod"
+      ],
+      "type": "object"
     }
   },
   "required": [
@@ -478,8 +636,10 @@
     "containerImage",
     "containerEnvironmentVariables",
     "containerSecrets",
+    "hooks",
     "pod",
     "resourceNamePrefix",
-    "sensor"
+    "sensor",
+    "updater"
   ]
 }

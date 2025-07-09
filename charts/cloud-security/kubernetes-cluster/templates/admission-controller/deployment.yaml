@@ -23,17 +23,17 @@ spec:
   template:
     metadata:
       annotations:
-        {{- with .Values.admissionController.pod.annotations }}
+        {{- with (default .Values.pod.annotations .Values.admissionController.pod.annotations) }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
       labels:
         {{- include "labels" . | nindent 8 }}
         {{- include "admissionController.labels" . | nindent 8 }}
-        {{- with .Values.admissionController.pod.labels }}
+        {{- with (default .Values.pod.labels .Values.admissionController.pod.labels) }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
-      {{- with .Values.admissionController.pod.affinity }}
+      {{- with (default .Values.pod.affinity .Values.admissionController.pod.affinity) }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -89,12 +89,12 @@ spec:
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 3
-        {{- with .Values.admissionController.pod.resources }}
+        {{- with (default .Values.pod.resources .Values.admissionController.pod.resources) }}
           resources:
         {{- toYaml . | nindent 12 }}
         {{- end }}
-          securityContext:  
-          {{- include "containerSecurityContext" (dict "securityContext" .Values.admissionController.pod.containers.securityContext) | nindent 12 }}
+          securityContext:
+          {{- include "containerSecurityContext" (dict "securityContext" (default .Values.pod.containers.securityContext .Values.admissionController.pod.containers.securityContext)) | nindent 12 }}
           volumeMounts:
             {{- if not .Values.admissionController.certificates.injectExternally }}
             - mountPath: {{ .Values.admissionController.certificates.volumeMountPath }}
@@ -108,7 +108,7 @@ spec:
         {{- include "podSecurityContext" . | nindent 8 }}
       serviceAccountName: {{ include "admissionController.resourceNamePrefix" . }}-service-account
       terminationGracePeriodSeconds: 60
-      {{- with .Values.admissionController.pod.tolerations }}
+      {{- with (default .Values.pod.tolerations .Values.admissionController.pod.tolerations) }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}

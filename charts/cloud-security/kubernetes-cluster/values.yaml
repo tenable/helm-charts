@@ -13,10 +13,15 @@ admissionController:
     affinity: {}
     annotations: {}
     containers:
-      securityContext:
-        runAsUser: 1000
+      securityContext: {}
     labels: {}
-    resources: {}
+    resources:
+      limits:
+        cpu: "100m"
+        memory: "256Mi"
+      requests:
+        cpu: "100m"
+        memory: "256Mi"
     tolerations: []
   replicas: 3
   strategy:
@@ -38,7 +43,7 @@ connector:
     affinity: {}
     annotations: {}
     containers:
-      securityContext: null
+      securityContext: {}
     labels: {}
     resources: {}
     tolerations: []
@@ -59,7 +64,7 @@ hooks:
     affinity: {}
     annotations: {}
     containers:
-      securityContext: null
+      securityContext: {}
     labels: {}
     resources: {}
     tolerations: []
@@ -104,13 +109,7 @@ updater:
     affinity: {}
     annotations: {}
     containers:
-      securityContext: null
+      securityContext: {}
     labels: {}
-    resources:
-      limits:
-        cpu: "100m"
-        memory: "512Mi"
-      requests:
-        cpu: "100m"
-        memory: "512Mi"
+    resources: {}
     tolerations: []
