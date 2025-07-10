@@ -1,5 +1,5 @@
 # CODEOWNERS
-* @michaeldolinsky @bkizer-tenable @ap-ten
+* @michaeldolinsky @bkizer-tenable
 cloud-security/* @tenable/cloud-security-helm-charts
 security-center/* @tenable/security-center-helm-charts
 tes-deployment-assessment/* @tenable/tes-deployment-assessment-helm-charts
