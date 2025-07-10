@@ -75,7 +75,7 @@ spec:
           hostPath:
             path: {{ .Values.sensor.dataPath }}
             type: DirectoryOrCreate
-      {{- include "containerSecretsVolume" . | nindent 6 }}
+      {{- include "containerSecretsVolume" . | nindent 8 }}
   updateStrategy:
     rollingUpdate:
       maxSurge: 0

@@ -96,11 +96,9 @@ spec:
           securityContext:
           {{- include "containerSecurityContext" (dict "securityContext" (default .Values.pod.containers.securityContext .Values.admissionController.pod.containers.securityContext)) | nindent 12 }}
           volumeMounts:
-            {{- if not .Values.admissionController.certificates.injectExternally }}
-            - mountPath: {{ .Values.admissionController.certificates.volumeMountPath }}
+            - mountPath: /var/run/secrets/certificates
               name: {{ include "admissionController.resourceNamePrefix" . }}-certificate-volume
               readOnly: true
-            {{- end }}
             {{- include "containerSecretsVolumeMount" . | nindent 12 }}
       imagePullSecrets:
         {{- include "containerImagePullSecretNames" (dict "root" .) | nindent 8 }}
@@ -113,11 +111,9 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-        {{- if not .Values.admissionController.certificates.injectExternally }}
         - name: {{ include "admissionController.resourceNamePrefix" . }}-certificate-volume
           secret:
             defaultMode: 0444
-            secretName: {{ include "admissionController.caCertificateSecretName" . }}
-        {{- end }}
+            secretName: {{ include "admissionController.certificateSecretName" . }}
         {{- include "containerSecretsVolume" . | nindent 8 }}
 {{- end }}
