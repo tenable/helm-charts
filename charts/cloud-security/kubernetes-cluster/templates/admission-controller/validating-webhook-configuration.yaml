@@ -2,22 +2,26 @@
 {{ $tls := include "admissionController.tls" . | fromYaml }}
 apiVersion: v1
 kind: Secret
+type: kubernetes.io/tls
 metadata:
   annotations:
     {{- include "annotations" . | nindent 4 }}
   labels:
     {{- include "labels" . | nindent 4 }}
     {{- include "admissionController.labels" . | nindent 4 }}
-  name: {{ include "admissionController.resourceNamePrefix" . }}-secret
+  name: {{ include "admissionController.certificateSecretName" . }}
   namespace: {{ .Release.Namespace }}
 data:
-  tls.key: {{ $tls.serverCertificateKeyBase64 }}
   tls.crt: {{ $tls.serverCertificateBase64 }}
+  tls.key: {{ $tls.serverCertificateKeyBase64 }}
 ---
 apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingWebhookConfiguration
 metadata:
   annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation
+    helm.sh/hook-weight: "-5"
     {{- include "annotations" . | nindent 4 }}
   labels:
     {{- include "labels" . | nindent 4 }}
@@ -28,7 +32,7 @@ webhooks:
   - v1
   - v1beta1
   clientConfig:
-    caBundle: {{ $tls.serverCertificateAuthorityCertificateBase64 }}
+    caBundle: {{ $tls.serverCaCertificateBase64 }}
     service:
       name: {{ include "admissionController.resourceNamePrefix" . }}-service
       namespace: {{ .Release.Namespace }}

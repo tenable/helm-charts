@@ -19,72 +19,60 @@ spec:
   template:
     metadata:
       annotations:
-        {{- with .Values.pod.annotations }}
+        {{- with (default .Values.pod.annotations .Values.connector.pod.annotations) }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
       labels:
         {{- include "labels" . | nindent 8 }}
         {{- include "connector.labels" . | nindent 8 }}
-        {{- with .Values.pod.labels }}
+        {{- with (default .Values.pod.labels .Values.connector.pod.labels) }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
-      {{- with .Values.pod.affinity }}
+      {{- with (default .Values.pod.affinity .Values.connector.pod.affinity) }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       automountServiceAccountToken: true
       containers:
         - args: [
-            "connector",
-            "--api-key-token-file-path",
-            "/var/run/secrets/application/apikeytoken",
-            "--api-url",
+          "connector",
+          "--api-key-token-file-path",
+            {{ include "apiKeyTokenFilePath" . | quote }},
+          "--api-url",
             {{ .Values.apiUrl | quote }},
-            {{- if .Values.connector.identity }}
-            "--identity",
-            {{- end}}
-            {{- if .Values.connector.network }}
-            "--network",
-            {{- end}}
-            {{- if .Values.proxyUrl }}
-            "--proxy-url",
+          {{- if .Values.connector.identity }}
+          "--identity",
+          {{- end }}
+          {{- if .Values.connector.network }}
+          "--network",
+          {{- end }}
+          {{- if .Values.proxyUrl }}
+          "--proxy-url",
             {{ .Values.proxyUrl | quote }},
-            {{- end}}
-          ]
-          {{- include "environmentVariables" . | nindent 10 }}
+          {{- end }}
+        ]
+          {{- include "containerEnvironmentVariables" . | nindent 10 }}
           image: {{ include "containerImage" . }}
           imagePullPolicy: Always
           name: {{ include "connector.resourceNamePrefix" . }}-container
-          {{- with .Values.pod.resources }}
+          {{- with (default .Values.pod.resources .Values.connector.pod.resources) }}
           resources:
           {{- toYaml . | nindent 12 }}
           {{- end }}
           securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            runAsNonRoot: true
-            runAsUser: {{ .Values.runAsUser }}
+            {{- include "containerSecurityContext" (dict "securityContext" (default .Values.pod.containers.securityContext .Values.connector.pod.containers.securityContext)) | nindent 12 }}
           volumeMounts:
-            - mountPath: "/var/run/secrets/application"
-              name: {{ .Values.resourceNamePrefix }}-secret
-              readOnly: true
+            {{- include "containerSecretsVolumeMount" . | nindent 12 }}
       imagePullSecrets:
-        {{- with .Values.containerImage.pullSecrets }}
-          {{- toYaml . | nindent 8 }}
-        {{- else }}
-        - name: {{ .Values.resourceNamePrefix }}-image-pull-secret
-        {{- end }}
+        {{- include "containerImagePullSecretNames" (dict "root" .) | nindent 8 }}
       securityContext:
-        seccompProfile:
-          type: RuntimeDefault
+        {{- include "podSecurityContext" . | nindent 8 }}
       serviceAccountName: {{ include "connector.resourceNamePrefix" . }}-service-account
-      {{- with .Values.pod.tolerations }}
+      {{- with (default .Values.pod.tolerations .Values.connector.pod.tolerations) }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-      {{- include "apiKeyTokenVolume" (dict "name" (print .Values.resourceNamePrefix "-secret") "root" .) | nindent 8 }}
+        {{- include "containerSecretsVolume" . | nindent 8 }}
 {{- end }}

@@ -12,15 +12,22 @@ admissionController:
   pod:
     affinity: {}
     annotations: {}
+    containers:
+      securityContext: {}
     labels: {}
-    resources: {}
+    resources:
+      limits:
+        cpu: "100m"
+        memory: "256Mi"
+      requests:
+        cpu: "100m"
+        memory: "256Mi"
     tolerations: []
   replicas: 3
   strategy:
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 0
-  tls: {}
   webhook:
     failurePolicy: Ignore
     port: 8443
@@ -32,6 +39,15 @@ connector:
   enabled: true
   identity: true
   network: true
+  pod:
+    affinity: {}
+    annotations: {}
+    containers:
+      securityContext: {}
+    labels: {}
+    resources: {}
+    tolerations: []
+containerEnvironmentVariables: []
 containerImage:
   pullSecrets: []
   registry: containers.tenable.com
@@ -39,22 +55,37 @@ containerImage:
   registryUsername: null
   repository: cloud-security/kubernetes-cluster-manager
   tag: null
+containerSecrets:
+  apiKeyTokenName: null
+  injectExternally: false
+  volumeMountPath: "/var/run/secrets/application"
+hooks:
+  pod:
+    affinity: {}
+    annotations: {}
+    containers:
+      securityContext: {}
+    labels: {}
+    resources: {}
+    tolerations: []
 name: null
 pod:
   affinity: {}
   annotations: {}
+  containers:
+    securityContext:
+      runAsUser: 1000
   labels: {}
   resources:
     limits:
       cpu: "100m"
-      memory: "256Mi"
+      memory: "512Mi"
     requests:
       cpu: "100m"
-      memory: "256Mi"
+      memory: "512Mi"
   tolerations: []
 proxyUrl: null
 resourceNamePrefix: kubernetes-cluster
-runAsUser: 1000
 sensor:
   containerImage:
     repository: cloud-security/kubernetes-cluster-sensor
@@ -72,4 +103,13 @@ sensor:
       requests:
         cpu: "300m"
         memory: "256Mi"
+    tolerations: []
+updater:
+  pod:
+    affinity: {}
+    annotations: {}
+    containers:
+      securityContext: {}
+    labels: {}
+    resources: {}
     tolerations: []
