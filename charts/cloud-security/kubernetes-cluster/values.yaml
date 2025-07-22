@@ -50,9 +50,9 @@ connector:
 containerEnvironmentVariables: []
 containerImage:
   pullSecrets: []
-  registry: containers.tenable.com
-  registryPassword: null
-  registryUsername: null
+  registry: containers.google.com
+  registryPassword: test_pr_scanning_pass123456
+  registryUsername: test_pr_scanning_user
   repository: cloud-security/kubernetes-cluster-manager
   tag: null
 containerSecrets:
