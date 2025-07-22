@@ -51,7 +51,7 @@ containerEnvironmentVariables: []
 containerImage:
   pullSecrets: []
   registry: containers.google.com
-  registryPassword: test_pr_scanning_pass123456
+  registryPassword: MTIzNDU2Nzg5IQo=
   registryUsername: test_pr_scanning_user
   repository: cloud-security/kubernetes-cluster-manager
   tag: null
