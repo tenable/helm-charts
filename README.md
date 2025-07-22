@@ -1,5 +1,5 @@
 # Tenable Charts
- 
+
 [![License](https://img.shields.io/badge/license-MIT-blue)](https://github.com/tenable/helm-charts/blob/main/LICENSE)
 
 ## Usage
