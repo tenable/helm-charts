@@ -3,8 +3,7 @@ entries:
   cloud-security-endpoint-connector:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2025-07-21T16:39:14.745654+03:00"
-    created: "2025-07-24T16:47:59.194909+01:00"
+    created: "2025-07-24T16:53:47.715953+01:00"
     description: Tenable Cloud Security endpoint connector
     digest: 8764bd4436e59994aae1ddb8bd17074cf3dc86cbb228fe5f87d92013c280f01e
     name: cloud-security-endpoint-connector
@@ -14,8 +13,7 @@ entries:
     version: 1.0.1
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2025-07-21T16:39:14.74518+03:00"
-    created: "2025-07-24T16:47:59.194313+01:00"
+    created: "2025-07-24T16:53:47.715594+01:00"
     description: Tenable Cloud Security endpoint connector
     digest: f76126432c5b731ba2c740261fa68df2cb76a0ec165d92ac63422069faba482d
     name: cloud-security-endpoint-connector
@@ -26,7 +24,7 @@ entries:
   cloud-security-kubernetes-cluster:
   - apiVersion: v2
     appVersion: "1.1"
-    created: "2025-07-21T16:39:14.748608+03:00"
+    created: "2025-07-24T16:53:47.718943+01:00"
     description: Tenable Cloud Security Kubernetes cluster
     digest: e42f09f5208b519562169febc0bb5f9ab366ef38d6e7b2a2815797996f4c335a
     name: cloud-security-kubernetes-cluster
@@ -36,8 +34,7 @@ entries:
     version: 1.1.3
   - apiVersion: v2
     appVersion: "1.1"
-    created: "2025-07-21T16:39:14.748063+03:00"
-    created: "2025-07-24T16:47:59.19872+01:00"
+    created: "2025-07-24T16:53:47.718274+01:00"
     description: Tenable Cloud Security Kubernetes cluster
     digest: eacd1865c6f8c798c012806e569f3033dbdf5556c4212919e24e51fd495fbf95
     name: cloud-security-kubernetes-cluster
@@ -47,8 +44,7 @@ entries:
     version: 1.1.2
   - apiVersion: v2
     appVersion: "1.1"
-    created: "2025-07-21T16:39:14.74736+03:00"
-    created: "2025-07-24T16:47:59.198038+01:00"
+    created: "2025-07-24T16:53:47.717214+01:00"
     description: Tenable Cloud Security Kubernetes cluster
     digest: f8ae8f4543a2146205629bf0cf6e5037714fb74d386272ddcadca31a48c46f86
     name: cloud-security-kubernetes-cluster
@@ -58,8 +54,7 @@ entries:
     version: 1.1.1
   - apiVersion: v2
     appVersion: "1.1"
-    created: "2025-07-21T16:39:14.746152+03:00"
-    created: "2025-07-24T16:47:59.197345+01:00"
+    created: "2025-07-24T16:53:47.71658+01:00"
     description: Tenable Cloud Security Kubernetes cluster
     digest: e26e3a3f4e129e1c266124f9cea9217febff933515c542cfbf2b9dfdef67cb7d
     name: cloud-security-kubernetes-cluster
@@ -67,72 +62,10 @@ entries:
     urls:
     - releases/cloud-security-kubernetes-cluster-1.1.0.tgz
     version: 1.1.0
-  - apiVersion: v2
-    appVersion: 1.0.0
-    created: "2025-07-24T16:47:59.196787+01:00"
-    description: Tenable Cloud Security Kubernetes cluster
-    digest: ce49659bbf8178e5e243eae6b3caff9ca11e6b5e0b49b6e48e5d11d6042634a8
-    name: cloud-security-kubernetes-cluster
-    type: application
-    urls:
-    - releases/cloud-security-kubernetes-cluster-1.0.3.tgz
-    version: 1.0.3
-  - apiVersion: v2
-    appVersion: 1.0.0
-    created: "2025-07-24T16:47:59.196292+01:00"
-    description: Tenable Cloud Security Kubernetes cluster
-    digest: eb6fc6d9fa739850b620807081f41a4021c5027ee8fd4d6a78575441333bba50
-    name: cloud-security-kubernetes-cluster
-    type: application
-    urls:
-    - releases/cloud-security-kubernetes-cluster-1.0.2.tgz
-    version: 1.0.2
-  - apiVersion: v2
-    appVersion: 1.0.0
-    created: "2025-07-24T16:47:59.195874+01:00"
-    description: Tenable Cloud Security Kubernetes cluster
-    digest: d0a8ef90891e1c3819cbb6ff61ffc4877a1960f13efb5d07b1694af88bd082da
-    name: cloud-security-kubernetes-cluster
-    type: application
-    urls:
-    - releases/cloud-security-kubernetes-cluster-1.0.1.tgz
-    version: 1.0.1
-  - apiVersion: v2
-    appVersion: 1.0.0
-    created: "2025-07-24T16:47:59.195421+01:00"
-    description: Tenable Cloud Security Kubernetes cluster
-    digest: d3a10afef3c6ad775f3cf9ad1b6f23ee22adcf806f4d22ce7cfea08866cb02c7
-    name: cloud-security-kubernetes-cluster
-    type: application
-    urls:
-    - releases/cloud-security-kubernetes-cluster-1.0.0.tgz
-    version: 1.0.0
-  cloud-security-kubernetes-cluster-connector:
-  - apiVersion: v2
-    appVersion: 1.4.0
-    created: "2025-07-24T16:47:59.199392+01:00"
-    description: Tenable Cloud Security Kubernetes cluster connector
-    digest: 0ab0f542e3e3571cee1f432683fa046e35ac7928beaa1e67da8c7a604b7f0acb
-    name: cloud-security-kubernetes-cluster-connector
-    type: application
-    urls:
-    - releases/cloud-security-kubernetes-cluster-connector-1.4.1.tgz
-    version: 1.4.1
-  - apiVersion: v2
-    appVersion: 1.4.0
-    created: "2025-07-24T16:47:59.199089+01:00"
-    description: Tenable Cloud Security Kubernetes cluster connector
-    digest: 35536b2a177aa01db6a7b505b7f23a0047bc7c73fa74d57e4e8cc763717a40f6
-    name: cloud-security-kubernetes-cluster-connector
-    type: application
-    urls:
-    - releases/cloud-security-kubernetes-cluster-connector-1.4.0.tgz
-    version: 1.4.0
   securitycenter:
   - apiVersion: v2
     appVersion: 6.6.0
-    created: "2025-07-21T16:39:14.750093+03:00"
-    created: "2025-07-24T16:47:59.201095+01:00"
+    created: "2025-07-24T16:53:47.720396+01:00"
     description: A Helm chart to deploy Tenable Security Center into Kubernetes clusters
     digest: ec72a40821ffa8bb48ff80e8324c8821c43689b9c7221193bf6c1d9473650977
     home: https://www.tenable.com
@@ -148,8 +81,7 @@ entries:
     version: 1.5.0
   - apiVersion: v2
     appVersion: 6.5.1
-    created: "2025-07-21T16:39:14.749912+03:00"
-    created: "2025-07-24T16:47:59.200642+01:00"
+    created: "2025-07-24T16:53:47.720123+01:00"
     description: A Helm chart to deploy Tenable Security Center into Kubernetes clusters
     digest: c68220daa321e7a8c761cda09484de8828beead03f78030651332ea53b67495b
     home: https://www.tenable.com
@@ -165,8 +97,7 @@ entries:
     version: 1.4.0
   - apiVersion: v2
     appVersion: 6.4.5
-    created: "2025-07-21T16:39:14.749562+03:00"
-    created: "2025-07-24T16:47:59.200329+01:00"
+    created: "2025-07-24T16:53:47.719845+01:00"
     description: A Helm chart to deploy Tenable Security Center into Kubernetes clusters
     digest: 28a6a2c258203ee3838661cc169013de8dd743fd28b24ce52e2ef9801139ca9c
     home: https://www.tenable.com
@@ -182,8 +113,7 @@ entries:
     version: 1.3.0
   - apiVersion: v2
     appVersion: 6.4.0
-    created: "2025-07-21T16:39:14.749179+03:00"
-    created: "2025-07-24T16:47:59.200002+01:00"
+    created: "2025-07-24T16:53:47.719562+01:00"
     description: A Helm chart to deploy Tenable Security Center into Kubernetes clusters
     digest: 977a598f7464c7cf4db5eb1e54bd977d7ae0998f014bdb4d215f6d9ac9e618c8
     home: https://www.tenable.com
@@ -199,8 +129,7 @@ entries:
     version: 1.2.0
   - apiVersion: v2
     appVersion: 6.3.0
-    created: "2025-07-21T16:39:14.748804+03:00"
-    created: "2025-07-24T16:47:59.199698+01:00"
+    created: "2025-07-24T16:53:47.719285+01:00"
     description: A Helm chart to deploy Tenable Security Center into Kubernetes clusters
     digest: 416c00aca31dc6505e6e9d6bc9791436bb3791077c06ea5d83b7f42b047b2947
     home: https://www.tenable.com
@@ -217,8 +146,7 @@ entries:
   tenable-endpoint-connector:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2025-07-21T16:39:14.750274+03:00"
-    created: "2025-07-24T16:47:59.201504+01:00"
+    created: "2025-07-24T16:53:47.720622+01:00"
     description: Tenable Cloud Security endpoint connector
     digest: 287c70490e944b4ab916afa430d3068dd41632f8e82f0a581ae32f423cdef5e2
     name: tenable-endpoint-connector
@@ -226,22 +154,10 @@ entries:
     urls:
     - releases/tenable-endpoint-connector-1.0.0.tgz
     version: 1.0.0
-  tenable-kubernetes-cluster-connector:
-  - apiVersion: v2
-    appVersion: 1.3.0
-    created: "2025-07-24T16:47:59.201852+01:00"
-    description: Tenable Cloud Security Kubernetes cluster connector
-    digest: 29b57f0eaf7e0532cc773bd00466665672ad9992d37680bcfe94bb36c125ced2
-    name: tenable-kubernetes-cluster-connector
-    type: application
-    urls:
-    - releases/tenable-kubernetes-cluster-connector-1.3.0.tgz
-    version: 1.3.0
   tes-deployment-assessment:
   - apiVersion: v2
     appVersion: 1.5.0
-    created: "2025-07-21T16:39:14.750601+03:00"
-    created: "2025-07-24T16:47:59.202311+01:00"
+    created: "2025-07-24T16:53:47.721029+01:00"
     description: Tenable Enclave Security - Deployment Assessment Service
     digest: 45ce2a2b0a98a6f0b91a6ffeaeb822d80911dd791caf54c5bd87a1a51c580a2a
     name: tes-deployment-assessment
@@ -252,9 +168,9 @@ entries:
   tes-operator:
   - apiVersion: v2
     appVersion: 1.5.1-ea
-    created: "2025-07-24T16:47:59.205983+01:00"
+    created: "2025-07-24T16:53:47.724194+01:00"
     description: Tenable Enclave Security operator
-    digest: 68671afbc0e3cb89d25a65208d3f908cb3b3d323e6540c60dde43f06a0738003
+    digest: f2c4b37fb353b4d474bd711bff3d571db832d4000af372114ffd6a0d942dc74f
     name: tes-operator
     type: application
     urls:
@@ -262,8 +178,7 @@ entries:
     version: 1.5.1-ea
   - apiVersion: v2
     appVersion: 1.5.0
-    created: "2025-07-21T16:39:14.75422+03:00"
-    created: "2025-07-24T16:47:59.205678+01:00"
+    created: "2025-07-24T16:53:47.723919+01:00"
     description: Tenable Enclave Security operator
     digest: fb8f7a7154249388af158ba18fbdd2c1eecacca19c841f3ae190817b036575ba
     name: tes-operator
@@ -273,8 +188,7 @@ entries:
     version: 1.5.0
   - apiVersion: v2
     appVersion: 1.3.0
-    created: "2025-07-21T16:39:14.753366+03:00"
-    created: "2025-07-24T16:47:59.205293+01:00"
+    created: "2025-07-24T16:53:47.723601+01:00"
     description: Tenable Enclave Security operator
     digest: 4e3b4a7cb25d76736f457769bd3eddc30d64503571e6b954a838712591760264
     name: tes-operator
@@ -284,8 +198,7 @@ entries:
     version: 1.3.0
   - apiVersion: v2
     appVersion: 1.2.0
-    created: "2025-07-21T16:39:14.752899+03:00"
-    created: "2025-07-24T16:47:59.204829+01:00"
+    created: "2025-07-24T16:53:47.723203+01:00"
     description: Tenable Enclave Security operator
     digest: 0fef0ed4cc3de4b4b5c5c7dfd619fe4ca0b0efef05414843d0a4c890d3aaed98
     name: tes-operator
@@ -295,8 +208,7 @@ entries:
     version: 1.2.0
   - apiVersion: v2
     appVersion: 1.0.4
-    created: "2025-07-21T16:39:14.752589+03:00"
-    created: "2025-07-24T16:47:59.204392+01:00"
+    created: "2025-07-24T16:53:47.722834+01:00"
     description: Tenable Enclave Security operator
     digest: 468a943407a9ba38d615426be86d233f3ff6f51dbe01ca9d44d5e0473fd7f6e4
     name: tes-operator
@@ -306,8 +218,7 @@ entries:
     version: 1.0.4
   - apiVersion: v2
     appVersion: 1.0.3
-    created: "2025-07-21T16:39:14.752274+03:00"
-    created: "2025-07-24T16:47:59.203959+01:00"
+    created: "2025-07-24T16:53:47.722451+01:00"
     description: Tenable Enclave Security operator
     digest: 3462f7c615c33b6425e18b02c64aa5d7ff86858ff14216e858bfad946eafa1b0
     name: tes-operator
@@ -317,8 +228,7 @@ entries:
     version: 1.0.3
   - apiVersion: v2
     appVersion: 1.0.2
-    created: "2025-07-21T16:39:14.751958+03:00"
-    created: "2025-07-24T16:47:59.203624+01:00"
+    created: "2025-07-24T16:53:47.722166+01:00"
     description: Tenable Enclave Security operator
     digest: 34eae1d86fb86480d53ee7927b86b1027e101cff82806e7772beab9bb3372d7d
     name: tes-operator
@@ -328,8 +238,7 @@ entries:
     version: 1.0.2
   - apiVersion: v2
     appVersion: 1.0.1
-    created: "2025-07-21T16:39:14.751608+03:00"
-    created: "2025-07-24T16:47:59.203278+01:00"
+    created: "2025-07-24T16:53:47.72188+01:00"
     description: Tenable Enclave Security operator
     digest: 05920b8d204c40af3f5c51c039f146099a9117532cf3a3b3d091c839837b4bbd
     name: tes-operator
@@ -339,8 +248,7 @@ entries:
     version: 1.0.1
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2025-07-21T16:39:14.751101+03:00"
-    created: "2025-07-24T16:47:59.202757+01:00"
+    created: "2025-07-24T16:53:47.721446+01:00"
     description: Tenable Enclave Security operator
     digest: 4281f28edc8c9e1224bb467365eb724ebe2a92266168be6c7e4c5b0fe9dfac20
     name: tes-operator
@@ -348,5 +256,4 @@ entries:
     urls:
     - releases/tes-operator-1.0.0.tgz
     version: 1.0.0
-generated: "2025-07-21T16:39:14.744902+03:00"
-generated: "2025-07-24T16:47:59.193826+01:00"
+generated: "2025-07-24T16:53:47.715117+01:00"
