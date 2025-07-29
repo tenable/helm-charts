@@ -13,6 +13,9 @@ spec:
     metadata:
       annotations:
         rollme: {{ randAlphaNum 5 | quote }}
+        {{- if .Capabilities.APIVersions.Has "security.openshift.io/v1/SecurityContextConstraints" }}
+        openshift.io/required-scc: {{ .Release.Name }}-{{ .Release.Namespace }}-scc
+        {{- end }}
       {{- with .Values.operator.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -22,22 +25,24 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
-      {{- with .Values.operator.image.imagePullSecret }}
+      {{- if .Values.operator.image.imagePullSecret }}
       imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
+        - name: {{ .Values.operator.image.imagePullSecret }}
       {{- end }}
       serviceAccountName: {{ include "tes-operator.serviceAccountName" . }}
       securityContext:
-        {{- toYaml .Values.operator.podSecurityContext | nindent 8 }}
+        runAsUser: {{ .Values.securityContext.runAsUser }}
+        runAsGroup: {{ .Values.securityContext.runAsGroup }}
+        runAsNonRoot: true
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
-            {{- toYaml .Values.operator.securityContext | nindent 12 }}
-          {{ if .Values.operator.image.registry }}
+            {{- toYaml .Values.operator.containerSecurityContext | nindent 12 }}
+          {{- if .Values.operator.image.registry }}
           image: "{{.Values.operator.image.registry}}/{{ .Values.operator.image.name }}:{{ .Values.operator.image.tag }}"
-          {{ else }}
+          {{- else }}
           image: "{{ .Values.operator.image.name }}:{{ .Values.operator.image.tag }}"
-          {{ end }}
+          {{- end }}
           imagePullPolicy: {{ .Values.operator.image.pullPolicy }}
           ports:
             - name: http
