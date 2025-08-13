@@ -3,10 +3,10 @@
 
 tenable/tes-operator:1.6.0
 tenable/tes-consec-api:1.6.7
-tenable/tes-consec-ui:1.6.1
+tenable/tes-consec-ui:1.6.3
 tenable/tes-consec-scan:1.6.0
 tenable/tes-consec-tvdl:1.6.0
-tenable/tes-consec-policy:1.6.0
+tenable/tes-consec-policy:1.6.3
 tenable/tes-deployment-assessment:1.0.45
 tenable/securitycenter-install:6.6.3
 tenable/securitycenter-runtime:6.6.3
