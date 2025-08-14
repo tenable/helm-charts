@@ -1,0 +1,13 @@
+{{- if not (lookup "scheduling.k8s.io/v1" "PriorityClass" "" "high-priority") }}
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: high-priority
+  annotations:
+    "meta.helm.sh/release-name": "shared"
+    "meta.helm.sh/release-namespace": "shared"
+    "helm.sh/resource-policy": keep
+value: 100000
+globalDefault: false
+description: "Priority class for Scan and TVDL services to reduce eviction"
+{{- end }}
