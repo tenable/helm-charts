@@ -13,7 +13,7 @@ spec:
     metadata:
       annotations:
         rollme: {{ randAlphaNum 5 | quote }}
-        {{- if .Capabilities.APIVersions.Has "security.openshift.io/v1/SecurityContextConstraints" }}
+        {{- if .Capabilities.APIVersions.Has "security.openshift.io/v1/SecurityContextConstraints" -}}
         openshift.io/required-scc: {{ .Release.Name }}-{{ .Release.Namespace }}-scc
         {{- end }}
       {{- with .Values.operator.podAnnotations }}
