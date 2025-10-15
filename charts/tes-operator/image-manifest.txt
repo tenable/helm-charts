@@ -1,14 +1,14 @@
 # These are the images pulled in to Tenable Enclave Security. If you are operating in an airgapped environment or
 # plan to use your own internal docker registry, you will need these images
 
-tenable/tes-operator:1.6.0
+tenable/tes-operator:1.6.1
 tenable/tes-consec-api:1.6.7
 tenable/tes-consec-ui:1.6.3
 tenable/tes-consec-scan:1.6.0
 tenable/tes-consec-tvdl:1.6.0
 tenable/tes-consec-policy:1.6.3
 tenable/tes-deployment-assessment:1.0.45
-tenable/securitycenter-install:6.6.3
-tenable/securitycenter-runtime:6.6.3
+tenable/securitycenter-install:6.6.4
+tenable/securitycenter-runtime:6.6.4
 tenable/tes-log-scraper:1.1.2
 postgres:16
