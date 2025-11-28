@@ -70,6 +70,7 @@ tes:
   blades:
     securitycenter:
     container-security:
+    tes-platform:
     global:
       # scopeCluster: true for backwards compatibility with existing deployments
       scopeCluster: true

@@ -1,18 +1,20 @@
-{{ if .Values.tes.blades.global.scopeCluster }}
+{{- if or .Values.tes.blades.global.scopeCluster (.Capabilities.APIVersions.Has "security.openshift.io/v1/SecurityContextConstraints") }}
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: {{ .Release.Name }}-{{ .Release.Namespace }}-read-cluster-id-role
 rules:
+{{- if .Values.tes.blades.global.scopeCluster }}
 - apiGroups: [""]
   resources: ["namespaces"]
   verbs: ["get"]
 - apiGroups: ["rbac.authorization.k8s.io"]
   resources: ["clusterroles", "clusterrolebindings"]
   verbs: ["get", "create", "patch"]
+{{- end }}
 {{- if .Capabilities.APIVersions.Has "security.openshift.io/v1/SecurityContextConstraints" }}
 - apiGroups: ["security.openshift.io"]
   resources: ["securitycontextconstraints"]
   verbs: ["create", "get", "delete", "patch"]
-{{ end }}
-{{ end }}
+{{- end }}
+{{- end }}

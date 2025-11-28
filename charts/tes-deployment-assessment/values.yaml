@@ -96,3 +96,13 @@ podAnnotations:
 nodeSelector: {}
 
 tolerations: []
+
+clientCerts:
+  tes:
+    cert: ""
+    key: ""
+  registry:
+    cert: ""
+    key: ""
+    caCert: ""
+  mountPath: /app/certs
