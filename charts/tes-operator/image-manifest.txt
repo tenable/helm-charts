@@ -8,8 +8,8 @@ tenable/tes-consec-scan:1.7.15
 tenable/tes-consec-tvdl:1.7.16
 tenable/tes-consec-policy:1.7.10
 tenable/tes-deployment-assessment:1.1.4
-tenable/securitycenter-install:6.6.4
-tenable/securitycenter-runtime:6.6.4
+tenable/securitycenter-install:6.7.5
+tenable/securitycenter-runtime:6.7.5
 tenable/tes-log-scraper:1.1.3
 tenable/tes-platform-ui:1.0.82
 tenable/tes-exposure-response:1.0.89
