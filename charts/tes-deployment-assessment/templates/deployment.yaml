@@ -49,6 +49,15 @@ spec:
             - key: tes-config.yaml
               path: tes-config.yaml
             name: {{ .Values.name }}-configmap
+      {{- if or
+            (and .Values.clientCerts.tes.cert .Values.clientCerts.tes.key)
+            (and .Values.clientCerts.registry.cert .Values.clientCerts.registry.key)
+            .Values.clientCerts.registry.caCert
+      }}
+        - name: client-certs
+          secret:
+            secretName: {{ .Values.name }}-client-certs
+      {{- end }}
       serviceAccountName: {{ .Values.name }}-service-account
       containers:
         - name: {{ .Values.name }}
@@ -88,6 +97,15 @@ spec:
               subPath: tes-config.yaml
               name: properties
               readOnly: true
+          {{- if or
+                (and .Values.clientCerts.tes.cert .Values.clientCerts.tes.key)
+                (and .Values.clientCerts.registry.cert .Values.clientCerts.registry.key)
+                .Values.clientCerts.registry.caCert
+          }}
+            - mountPath: {{ .Values.clientCerts.mountPath }}
+              name: client-certs
+              readOnly: true
+          {{- end }}
           livenessProbe:
               {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:

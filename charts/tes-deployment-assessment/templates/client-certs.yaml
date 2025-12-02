@@ -1,0 +1,25 @@
+{{- if or
+  (and .Values.clientCerts.tes.cert .Values.clientCerts.tes.key)
+  (and .Values.clientCerts.registry.cert .Values.clientCerts.registry.key)
+  .Values.clientCerts.registry.caCert
+}}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.name }}-client-certs
+  annotations:
+    description: "Auto-generated secret containing client certs and keys for the TES"
+type: Opaque
+data:
+  {{- if and .Values.clientCerts.tes.cert .Values.clientCerts.tes.key }}
+  tes-cert.pem: {{ .Values.clientCerts.tes.cert | b64enc }}
+  tes-key.pem: {{ .Values.clientCerts.tes.key | b64enc }}
+  {{- end }}
+  {{- if and .Values.clientCerts.registry.cert .Values.clientCerts.registry.key }}
+  registry-cert.pem: {{ .Values.clientCerts.registry.cert | b64enc }}
+  registry-key.pem: {{ .Values.clientCerts.registry.key | b64enc }}
+  {{- end }}
+  {{- if .Values.clientCerts.registry.caCert }}
+  registry-cacert.pem: {{ .Values.clientCerts.registry.caCert | b64enc }}
+  {{- end }}
+{{- end }}
