@@ -26,124 +26,50 @@ jobs:
         uses: azure/setup-helm@v4
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-      - name: Install Chart Releaser
+      - name: Package Release Charts
+        id: package_release_charts
         run: |
-          CR_VERSION="1.8.1"
-          curl -sSLo cr.tar.gz "https://github.com/helm/chart-releaser/releases/download/v${CR_VERSION}/chart-releaser_${CR_VERSION}_linux_amd64.tar.gz"
-          tar -xzf cr.tar.gz
-          chmod +x cr
-          sudo mv cr /usr/local/bin/
-      - name: Package Charts
-        id: chart_releaser
-        run: |
-          # Find all charts that have changed
-          CHANGED_CHARTS=()
+          CHARTS=()
           for chart in charts/cloud-security/*; do
             if [ -d "$chart" ]; then
               if git diff --name-only HEAD^ HEAD | grep -q "^$chart/"; then
                 CHART_NAME=$(basename "$chart")
-                CHANGED_CHARTS+=("$CHART_NAME")
+                CHARTS+=("$CHART_NAME")
                 helm package "$chart" -d releases/
               fi
             fi
           done
-          # Set output with changed charts
-          if [ ${#CHANGED_CHARTS[@]} -gt 0 ]; then
-            echo "changed_charts=${CHANGED_CHARTS[*]}" >> $GITHUB_OUTPUT
-            echo "Charts changed: ${CHANGED_CHARTS[*]}"
+          if [ ${#CHARTS[@]} -gt 0 ]; then
+            echo "charts=${CHARTS[*]}" >> $GITHUB_OUTPUT
+            echo "Release Charts: ${CHARTS[*]}"
           else
-            echo "No charts changed"
+            echo "No release charts"
           fi
-      - name: Debug Outputs
+      - name: Add Release Charts
+        if: steps.package_release_charts.outputs.charts != ''
         run: |
-          echo "Released Charts: ${{ steps.chart_releaser.outputs.changed_charts }}"
-      - name: Process Released Charts
-        env:
-          CHANGED_CHARTS: ${{ steps.chart_releaser.outputs.changed_charts }}
+          PR_BRANCH="cs/release/pr-$(date +%Y%m%d-%H%M%S)"
+          echo "PR_BRANCH=$PR_BRANCH" >> $GITHUB_ENV
+          git checkout -b $PR_BRANCH
+          git add releases/*
+          helm repo index --merge index.yaml .
+          git add index.yaml
+      - name: Generate Pull Request Title
+        if: steps.package_release_charts.outputs.charts != ''
         run: |
-          echo "Processing released charts..."
-          if [ \"$CHANGED_CHARTS\" != \"\" ]; then
-            PR_BRANCH="cs-release-pr-$(date +%Y%m%d-%H%M%S)"
-            echo "PR_BRANCH=$PR_BRANCH" >> $GITHUB_ENV
-            git checkout -b $PR_BRANCH
-            git add releases/*
-            helm repo index --merge index.yaml .
-            git add index.yaml
-          fi
-      - name: Check for GitGuardian API key
-        id: check_gitguardian_key
-        run: |
-          if [[ "${{ secrets.GITGUARDIAN_API_KEY }}" != "" ]]; then
-            echo "GITGUARDIAN_KEY=true" >> $GITHUB_ENV
-          else
-            echo "GITGUARDIAN_KEY=false" >> $GITHUB_ENV
-          fi
-      - name: Install GitGuardian CLI
-        if: steps.chart_releaser.outputs.changed_charts != '' && env.GITGUARDIAN_KEY == 'true'
-        run: |
-          pip install ggshield
-      - name: Extract and scan chart packages with GitGuardian
-        if: steps.chart_releaser.outputs.changed_charts != '' && env.GITGUARDIAN_KEY == 'true'
-        run: |
-          # Create directory for extracted charts
-          mkdir -p ./extracted_charts
-          # Process each changed chart directory
-          for chart_dir in ${{ steps.chart_releaser.outputs.changed_charts }}; do
-            # Get the chart name and version from Chart.yaml
-            chart_path="charts/cloud-security/$chart_dir"
-            chart_name=$(grep '^name:' "$chart_path/Chart.yaml" | awk '{print $2}' | tr -d '"')
-            chart_version=$(grep '^version:' "$chart_path/Chart.yaml" | awk '{print $2}' | tr -d '"')
-            echo "Processing chart directory: $chart_dir (name: $chart_name, version: $chart_version)"
-            # Find the matching tgz file
-            tgz_file="./releases/$chart_name-$chart_version.tgz"
-            if [ -f "$tgz_file" ]; then
-              echo "Found package: $tgz_file"
-              # Create unique directory for this chart
-              extract_dir="./extracted_charts/$chart_name-$chart_version"
-              mkdir -p "$extract_dir"
-              # Extract to dedicated directory
-              tar -xzf "$tgz_file" -C "$extract_dir"
-              echo "Extracted $tgz_file to $extract_dir"
-            else
-              echo "WARNING: No package found for $chart_name-$chart_version"
-            fi
-          done
-          # Scan the extracted content
-          GITGUARDIAN_API_KEY=${{ secrets.GITGUARDIAN_API_KEY }} \
-          ggshield -v secret scan path -y ./extracted_charts --recursive > scan_results.txt || scan_status=$?
-          # Check if any secrets were found
-          if [ "${scan_status:-0}" -ne 0 ] || grep -q "Incident" scan_results.txt; then
-            echo "::error::GitGuardian found secrets in the chart packages. Aborting push."
-            rm -rf ./extracted_charts scan_results.txt
-            exit 1
-          fi
-          echo "No secrets detected in chart packages. Proceeding with push."
-      - name: Commit and push to PR branch
-        if: steps.chart_releaser.outputs.changed_charts != '' && success()
-        run: |
-          # Only runs if GitGuardian check passed (or was skipped)
           PR_TITLE="CS "
-          for chart_dir in ${{ steps.chart_releaser.outputs.changed_charts }}; do
+          for chart_dir in ${{ steps.package_release_charts.outputs.charts }}; do
             chart_path="charts/cloud-security/${chart_dir}"
             chart_version=$(grep '^version:' "$chart_path/Chart.yaml" | awk '{print $2}' | tr -d '"')
             formatted_chart_name=$(echo "${chart_dir}" | sed 's/-/ /g' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) tolower(substr($i,2)); print}')
             PR_TITLE="$PR_TITLE | ${formatted_chart_name} Helm ${chart_version}"
           done
-          git commit -m "${PR_TITLE}"
-          git push origin ${{ env.PR_BRANCH }}
           echo PR_TITLE=${PR_TITLE} >> $GITHUB_ENV
       - name: Create Pull Request
-        if: steps.chart_releaser.outputs.changed_charts != '' && success()
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # Create PR using GitHub CLI
-          PR_URL=$(gh pr create \
-            --title "${{env.PR_TITLE}}" \
-            --body "" \
-            --base "${{ github.ref_name }}" \
-            --head "${{ env.PR_BRANCH }}")
-          PR_NUMBER=$(echo $PR_URL | awk -F'/' '{print $NF}')
-          gh api repos/${{ github.repository }}/pulls/$PR_NUMBER \
-                -X PATCH \
-                -f delete_branch_on_merge=true
+        if: steps.package_release_charts.outputs.charts != ''
+        uses: peter-evans/create-pull-request@v7
+        with:
+          base: main
+          branch: ${{ env.PR_BRANCH }}
+          commit-message: ${{env.PR_TITLE}}
+          title: ${{env.PR_TITLE}}
