@@ -39,15 +39,10 @@ jobs:
               fi
             fi
           done
-          if [ ${#CHARTS[@]} -gt 0 ]; then
-            helm repo index --merge index.yaml .
-            echo "charts=${CHARTS[*]}" >> $GITHUB_OUTPUT
-            echo "Release Charts: ${CHARTS[*]}"
-          else
-            echo "No release charts"
-          fi
+          helm repo index --merge index.yaml .
+          echo "charts=${CHARTS[*]}" >> $GITHUB_OUTPUT
+          echo "Release Charts: ${CHARTS[*]}"
       - name: Generate Pull Request Title
-        if: steps.package_release_charts.outputs.charts != ''
         run: |
           PR_TITLE="CS "
           for chart_dir in ${{ steps.package_release_charts.outputs.charts }}; do
@@ -59,7 +54,6 @@ jobs:
           echo PR_TITLE=${PR_TITLE} >> $GITHUB_ENV
           echo PR_BRANCH="cs/release/pr-$(date +%Y%m%d-%H%M%S)" >> $GITHUB_ENV
       - name: Create Pull Request
-        if: steps.package_release_charts.outputs.charts != ''
         uses: peter-evans/create-pull-request@v7
         with:
           base: main
