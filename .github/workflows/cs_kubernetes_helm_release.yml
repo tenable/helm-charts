@@ -57,11 +57,12 @@ jobs:
             PR_TITLE="$PR_TITLE | ${formatted_chart_name} Helm ${chart_version}"
           done
           echo PR_TITLE=${PR_TITLE} >> $GITHUB_ENV
+          echo PR_BRANCH="cs/release/pr-$(date +%Y%m%d-%H%M%S)" >> $GITHUB_ENV
       - name: Create Pull Request
         if: steps.package_release_charts.outputs.charts != ''
         uses: peter-evans/create-pull-request@v7
         with:
           base: main
-          branch: cs/release/pr-$(date +%Y%m%d-%H%M%S)
+          branch: ${{env.PR_BRANCH}}
           commit-message: ${{env.PR_TITLE}}
           title: ${{env.PR_TITLE}}
