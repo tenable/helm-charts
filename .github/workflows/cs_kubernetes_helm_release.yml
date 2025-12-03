@@ -3,12 +3,12 @@ name: Release Charts
 on:
   push:
     branches:
-      - cs/test-releases
+      - main
     paths:
       - 'charts/cloud-security/*/Chart.yaml'
 
 jobs:
-  release:
+  release-charts:
     permissions:
       contents: write
       pull-requests: write
