@@ -1,0 +1,62 @@
+name: Release Charts
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'charts/cloud-security/*/Chart.yaml'
+
+jobs:
+  release-charts:
+    permissions:
+      contents: write
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      - name: Package Release Charts
+        id: package_release_charts
+        run: |
+          CHARTS=()
+          for chart in charts/cloud-security/*; do
+            if [ -d "$chart" ]; then
+              if git diff --name-only HEAD^ HEAD | grep -q "^$chart/"; then
+                CHART_NAME=$(basename "$chart")
+                CHARTS+=("$CHART_NAME")
+                helm package "$chart" -d releases/
+              fi
+            fi
+          done
+          helm repo index --merge index.yaml .
+          echo "charts=${CHARTS[*]}" >> $GITHUB_OUTPUT
+          echo "Release Charts: ${CHARTS[*]}"
+      - name: Generate Pull Request Title
+        run: |
+          PR_TITLE="CS "
+          for chart_dir in ${{ steps.package_release_charts.outputs.charts }}; do
+            chart_path="charts/cloud-security/${chart_dir}"
+            chart_version=$(grep '^version:' "$chart_path/Chart.yaml" | awk '{print $2}' | tr -d '"')
+            formatted_chart_name=$(echo "${chart_dir}" | sed 's/-/ /g' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) tolower(substr($i,2)); print}')
+            PR_TITLE="$PR_TITLE | ${formatted_chart_name} Helm ${chart_version}"
+          done
+          echo PR_TITLE=${PR_TITLE} >> $GITHUB_ENV
+          echo PR_BRANCH="cs/release/pr-$(date +%Y%m%d-%H%M%S)" >> $GITHUB_ENV
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          base: main
+          branch: ${{env.PR_BRANCH}}
+          commit-message: ${{env.PR_TITLE}}
+          title: ${{env.PR_TITLE}}

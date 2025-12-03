@@ -1,3 +1,6 @@
+apiKeyToken: ""
+apiKeyTokenSecretName: ""
+apiUrl: ""
 containerImagePath: tenable/cloud-security-endpoint-connector
 containerImagePullSecrets: []
 pod:
@@ -6,4 +9,7 @@ pod:
   labels: {}
   resources: {}
   tolerations: []
+proxyUrl: ""
+serviceEndpoint: ""
+serviceId: ""
 resourceNamePrefix: endpoint-connector
