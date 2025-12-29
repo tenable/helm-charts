@@ -56,6 +56,11 @@ spec:
           securityContext:
             privileged: true
             runAsUser: 0
+            seLinuxOptions:
+              user: system_u
+              role: system_r
+              level: "s0"
+              type: spc_t
           volumeMounts:
             - name: {{ include "sensor.resourceNamePrefix" . }}-data
               mountPath: {{ .Values.sensor.dataPath }}
