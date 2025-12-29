@@ -60,7 +60,7 @@ spec:
               user: system_u
               role: system_r
               level: "s0"
-              type: spc_t
+              type: super_t
           volumeMounts:
             - name: {{ include "sensor.resourceNamePrefix" . }}-data
               mountPath: {{ .Values.sensor.dataPath }}
