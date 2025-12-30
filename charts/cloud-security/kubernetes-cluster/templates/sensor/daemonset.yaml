@@ -54,7 +54,20 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           securityContext:
-            privileged: true
+            capabilities:
+              add:
+                - DAC_OVERRIDE
+                - DAC_READ_SEARCH
+                - FOWNER
+                - IPC_LOCK
+                - NET_ADMIN
+                - NET_RAW
+                - SYS_ADMIN
+                - SYS_CHROOT
+                - SYS_PTRACE
+                - SYS_RAWIO
+                - SYS_RESOURCE
+            privileged: false
             runAsUser: 0
             seLinuxOptions:
               user: system_u
