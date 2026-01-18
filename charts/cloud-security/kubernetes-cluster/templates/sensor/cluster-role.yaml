@@ -1,4 +1,4 @@
-{{- if .Values.sensor.enabled }}
+{{- if include "sensor.enabled" . }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -13,6 +13,7 @@ rules:
     resourceNames: ["kube-system"]
     resources: ["namespaces"]
     verbs: ["get"]
+  {{- if .Values.sensor.runtimeDetection }}
   - apiGroups: [ "apps" ]
     resources: [ "replicasets" ]
     verbs: [ "get" ]
@@ -22,4 +23,5 @@ rules:
   - apiGroups: [ "" ]
     resources: [ "pods" ]
     verbs: [ "get" ]
+  {{- end }}
 {{- end }}

@@ -1,4 +1,4 @@
-{{- if .Values.sensor.enabled }}
+{{- if include "sensor.enabled" . }}
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -45,6 +45,8 @@ spec:
           "--proxy-url",
             {{ .Values.proxyUrl | quote }},
           {{- end }}
+          "--runtime-detection={{.Values.sensor.runtimeDetection}}",
+          "--vulnerability-management={{.Values.sensor.vulnerabilityManagement}}",
         ]
           {{- include "containerEnvironmentVariables" . | nindent 10 }}
           image: {{ include "sensor.containerImage" . }}

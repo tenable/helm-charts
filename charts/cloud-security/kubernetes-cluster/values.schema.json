@@ -493,9 +493,6 @@
         "dataPath": {
           "type": "string"
         },
-        "enabled": {
-          "type": "boolean"
-        },
         "pod": {
           "properties": {
             "affinity": {
@@ -561,13 +558,20 @@
             "tolerations"
           ],
           "type": "object"
+        },
+        "runtimeDetection": {
+          "type": "boolean"
+        },
+        "vulnerabilityManagement": {
+          "type": "boolean"
         }
       },
       "required": [
         "containerImage",
         "dataPath",
-        "enabled",
-        "pod"
+        "pod",
+        "runtimeDetection",
+        "vulnerabilityManagement"
       ],
       "type": "object"
     },
