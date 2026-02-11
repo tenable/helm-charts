@@ -15,5 +15,5 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: {{ include "connector.resourceNamePrefix" . }}-service-account
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ include "namespace" . }}
 {{- end }}

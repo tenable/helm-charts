@@ -8,7 +8,7 @@ metadata:
   labels:
     {{- include "labels" . | nindent 4 }}
   name: {{ .Values.resourceNamePrefix }}-post-delete-job
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ include "namespace" . }}
 spec:
   backoffLimit: 0
   template:
@@ -28,17 +28,16 @@ spec:
       {{- end }}
       automountServiceAccountToken: true
       containers:
-        - args: [
-          "release-post-delete",
-          "--api-key-token-file-path",
-            {{ include "apiKeyTokenFilePath" . | quote }},
-          "--api-url",
-            {{ .Values.apiUrl | quote }},
-          {{- if .Values.proxyUrl }}
-          "--proxy-url",
-            {{ .Values.proxyUrl | quote }},
-          {{- end }}
-        ]
+        - args:
+            - release-post-delete
+            - --api-key-token-file-path
+            - {{ include "apiKeyTokenFilePath" . | quote }}
+            - --api-url
+            - {{ .Values.apiUrl | quote }}
+            {{- if .Values.proxyUrl }}
+            - --proxy-url
+            - {{ .Values.proxyUrl | quote }}
+            {{- end }}
           {{- include "containerEnvironmentVariables" . | nindent 10 }}
           image: {{ include "containerImage" . }}
           imagePullPolicy: Always
@@ -55,7 +54,7 @@ spec:
         {{- include "containerImagePullSecretNames" (dict "name" (print .Values.resourceNamePrefix "-post-delete-image-pull-secret") "root" .) | nindent 8 }}
       restartPolicy: Never
       securityContext:
-        {{- include "podSecurityContext" . | nindent 8 }}
+        {{- include "podSecurityContext" (dict "root" . "workloadContext" .Values.hooks.pod.securityContext) | nindent 8 }}
       serviceAccountName: {{ .Values.resourceNamePrefix }}-post-delete-service-account
       {{- with (default .Values.pod.tolerations .Values.hooks.pod.tolerations) }}
       tolerations:

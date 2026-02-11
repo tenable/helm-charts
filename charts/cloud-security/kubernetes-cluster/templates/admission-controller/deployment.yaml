@@ -8,7 +8,7 @@ metadata:
     {{- include "labels" . | nindent 4 }}
     {{- include "admissionController.labels" . | nindent 4 }}
   name: {{ include "admissionController.resourceNamePrefix" . }}-deployment
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ include "namespace" . }}
 spec:
   replicas: {{ .Values.admissionController.replicas }}
   selector:
@@ -39,27 +39,25 @@ spec:
       {{- end }}
       automountServiceAccountToken: true
       containers:
-        - args: [
-            "--api-key-token-file-path",
-            {{ include "apiKeyTokenFilePath" . | quote }},
-            "--api-url",
-            {{ .Values.apiUrl | quote }},
-            "--health-server-port",
-            {{ .Values.admissionController.healthPort | quote }},
-            "--log-level",
-            {{ .Values.admissionController.logLevel | quote }},
-            "{{ .Values.admissionController.logLevel }}",
+        - args:
+            - --api-key-token-file-path
+            - {{ include "apiKeyTokenFilePath" . | quote }}
+            - --api-url
+            - {{ .Values.apiUrl | quote }}
+            - --health-server-port
+            - {{ .Values.admissionController.healthPort | quote }}
+            - --log-level
+            - {{ .Values.admissionController.logLevel | quote }}
             {{- if .Values.proxyUrl }}
-            "--proxy-url",
-            {{ .Values.proxyUrl | quote }},
+            - --proxy-url
+            - {{ .Values.proxyUrl | quote }}
             {{- end }}
-            "--validating-admission-configuration-name",
-            {{ include "admissionController.resourceNamePrefix" . }}-vwc,
-            "--webhook-server-certificates-directory-path",
-            "/var/run/secrets/certificates",
-            "--webhook-server-port",
-            {{ .Values.admissionController.webhook.port | quote }}
-          ]
+            - --validating-admission-configuration-name
+            - {{ include "admissionController.resourceNamePrefix" . }}-vwc
+            - --webhook-server-certificates-directory-path
+            - /var/run/secrets/certificates
+            - --webhook-server-port
+            - {{ .Values.admissionController.webhook.port | quote }}
           {{- include "containerEnvironmentVariables" . | nindent 10 }}
           image: {{ include "admissionController.containerImage" . }}
           imagePullPolicy: Always
@@ -103,7 +101,7 @@ spec:
       imagePullSecrets:
         {{- include "containerImagePullSecretNames" (dict "root" .) | nindent 8 }}
       securityContext:
-        {{- include "podSecurityContext" . | nindent 8 }}
+        {{- include "podSecurityContext" (dict "root" . "workloadContext" .Values.admissionController.pod.securityContext) | nindent 8 }}
       serviceAccountName: {{ include "admissionController.resourceNamePrefix" . }}-service-account
       terminationGracePeriodSeconds: 60
       {{- with (default .Values.pod.tolerations .Values.admissionController.pod.tolerations) }}

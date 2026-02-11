@@ -10,7 +10,7 @@ metadata:
     {{- include "labels" . | nindent 4 }}
     {{- include "admissionController.labels" . | nindent 4 }}
   name: {{ include "admissionController.certificateSecretName" . }}
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ include "namespace" . }}
 data:
   tls.crt: {{ $tls.serverCertificateBase64 }}
   tls.key: {{ $tls.serverCertificateKeyBase64 }}
@@ -35,7 +35,7 @@ webhooks:
     caBundle: {{ $tls.serverCaCertificateBase64 }}
     service:
       name: {{ include "admissionController.resourceNamePrefix" . }}-service
-      namespace: {{ .Release.Namespace }}
+      namespace: {{ include "namespace" . }}
       path: /v1/admit
       port: 443
   failurePolicy: {{ .Values.admissionController.webhook.failurePolicy }}
@@ -46,7 +46,7 @@ webhooks:
     - key: kubernetes.io/metadata.name
       operator: NotIn
       values:
-      - {{ .Release.Namespace }}
+      - {{ include "namespace" . }}
   sideEffects: None
   timeoutSeconds: {{ .Values.admissionController.webhook.timeoutSeconds }}
 {{- end }}

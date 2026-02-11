@@ -17,8 +17,8 @@ seccompProfiles:
 seLinuxContext:
   type: RunAsAny
 users:
-  - system:serviceaccount:{{ .Release.Namespace }}:{{ .Values.resourceNamePrefix }}-post-delete-service-account
-  - system:serviceaccount:{{ .Release.Namespace }}:{{ .Values.resourceNamePrefix }}-pre-install-service-account
+  - system:serviceaccount:{{ include "namespace" . }}:{{ .Values.resourceNamePrefix }}-post-delete-service-account
+  - system:serviceaccount:{{ include "namespace" . }}:{{ .Values.resourceNamePrefix }}-pre-install-service-account
 volumes:
   - csi
   - emptyDir

@@ -64,12 +64,8 @@
             "containers": {
               "properties": {
                 "securityContext": {
-                  "properties": {
-                    "runAsUser": {
-                      "type": "integer"
-                    }
-                  },
-                  "type": "object"
+                  "type": "object",
+                  "additionalProperties": true
                 }
               },
               "required": [
@@ -85,6 +81,10 @@
               "properties": {},
               "type": "object"
             },
+            "securityContext": {
+              "type": "object",
+              "additionalProperties": true
+            },
             "tolerations": {
               "type": "array"
             }
@@ -95,6 +95,7 @@
             "containers",
             "labels",
             "resources",
+            "securityContext",
             "tolerations"
           ],
           "type": "object"
@@ -194,12 +195,8 @@
             "containers": {
               "properties": {
                 "securityContext": {
-                  "properties": {
-                    "runAsUser": {
-                      "type": "integer"
-                    }
-                  },
-                  "type": "object"
+                  "type": "object",
+                  "additionalProperties": true
                 }
               },
               "required": [
@@ -215,6 +212,10 @@
               "properties": {},
               "type": "object"
             },
+            "securityContext": {
+              "type": "object",
+              "additionalProperties": true
+            },
             "tolerations": {
               "type": "array"
             }
@@ -225,6 +226,7 @@
             "containers",
             "labels",
             "resources",
+            "securityContext",
             "tolerations"
           ],
           "type": "object"
@@ -314,12 +316,6 @@
       ],
       "type": "object"
     },
-    "name": {
-      "type": [
-        "null",
-        "string"
-      ]
-    },
     "hooks": {
       "properties": {
         "pod": {
@@ -335,12 +331,8 @@
             "containers": {
               "properties": {
                 "securityContext": {
-                  "properties": {
-                    "runAsUser": {
-                      "type": "integer"
-                    }
-                  },
-                  "type": "object"
+                  "type": "object",
+                  "additionalProperties": true
                 }
               },
               "required": [
@@ -356,6 +348,10 @@
               "properties": {},
               "type": "object"
             },
+            "securityContext": {
+              "type": "object",
+              "additionalProperties": true
+            },
             "tolerations": {
               "type": "array"
             }
@@ -366,6 +362,7 @@
             "containers",
             "labels",
             "resources",
+            "securityContext",
             "tolerations"
           ],
           "type": "object"
@@ -375,6 +372,18 @@
         "pod"
       ],
       "type": "object"
+    },
+    "name": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "namespaceOverride": {
+      "type": [
+        "null",
+        "string"
+      ]
     },
     "pod": {
       "properties": {
@@ -389,15 +398,13 @@
         "containers": {
           "properties": {
             "securityContext": {
+              "type": "object",
+              "additionalProperties": true,
               "properties": {
                 "runAsUser": {
                   "type": "integer"
                 }
-              },
-              "required": [
-                "runAsUser"
-              ],
-              "type": "object"
+              }
             }
           },
           "required": [
@@ -448,6 +455,10 @@
           ],
           "type": "object"
         },
+        "securityContext": {
+          "type": "object",
+          "additionalProperties": true
+        },
         "tolerations": {
           "type": "array"
         }
@@ -458,6 +469,7 @@
         "containers",
         "labels",
         "resources",
+        "securityContext",
         "tolerations"
       ],
       "type": "object"
@@ -506,6 +518,18 @@
               "properties": {},
               "type": "object"
             },
+            "containers": {
+              "properties": {
+                "securityContext": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "required": [
+                "securityContext"
+              ],
+              "type": "object"
+            },
             "labels": {
               "properties": {},
               "type": "object"
@@ -549,6 +573,10 @@
               ],
               "type": "object"
             },
+            "securityContext": {
+              "type": "object",
+              "additionalProperties": true
+            },
             "tolerations": {
               "type": "array"
             }
@@ -556,8 +584,10 @@
           "required": [
             "affinity",
             "annotations",
+            "containers",
             "labels",
             "resources",
+            "securityContext",
             "tolerations"
           ],
           "type": "object"
@@ -586,12 +616,8 @@
             "containers": {
               "properties": {
                 "securityContext": {
-                  "properties": {
-                    "runAsUser": {
-                      "type": "integer"
-                    }
-                  },
-                  "type": "object"
+                  "type": "object",
+                  "additionalProperties": true
                 }
               },
               "required": [
@@ -607,6 +633,10 @@
               "properties": {},
               "type": "object"
             },
+            "securityContext": {
+              "type": "object",
+              "additionalProperties": true
+            },
             "tolerations": {
               "type": "array"
             }
@@ -617,6 +647,7 @@
             "containers",
             "labels",
             "resources",
+            "securityContext",
             "tolerations"
           ],
           "type": "object"

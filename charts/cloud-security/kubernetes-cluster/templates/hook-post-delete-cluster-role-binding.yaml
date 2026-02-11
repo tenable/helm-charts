@@ -16,4 +16,4 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: {{ .Values.resourceNamePrefix }}-post-delete-service-account
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ include "namespace" . }}
