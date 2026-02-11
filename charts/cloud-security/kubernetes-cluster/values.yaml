@@ -87,6 +87,7 @@ pod:
 proxyUrl: null
 resourceNamePrefix: kubernetes-cluster
 sensor:
+  priorityClassName: ""
   containerImage:
     repository: cloud-security/kubernetes-cluster-sensor
     tag: null
