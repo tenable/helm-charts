@@ -22,6 +22,7 @@ admissionController:
       requests:
         cpu: "100m"
         memory: "256Mi"
+    securityContext: {}
     tolerations: []
   replicas: 3
   strategy:
@@ -46,6 +47,7 @@ connector:
       securityContext: {}
     labels: {}
     resources: {}
+    securityContext: {}
     tolerations: []
 containerEnvironmentVariables: []
 containerImage:
@@ -67,8 +69,10 @@ hooks:
       securityContext: {}
     labels: {}
     resources: {}
+    securityContext: {}
     tolerations: []
 name: null
+namespaceOverride: null
 pod:
   affinity: {}
   annotations: {}
@@ -83,6 +87,7 @@ pod:
     requests:
       cpu: "100m"
       memory: "512Mi"
+  securityContext: {}
   tolerations: []
 proxyUrl: null
 resourceNamePrefix: kubernetes-cluster
@@ -95,6 +100,8 @@ sensor:
   pod:
     affinity: {}
     annotations: {}
+    containers:
+      securityContext: {}
     labels: {}
     resources:
       limits:
@@ -103,6 +110,7 @@ sensor:
       requests:
         cpu: "300m"
         memory: "256Mi"
+    securityContext: {}
     tolerations: []
 updater:
   pod:
@@ -112,4 +120,5 @@ updater:
       securityContext: {}
     labels: {}
     resources: {}
+    securityContext: {}
     tolerations: []

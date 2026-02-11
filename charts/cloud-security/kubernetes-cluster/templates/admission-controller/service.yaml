@@ -8,7 +8,7 @@ metadata:
     {{- include "labels" . | nindent 4 }}
     {{- include "admissionController.labels" . | nindent 4 }}
   name: {{ include "admissionController.resourceNamePrefix" . }}-service
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ include "namespace" . }}
 spec:
   ports:
   - name: {{ include "admissionController.resourceNamePrefix" . }}-port
