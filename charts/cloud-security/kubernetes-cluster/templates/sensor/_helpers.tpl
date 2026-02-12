@@ -3,7 +3,7 @@
 {{- end }}
 
 {{ define "sensor.enabled" -}}
-{{ if or .Values.sensor.runtimeDetection .Values.sensor.vulnerabilityManagement -}}true{{ end -}}
+{{ if or .Values.sensor.enabled .Values.sensor.runtimeDetection .Values.sensor.vulnerabilityManagement -}}true{{ end -}}
 {{- end }}
 
 {{- define "sensor.globalResourceName" -}}
