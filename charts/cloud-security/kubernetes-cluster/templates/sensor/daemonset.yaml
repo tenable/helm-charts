@@ -63,6 +63,7 @@ spec:
             {{- end }}
             capabilities:
               add:
+                - CAP_PERFMON
                 - DAC_OVERRIDE
                 - DAC_READ_SEARCH
                 - FOWNER
