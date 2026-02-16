@@ -45,8 +45,12 @@ spec:
           "--proxy-url",
             {{ .Values.proxyUrl | quote }},
           {{- end }}
-          "--runtime-detection={{.Values.sensor.runtimeDetection}}",
-          "--vulnerability-management={{ or .Values.sensor.enabled .Values.sensor.vulnerabilityManagement }}",
+          {{- if .Values.sensor.runtimeDetection }}
+          "--runtime-detection",
+          {{- end }}
+          {{- if and (not .Values.sensor.vulnerabilityManagement) (not .Values.sensor.enabled) }}
+          "--vulnerability-management=false",
+          {{- end }}
         ]
           {{- include "containerEnvironmentVariables" . | nindent 10 }}
           image: {{ include "sensor.containerImage" . }}
