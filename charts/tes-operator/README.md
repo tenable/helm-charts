@@ -31,6 +31,11 @@ This chart bootstraps a Tenable Enclave Security deployment on a Kubernetes clus
   - [Change Service Type](#change-service-type)
   - [Configure Routable URL](#configure-routable-url)
   - [External DNS Annotation](#external-dns-annotation)
+  - [Reporting job annotations and tolerations](#reporting-job-annotations-and-tolerations)
+  - [Reporting job concurrency limit](#reporting-job-concurrency-limit)
+  - [Reporting job rate limit](#reporting-job-rate-limit)
+  - [Reporting job lifetime](#reporting-job-lifetime)
+  - [Job manager POD log level](#job-manager-pod-log-level)
 - [Global TES Settings](#global-tes-settings)
 - [Important Notes](#important-notes)
 - [Additional Resources](#additional-resources)
@@ -95,6 +100,18 @@ tes:
         limits:
           cpu: 4000m
           memory: 8Gi
+      sc-job-manager:
+        job:
+          resources:
+            report:
+              limit:
+                cpu: 2000m
+                memory: 2Gi
+              request:
+                cpu: 2000m
+                memory: 2Gi
+              fop:
+                memory: 1G
     container-security:
       tes-consec-ui:
         resources:
@@ -275,6 +292,84 @@ When applied to the `tenable-enclave-security` namespace, this results in:
 
 ```yaml
 external-dns.alpha.kubernetes.io/hostname: tenable-enclave-security.tenable.com
+```
+
+### Reporting job annotations and tolerations
+
+You can add custom annotations and tolerations to the reporting job with the following options.
+
+```yaml
+tes:
+  blades:
+    securitycenter:
+      sc-job-manager:
+        job:
+          report:
+            podSpec:
+              annotations:
+                key: value
+              tolerations:
+                - key: "key"
+                  operator: "Equal"
+                  value: "value"
+                  effect: "NoSchedule"
+                - key: "key"
+                  operator: "Exists"
+                  effect: "NoSchedule"
+```
+
+### Reporting job concurrency limit
+
+You can set a concurrency limit for report jobs to limit the number of reports that can run in parallel. By default, it is 4.
+It is recommended to set this value based on the resources allocated for the report job and the overall cluster capacity to avoid resource contention and ensure optimal performance.
+
+```yaml
+tes:
+  blades:
+    securitycenter:
+      sc-job-manager:
+        job:
+          limit: "4" # number of reports that can run in parallel
+```
+
+### Reporting job rate limit
+
+You can set a rate limit for the job-manager to specify how often the system should look for new report jobs requests to launch. By default, it is 10 seconds.
+
+```yaml
+tes:
+  blades:
+    securitycenter:
+      sc-job-manager:
+        job:
+          rateLimit: "10" # in seconds # frequency to look for new report jobs to launch
+```
+
+### Reporting job lifetime
+
+You can set a lifetime for report jobs to specify the maximum amount of time a report job can run before it is terminated. By default, it is 7 days.
+
+```yaml
+tes:
+  blades:
+    securitycenter:
+      sc-job-manager:
+        job:
+          lifeTime: # in days # max days a report job can run
+            reports: "7"
+```
+
+### Job manager POD log level
+
+You can set the log level for the job manager POD to control the verbosity of logs. By default, it is set to "warn". Allowed values are: debug, info, warn, error, fatal.
+
+```yaml
+tes:
+  blades:
+    securitycenter:
+      sc-job-manager:
+        job:
+          debugLevel: "warn" # debug level for job manager logs # allowed values : debug / info / error / fatal
 ```
 
 ## Global TES Settings
