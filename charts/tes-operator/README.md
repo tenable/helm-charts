@@ -33,9 +33,9 @@ This chart bootstraps a Tenable Enclave Security deployment on a Kubernetes clus
   - [External DNS Annotation](#external-dns-annotation)
   - [Reporting job annotations and tolerations](#reporting-job-annotations-and-tolerations)
   - [Reporting job concurrency limit](#reporting-job-concurrency-limit)
-  - [Reporting job rate limit](#reporting-job-rate-limit)
   - [Reporting job lifetime](#reporting-job-lifetime)
   - [Job manager POD log level](#job-manager-pod-log-level)
+  - [Pod Annotations](#pod-annotations)
 - [Global TES Settings](#global-tes-settings)
 - [Important Notes](#important-notes)
 - [Additional Resources](#additional-resources)
@@ -297,6 +297,7 @@ external-dns.alpha.kubernetes.io/hostname: tenable-enclave-security.tenable.com
 ### Reporting job annotations and tolerations
 
 You can add custom annotations and tolerations to the reporting job with the following options.
+This can help premature eviction when the reporting jobs are running.
 
 ```yaml
 tes:
@@ -332,19 +333,6 @@ tes:
           limit: "4" # number of reports that can run in parallel
 ```
 
-### Reporting job rate limit
-
-You can set a rate limit for the job-manager to specify how often the system should look for new report jobs requests to launch. By default, it is 10 seconds.
-
-```yaml
-tes:
-  blades:
-    securitycenter:
-      sc-job-manager:
-        job:
-          rateLimit: "10" # in seconds # frequency to look for new report jobs to launch
-```
-
 ### Reporting job lifetime
 
 You can set a lifetime for report jobs to specify the maximum amount of time a report job can run before it is terminated. By default, it is 7 days.
@@ -370,6 +358,41 @@ tes:
       sc-job-manager:
         job:
           debugLevel: "warn" # debug level for job manager logs # allowed values : debug / info / error / fatal
+```
+
+### Pod Annotations
+
+You can set custom pod annotations for respective pods using the below values. Example to scrape metrics:
+
+```yaml
+tes:
+  blades:
+    securitycenter:
+      podAnnotations:
+        tenable.com/product: "tenable-enclave-security"
+      sc-job-manager:
+        podAnnotations:
+          tenable.com/product: "tenable-enclave-security"
+    container-security:
+      tes-consec-api:
+        podAnnotations:
+          tenable.com/product: "tenable-enclave-security"
+      tes-consec-scan:
+        podAnnotations:
+          tenable.com/product: "tenable-enclave-security"
+      tes-consec-policy:
+        podAnnotations:
+          tenable.com/product: "tenable-enclave-security"
+      tes-consec-tvdl:
+        podAnnotations:
+          tenable.com/product: "tenable-enclave-security"
+    tes-platform:
+      tes-exposure-response:
+        podAnnotations:
+          tenable.com/product: "tenable-enclave-security"
+      tes-platform-ui:
+        podAnnotations:
+          tenable.com/product: "tenable-enclave-security"
 ```
 
 ## Global TES Settings
