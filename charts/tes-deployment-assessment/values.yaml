@@ -2,7 +2,7 @@ name: tes-deployment-assessment
 image:
   registry: tenable
   pullPolicy: IfNotPresent
-  tag: "1.1.4"
+  tag: "1.2.6"
 
 replicaCount: 2
 
