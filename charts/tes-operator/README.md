@@ -35,6 +35,7 @@ This chart bootstraps a Tenable Enclave Security deployment on a Kubernetes clus
   - [Reporting job concurrency limit](#reporting-job-concurrency-limit)
   - [Reporting job lifetime](#reporting-job-lifetime)
   - [Job manager POD log level](#job-manager-pod-log-level)
+  - [Pod Annotations](#pod-annotations)
 - [Global TES Settings](#global-tes-settings)
 - [Important Notes](#important-notes)
 - [Additional Resources](#additional-resources)
