@@ -15,12 +15,12 @@ seLinuxContext:
   type: RunAsAny
 users:
   {{- if .Values.admissionController.enabled }}
-  - system:serviceaccount:{{ .Release.Namespace }}:{{ include "admissionController.resourceNamePrefix" . }}-service-account
+  - system:serviceaccount:{{ include "namespace" . }}:{{ include "admissionController.resourceNamePrefix" . }}-service-account
   {{- end }}
   {{- if .Values.connector.enabled }}
-  - system:serviceaccount:{{ .Release.Namespace }}:{{ include "connector.resourceNamePrefix" . }}-service-account
+  - system:serviceaccount:{{ include "namespace" . }}:{{ include "connector.resourceNamePrefix" . }}-service-account
   {{- end }}
-  - system:serviceaccount:{{ .Release.Namespace }}:{{ include "updater.resourceNamePrefix" . }}-service-account
+  - system:serviceaccount:{{ include "namespace" . }}:{{ include "updater.resourceNamePrefix" . }}-service-account
 volumes:
   - csi
   - emptyDir

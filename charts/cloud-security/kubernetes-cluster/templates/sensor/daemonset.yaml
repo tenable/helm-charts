@@ -8,7 +8,7 @@ metadata:
     {{- include "labels" . | nindent 4 }}
     {{- include "sensor.labels" . | nindent 4 }}
   name: {{ include "sensor.resourceNamePrefix" . }}-daemonset
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ include "namespace" . }}
 spec:
   selector:
     matchLabels:
@@ -32,19 +32,18 @@ spec:
       {{- end }}
       automountServiceAccountToken: true
       containers:
-        - args: [
-          "--api-key-token-file-path",
-              {{ include "apiKeyTokenFilePath" . | quote }},
-          "--api-url",
-            {{ .Values.apiUrl | quote }},
-          "--data-path",
-            {{ .Values.sensor.dataPath | quote }},
-          "--logs",
-          {{- if .Values.proxyUrl }}
-          "--proxy-url",
-            {{ .Values.proxyUrl | quote }},
-          {{- end }}
-        ]
+        - args:
+            - --api-key-token-file-path
+            - {{ include "apiKeyTokenFilePath" . | quote }}
+            - --api-url
+            - {{ .Values.apiUrl | quote }}
+            - --data-path
+            - {{ .Values.sensor.dataPath | quote }}
+            - --logs
+            {{- if .Values.proxyUrl }}
+            - --proxy-url
+            - {{ .Values.proxyUrl | quote }}
+            {{- end }}
           {{- include "containerEnvironmentVariables" . | nindent 10 }}
           image: {{ include "sensor.containerImage" . }}
           imagePullPolicy: Always
@@ -54,8 +53,7 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           securityContext:
-            privileged: true
-            runAsUser: 0
+            {{- include "sensor.containerSecurityContext" (dict "securityContext" (default .Values.pod.containers.securityContext .Values.sensor.pod.containers.securityContext)) | nindent 12 }}
           volumeMounts:
             - name: {{ include "sensor.resourceNamePrefix" . }}-data
               mountPath: {{ .Values.sensor.dataPath }}
@@ -64,7 +62,7 @@ spec:
       imagePullSecrets:
         {{- include "containerImagePullSecretNames" (dict "root" .) | nindent 8 }}
       securityContext:
-        {{- include "podSecurityContext" . | nindent 8 }}
+        {{- include "podSecurityContext" (dict "root" . "workloadContext" .Values.sensor.pod.securityContext) | nindent 8 }}
       serviceAccountName: {{ include "sensor.resourceNamePrefix" . }}-service-account
       {{- with (default .Values.pod.tolerations .Values.sensor.pod.tolerations) }}
       tolerations:

@@ -7,7 +7,7 @@ metadata:
     {{- include "labels" . | nindent 4 }}
     {{- include "updater.labels" . | nindent 4 }}
   name: {{ include "updater.resourceNamePrefix" . }}-role-binding
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ include "namespace" . }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -15,4 +15,4 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: {{ include "updater.resourceNamePrefix" . }}-service-account
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ include "namespace" . }}

@@ -20,7 +20,7 @@ app.kubernetes.io/component: admission-controller
 
 {{- define "admissionController.tls" -}}
 {{ $serverCaCertificate := genCA (printf "%s-ca" (include "admissionController.resourceNamePrefix" .)) 1095 -}}
-{{ $serverCertificateHostname := (printf "%s-service.%s.svc" (include "admissionController.resourceNamePrefix" .) .Release.Namespace) }}
+{{- $serverCertificateHostname := (printf "%s-service.%s.svc" (include "admissionController.resourceNamePrefix" .) (include "namespace" .)) }}
 {{ $serverCertificate := genSignedCert $serverCertificateHostname nil (list $serverCertificateHostname) 1095 $serverCaCertificate -}}
 serverCaCertificateBase64: {{ $serverCaCertificate.Cert | b64enc }}
 serverCertificateBase64: {{ $serverCertificate.Cert | b64enc }}

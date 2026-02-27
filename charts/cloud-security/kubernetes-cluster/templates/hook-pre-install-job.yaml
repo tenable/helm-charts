@@ -9,7 +9,7 @@ metadata:
   labels:
     {{- include "labels" . | nindent 4 }}
   name: {{ .Values.resourceNamePrefix }}-pre-install-job
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ include "namespace" . }}
 spec:
   backoffLimit: 0
   template:
@@ -28,33 +28,32 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
-        - args: [
-            "release-pre-install",
-            "--api-key-token-file-path",
-              {{ include "apiKeyTokenFilePath" . | quote }},
-            "--api-url",
-              {{ .Values.apiUrl | quote }},
-            "--application-version",
-              {{ .Chart.AppVersion | quote }},
+        - args:
+            - release-pre-install
+            - --api-key-token-file-path
+            - {{ include "apiKeyTokenFilePath" . | quote }}
+            - --api-url
+            - {{ .Values.apiUrl | quote }}
+            - --application-version
+            - {{ .Chart.AppVersion | quote }}
             {{- if .Values.clusterId }}
-            "--cluster-raw-id",
-              {{ .Values.clusterId | quote }},
+            - --cluster-raw-id
+            - {{ .Values.clusterId | quote }}
             {{- end }}
-            "--helm-release-name",
-              {{ print .Release.Namespace ":" .Release.Name | quote }},
-              {{- if .Values.name }}
-            "--name",
-              {{ .Values.name | quote }},
-              {{- end }}
-              {{- if .Values.proxyUrl }}
-            "--proxy-url",
-              {{ .Values.proxyUrl | quote }},
-              {{- end }}
-              {{- if .Values.accountId }}
-            "--tenant-raw-id",
-              {{ .Values.accountId | quote }}
-              {{- end }}
-          ]
+            - --helm-release-name
+            - {{ print .Release.Namespace ":" .Release.Name | quote }}
+            {{- if .Values.name }}
+            - --name
+            - {{ .Values.name | quote }}
+            {{- end }}
+            {{- if .Values.proxyUrl }}
+            - --proxy-url
+            - {{ .Values.proxyUrl | quote }}
+            {{- end }}
+            {{- if .Values.accountId }}
+            - --tenant-raw-id
+            - {{ .Values.accountId | quote }}
+            {{- end }}
           {{- include "containerEnvironmentVariables" . | nindent 10 }}
           image: {{ include "containerImage" . }}
           imagePullPolicy: Always
@@ -71,7 +70,7 @@ spec:
         {{- include "containerImagePullSecretNames" (dict "name" (print .Values.resourceNamePrefix "-pre-install-image-pull-secret") "root" .) | nindent 8 }}
       restartPolicy: Never
       securityContext:
-        {{- include "podSecurityContext" . | nindent 8 }}
+        {{- include "podSecurityContext" (dict "root" . "workloadContext" .Values.hooks.pod.securityContext) | nindent 8 }}
       serviceAccountName: {{ .Values.resourceNamePrefix }}-pre-install-service-account
       {{- with (default .Values.pod.tolerations .Values.hooks.pod.tolerations) }}
       tolerations:

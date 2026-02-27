@@ -15,5 +15,5 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: {{ include "admissionController.resourceNamePrefix" . }}-service-account
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ include "namespace" . }}
 {{- end }}

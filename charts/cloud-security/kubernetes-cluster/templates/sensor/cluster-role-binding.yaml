@@ -15,5 +15,5 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: {{ include "sensor.resourceNamePrefix" . }}-service-account
-    namespace: {{ .Release.Namespace }}
+    namespace: {{ include "namespace" . }}
 {{- end }}
