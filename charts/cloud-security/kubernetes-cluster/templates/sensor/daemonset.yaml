@@ -1,4 +1,4 @@
-{{- if .Values.sensor.enabled }}
+{{- if include "sensor.enabled" . }}
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -16,6 +16,7 @@ spec:
   template:
     metadata:
       annotations:
+        container.apparmor.security.beta.kubernetes.io/{{ include "sensor.resourceNamePrefix" . }}-container: unconfined
         {{- with (default .Values.pod.annotations .Values.sensor.pod.annotations) }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -44,6 +45,12 @@ spec:
           "--proxy-url",
             {{ .Values.proxyUrl | quote }},
           {{- end }}
+          {{- if .Values.sensor.runtimeDetection }}
+          "--runtime-detection",
+          {{- end }}
+          {{- if and (not .Values.sensor.vulnerabilityManagement) (not .Values.sensor.enabled) }}
+          "--vulnerability-management=false",
+          {{- end }}
         ]
           {{- include "containerEnvironmentVariables" . | nindent 10 }}
           image: {{ include "sensor.containerImage" . }}
@@ -54,8 +61,33 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           securityContext:
-            privileged: true
             runAsUser: 0
+            privileged: {{ not .Values.sensor.runtimeDetection }}
+            {{- if .Values.sensor.runtimeDetection }}
+            {{- if semverCompare ">=1.30" .Capabilities.KubeVersion.Version }}
+            appArmorProfile:
+              type: Unconfined
+            {{- end }}
+            capabilities:
+              add:
+                - DAC_OVERRIDE
+                - DAC_READ_SEARCH
+                - FOWNER
+                - IPC_LOCK
+                - NET_ADMIN
+                - NET_RAW
+                - PERFMON
+                - SYS_ADMIN
+                - SYS_CHROOT
+                - SYS_PTRACE
+                - SYS_RAWIO
+                - SYS_RESOURCE
+            seLinuxOptions:
+              user: system_u
+              role: system_r
+              level: "s0"
+              type: super_t
+            {{- end }}
           volumeMounts:
             - name: {{ include "sensor.resourceNamePrefix" . }}-data
               mountPath: {{ .Values.sensor.dataPath }}

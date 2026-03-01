@@ -1,4 +1,4 @@
-{{- if and .Values.sensor.enabled (.Capabilities.APIVersions.Has "security.openshift.io/v1/SecurityContextConstraints") }}
+{{- if and (include "sensor.enabled" .) (.Capabilities.APIVersions.Has "security.openshift.io/v1/SecurityContextConstraints") }}
 apiVersion: security.openshift.io/v1
 kind: SecurityContextConstraints
 metadata:
