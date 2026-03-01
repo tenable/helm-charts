@@ -61,6 +61,9 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           securityContext:
+            runAsUser: 0
+            privileged: {{ not .Values.sensor.runtimeDetection }}
+            {{- if .Values.sensor.runtimeDetection }}
             {{- if semverCompare ">=1.30" .Capabilities.KubeVersion.Version }}
             appArmorProfile:
               type: Unconfined
@@ -79,13 +82,12 @@ spec:
                 - SYS_PTRACE
                 - SYS_RAWIO
                 - SYS_RESOURCE
-            privileged: false
-            runAsUser: 0
             seLinuxOptions:
               user: system_u
               role: system_r
               level: "s0"
               type: super_t
+            {{- end }}
           volumeMounts:
             - name: {{ include "sensor.resourceNamePrefix" . }}-data
               mountPath: {{ .Values.sensor.dataPath }}
