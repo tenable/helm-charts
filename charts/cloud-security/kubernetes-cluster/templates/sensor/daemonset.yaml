@@ -70,13 +70,13 @@ spec:
             {{- end }}
             capabilities:
               add:
-                - CAP_PERFMON
                 - DAC_OVERRIDE
                 - DAC_READ_SEARCH
                 - FOWNER
                 - IPC_LOCK
                 - NET_ADMIN
                 - NET_RAW
+                - PERFMON
                 - SYS_ADMIN
                 - SYS_CHROOT
                 - SYS_PTRACE
