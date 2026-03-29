@@ -20,7 +20,7 @@ metadata:
   labels:
     {{- include "labels" .root | nindent 4 }}
   name: {{ .name }}
-  namespace: {{ .root.Release.Namespace }}
+  namespace: {{ include "namespace" .root }}
 stringData:
   API_KEY_TOKEN: {{ .root.Values.apiKeyToken }}
 type: Opaque
@@ -37,7 +37,7 @@ env:
 {{- toYaml . | nindent 2 }}
 {{- end }}
   - name: SIL_LogFormat
-    value: Text 
+    value: Text
 {{- end }}
 
 {{- define "containerImage" -}}
@@ -45,7 +45,7 @@ env:
 {{- end }}
 
 {{- define "containerImagePullSecret" -}}
-{{- if and (not .root.Values.containerImage.pullSecrets) .root.Values.containerImage.registryUsername .root.Values.containerImage.registryPassword }}
+{{- if and (not .root.Values.containerImage.pullSecrets) .root.Values.containerImage.registryUsername .root.Values.containerImage.registryPassword -}}
 {{- $dockerConfigJson := ( printf "{\"auths\": {\"%s\": { \"username\": \"%s\", \"password\": \"%s\", \"auth\": \"%s\"}}}" .root.Values.containerImage.registry .root.Values.containerImage.registryUsername .root.Values.containerImage.registryPassword (printf "%s:%s" .root.Values.containerImage.registryUsername .root.Values.containerImage.registryPassword | b64enc)) }}
 apiVersion: v1
 kind: Secret
@@ -58,8 +58,8 @@ metadata:
   labels:
     {{- include "labels" .root | nindent 4 }}
   name: {{ .name }}
-  namespace: {{ .root.Release.Namespace }}
-data: 
+  namespace: {{ include "namespace" .root }}
+data:
   .dockerconfigjson: {{  $dockerConfigJson | b64enc | quote }}
 type: kubernetes.io/dockerconfigjson
 {{- end }}
@@ -96,12 +96,22 @@ type: kubernetes.io/dockerconfigjson
 {{- end }}
 
 {{- define "containerSecurityContext" -}}
+{{- $defaults := fromYaml (include "containerSecurityContext.defaults" .) -}}
+{{- $securityContext := default dict .securityContext -}}
+{{- $result := deepCopy $defaults -}}
+{{- range $key, $value := $securityContext }}
+{{- $_ := set $result $key $value -}}
+{{- end -}}
+{{- toYaml $result }}
+{{- end }}
+
+{{- define "containerSecurityContext.defaults" -}}
 allowPrivilegeEscalation: false
 capabilities:
   drop:
     - ALL
 runAsNonRoot: true
-runAsUser: {{ .securityContext.runAsUser }}
+runAsUser: 1000
 {{- end }}
 
 {{- define "globalResourceName" -}}
@@ -116,7 +126,25 @@ app.kubernetes.io/version: {{ .Chart.Version }}
 helm.sh/chart: {{ printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
+{{- define "namespace" -}}
+{{- .Values.namespaceOverride | default .Release.Namespace }}
+{{- end }}
+
 {{- define "podSecurityContext" -}}
+{{- $defaults := fromYaml (include "podSecurityContext.defaults" .) -}}
+{{- $globalContext := default dict .root.Values.pod.securityContext -}}
+{{- $workloadContext := default dict .workloadContext -}}
+{{- $result := deepCopy $defaults -}}
+{{- range $key, $value := $globalContext }}
+{{- $_ := set $result $key $value -}}
+{{- end -}}
+{{- range $key, $value := $workloadContext }}
+{{- $_ := set $result $key $value -}}
+{{- end -}}
+{{- toYaml $result }}
+{{- end }}
+
+{{- define "podSecurityContext.defaults" -}}
 seccompProfile:
   type: RuntimeDefault
 {{- end }}

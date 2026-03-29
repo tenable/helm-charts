@@ -7,7 +7,7 @@ metadata:
     {{- include "labels" . | nindent 4 }}
     {{- include "updater.labels" . | nindent 4 }}
   name: {{ include "updater.resourceNamePrefix" . }}-cronjob
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ include "namespace" . }}
 spec:
   concurrencyPolicy: Forbid
   jobTemplate:
@@ -34,29 +34,28 @@ spec:
           automountServiceAccountToken: true
           restartPolicy: Never
           containers:
-            - args: [
-              "updater",
-              "--api-key-token-file-path",
-                {{ include "apiKeyTokenFilePath" . | quote }},
-              "--api-url",
-                {{ .Values.apiUrl | quote }},
-              "--application-version",
-                {{ .Chart.AppVersion | quote }},
-              "--helm-release-name",
-                {{ print .Release.Namespace ":" .Release.Name | quote }},
-              {{- if .Values.name }}
-              "--name",
-                {{ .Values.name | quote }},
-              {{- end }}
-              {{- if .Values.proxyUrl }}
-              "--proxy-url",
-                {{ .Values.proxyUrl | quote }},
-              {{- end }}
-              {{- if .Values.accountId }}
-              "--tenant-raw-id",
-                {{ .Values.accountId | quote }}
-              {{- end }}
-            ]
+            - args:
+                - updater
+                - --api-key-token-file-path
+                - {{ include "apiKeyTokenFilePath" . | quote }}
+                - --api-url
+                - {{ .Values.apiUrl | quote }}
+                - --application-version
+                - {{ .Chart.AppVersion | quote }}
+                - --helm-release-name
+                - {{ print .Release.Namespace ":" .Release.Name | quote }}
+                {{- if .Values.name }}
+                - --name
+                - {{ .Values.name | quote }}
+                {{- end }}
+                {{- if .Values.proxyUrl }}
+                - --proxy-url
+                - {{ .Values.proxyUrl | quote }}
+                {{- end }}
+                {{- if .Values.accountId }}
+                - --tenant-raw-id
+                - {{ .Values.accountId | quote }}
+                {{- end }}
               {{- include "containerEnvironmentVariables" . | nindent 14 }}
               image: {{ include "containerImage" . }}
               imagePullPolicy: Always
@@ -72,7 +71,7 @@ spec:
           imagePullSecrets:
             {{- include "containerImagePullSecretNames" (dict "root" .) | nindent 12 }}
           securityContext:
-            {{- include "podSecurityContext" . | nindent 12 }}
+            {{- include "podSecurityContext" (dict "root" . "workloadContext" .Values.updater.pod.securityContext) | nindent 12 }}
           serviceAccountName: {{ include "updater.resourceNamePrefix" . }}-service-account
           {{- with (default .Values.pod.tolerations .Values.updater.pod.tolerations) }}
           tolerations:

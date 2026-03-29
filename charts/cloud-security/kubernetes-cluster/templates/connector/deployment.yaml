@@ -8,7 +8,7 @@ metadata:
     {{- include "labels" . | nindent 4 }}
     {{- include "connector.labels" . | nindent 4 }}
   name: {{ include "connector.resourceNamePrefix" . }}-deployment
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ include "namespace" . }}
 spec:
   replicas: 1
   selector:
@@ -35,23 +35,22 @@ spec:
       {{- end }}
       automountServiceAccountToken: true
       containers:
-        - args: [
-          "connector",
-          "--api-key-token-file-path",
-            {{ include "apiKeyTokenFilePath" . | quote }},
-          "--api-url",
-            {{ .Values.apiUrl | quote }},
+        - args:
+            - connector
+            - --api-key-token-file-path
+            - {{ include "apiKeyTokenFilePath" . | quote }}
+            - --api-url
+            - {{ .Values.apiUrl | quote }}
           {{- if .Values.connector.identity }}
-          "--identity",
+            - --identity
           {{- end }}
           {{- if .Values.connector.network }}
-          "--network",
+            - --network
           {{- end }}
           {{- if .Values.proxyUrl }}
-          "--proxy-url",
-            {{ .Values.proxyUrl | quote }},
+            - --proxy-url
+            - {{ .Values.proxyUrl | quote }}
           {{- end }}
-        ]
           {{- include "containerEnvironmentVariables" . | nindent 10 }}
           image: {{ include "containerImage" . }}
           imagePullPolicy: Always
@@ -67,7 +66,7 @@ spec:
       imagePullSecrets:
         {{- include "containerImagePullSecretNames" (dict "root" .) | nindent 8 }}
       securityContext:
-        {{- include "podSecurityContext" . | nindent 8 }}
+        {{- include "podSecurityContext" (dict "root" . "workloadContext" .Values.connector.pod.securityContext) | nindent 8 }}
       serviceAccountName: {{ include "connector.resourceNamePrefix" . }}-service-account
       {{- with (default .Values.pod.tolerations .Values.connector.pod.tolerations) }}
       tolerations:

@@ -8,7 +8,7 @@ metadata:
     {{- include "labels" . | nindent 4 }}
     {{- include "admissionController.labels" . | nindent 4 }}
   name: {{ include "admissionController.resourceNamePrefix" . }}-network-policy
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ include "namespace" . }}
 spec:
   ingress:
   {{- with .Values.admissionController.networkPolicy.ingress }}
