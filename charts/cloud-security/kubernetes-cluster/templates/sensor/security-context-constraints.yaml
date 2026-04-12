@@ -33,7 +33,7 @@ seLinuxContext:
 supplementalGroups:
   type: RunAsAny
 users:
-  - system:serviceaccount:{{ .Release.Namespace }}:{{ include "sensor.resourceNamePrefix" . }}-service-account
+  - system:serviceaccount:{{ include "namespace" . }}:{{ include "sensor.resourceNamePrefix" . }}-service-account
 volumes:
   - '*'
 {{- end }}
