@@ -1,6 +1,9 @@
 # CODEOWNERS
 * @michaeldolinsky @bkizer-tenable
-charts/cloud-security/* @tenable/cloud-security-helm-charts
-charts/security-center/* @tenable/security-center-helm-charts
-charts/tes-deployment-assessment/* @tenable/tes-deployment-assessment-helm-charts
-charts/tes-operator/* @tenable/tes-operator-helm-charts
+charts/cloud-security/** @tenable/cloud-security-helm-charts
+charts/security-center/** @tenable/security-center-helm-charts
+charts/tes-deployment-assessment/** @tenable/tes-deployment-assessment-helm-charts
+charts/tes-operator/** @tenable/tes-operator-helm-charts
+.github/** @michaeldolinsky @bkizer-tenable @tenable/cloud-security-helm-charts @tenable/security-center-helm-charts @tenable/tes-deployment-assessment-helm-charts @tenable/tes-operator-helm-charts
+releases/* @tenable/cloud-security-helm-charts @tenable/security-center-helm-charts @tenable/tes-deployment-assessment-helm-charts @tenable/tes-operator-helm-charts
+index.yaml @tenable/cloud-security-helm-charts @tenable/security-center-helm-charts @tenable/tes-deployment-assessment-helm-charts @tenable/tes-operator-helm-charts
