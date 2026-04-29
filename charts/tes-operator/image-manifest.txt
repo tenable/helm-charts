@@ -16,3 +16,4 @@ tenable/tes-exposure-response:1.0.103
 tenable/sc-job-manager:1.0.165
 tenable/tes-reporting:6.8.0
 postgres:17
+traefik:v3.6.12
