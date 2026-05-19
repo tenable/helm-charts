@@ -64,6 +64,7 @@ spec:
           volumeMounts:
             - name: {{ include "sensor.resourceNamePrefix" . }}-data
               mountPath: {{ .Values.sensor.dataPath }}
+            {{- include "containerCaCertificateVolumeMount" . | nindent 12 }}
             {{- include "containerSecretsVolumeMount" . | nindent 12 }}
       hostPID: true
       imagePullSecrets:
@@ -80,6 +81,7 @@ spec:
           hostPath:
             path: {{ .Values.sensor.dataPath }}
             type: DirectoryOrCreate
+      {{- include "containerCaCertificateVolume" (dict "root" .) | nindent 8 }}
       {{- include "containerSecretsVolume" (dict "root" .) | nindent 8 }}
   updateStrategy:
     rollingUpdate:

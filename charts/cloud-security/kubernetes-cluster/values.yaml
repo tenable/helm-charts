@@ -49,6 +49,10 @@ connector:
     resources: {}
     securityContext: {}
     tolerations: []
+containerCaCertificate:
+  pem: null
+  secretName: null
+  volumeMountPath: "/etc/ssl/extra"
 containerEnvironmentVariables: []
 containerImage:
   pullSecrets: []

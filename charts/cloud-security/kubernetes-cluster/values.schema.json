@@ -240,6 +240,29 @@
       ],
       "type": "object"
     },
+    "containerCaCertificate": {
+      "properties": {
+        "pem": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "secretName": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "volumeMountPath": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "volumeMountPath"
+      ],
+      "type": "object"
+    },
     "containerImage": {
       "properties": {
         "pullSecrets": {
@@ -668,8 +691,9 @@
     "apiKeyToken",
     "apiUrl",
     "connector",
-    "containerImage",
+    "containerCaCertificate",
     "containerEnvironmentVariables",
+    "containerImage",
     "containerSecrets",
     "hooks",
     "pod",

@@ -49,6 +49,7 @@ spec:
           securityContext:
             {{- include "containerSecurityContext" (dict "securityContext" (default .Values.pod.containers.securityContext .Values.hooks.pod.containers.securityContext)) | nindent 12 }}
           volumeMounts:
+            {{- include "containerCaCertificateVolumeMount" . | nindent 10 }}
             {{- include "containerSecretsVolumeMount" . | nindent 10 }}
       imagePullSecrets:
         {{- include "containerImagePullSecretNames" (dict "name" (print .Values.resourceNamePrefix "-post-delete-image-pull-secret") "root" .) | nindent 8 }}
@@ -61,6 +62,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
+        {{- include "containerCaCertificateVolume" (dict "name" (include "containerCaCertificateSecretName" (dict "phase" "post-delete" "root" .)) "root" .) | nindent 8 }}
         {{- include "containerSecretsVolume" (dict "name" (include "apiKeyTokenSecretName" (dict "phase" "post-delete" "root" .)) "root" .) | nindent 8 }}
 ---
 {{ $apiKeyTokenSecretAnnotations :=
@@ -70,6 +72,13 @@ spec:
   "helm.sh/hook-weight: \"-1\"" }}
 {{ include "apiKeyTokenSecret" (dict "name" (include "apiKeyTokenSecretName" (dict "phase" "post-delete" "root" .)) "root" . "annotations" $apiKeyTokenSecretAnnotations) }}
 
+---
+{{ $containerCaCertificateSecretAnnotations :=
+  list
+  "helm.sh/hook: post-delete"
+  "helm.sh/hook-delete-policy: before-hook-creation, hook-failed, hook-succeeded"
+  "helm.sh/hook-weight: \"-2\"" }}
+{{ include "containerCaCertificateSecret" (dict "name" (include "containerCaCertificateSecretName" (dict "phase" "post-delete" "root" .)) "root" . "annotations" $containerCaCertificateSecretAnnotations) }}
 ---
 {{ $containerImagePullSecretAnnotations :=
   list

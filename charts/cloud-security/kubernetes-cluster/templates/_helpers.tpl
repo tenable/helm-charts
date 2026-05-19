@@ -37,6 +37,63 @@ type: Opaque
 {{- end -}}
 {{- end }}
 
+{{- define "containerCaCertificateEnabled" -}}
+{{- if or .Values.containerCaCertificate.pem .Values.containerCaCertificate.secretName -}}true{{- end }}
+{{- end }}
+
+{{- define "containerCaCertificateEnvironmentVariables" -}}
+{{- if include "containerCaCertificateEnabled" . }}
+- name: SSL_CERT_DIR
+  value: {{ printf "/etc/ssl/certs:%s" .Values.containerCaCertificate.volumeMountPath | quote }}
+{{- end }}
+{{- end }}
+
+{{- define "containerCaCertificateSecret" -}}
+{{- if .root.Values.containerCaCertificate.pem }}
+apiVersion: v1
+kind: Secret
+metadata:
+  annotations:
+    {{- include "annotations" .root | nindent 4 }}
+    {{- with .annotations }}
+      {{- join "\n" . | nindent 4 }}
+    {{- end }}
+  labels:
+    {{- include "labels" .root | nindent 4 }}
+  name: {{ .name }}
+  namespace: {{ include "namespace" .root }}
+stringData:
+  ca.crt: {{ .root.Values.containerCaCertificate.pem | quote }}
+type: Opaque
+{{- end }}
+{{- end }}
+
+{{- define "containerCaCertificateSecretName" -}}
+{{- if .root.Values.containerCaCertificate.secretName -}}
+{{- .root.Values.containerCaCertificate.secretName -}}
+{{- else if .phase -}}
+{{- print .root.Values.resourceNamePrefix "-" .phase "-ca-certificate" -}}
+{{- else -}}
+{{- print .root.Values.resourceNamePrefix "-ca-certificate" -}}
+{{- end -}}
+{{- end }}
+
+{{- define "containerCaCertificateVolume" -}}
+{{- if include "containerCaCertificateEnabled" .root }}
+- name: {{ print .root.Values.resourceNamePrefix "-ca-certificate" }}
+  secret:
+    secretName: {{ .name | default (include "containerCaCertificateSecretName" (dict "root" .root)) | quote }}
+{{- end }}
+{{- end }}
+
+{{- define "containerCaCertificateVolumeMount" -}}
+{{- if include "containerCaCertificateEnabled" . }}
+- mountPath: {{ .Values.containerCaCertificate.volumeMountPath | quote }}
+  name: {{ print .Values.resourceNamePrefix "-ca-certificate" }}
+  readOnly: true
+{{- end }}
+{{- end }}
+
 {{- define "containerEnvironmentVariables" -}}
 env:
 {{- with .Values.containerEnvironmentVariables }}
@@ -44,6 +101,7 @@ env:
 {{- end }}
   - name: SIL_LogFormat
     value: Text
+{{- include "containerCaCertificateEnvironmentVariables" . | nindent 2 }}
 {{- end }}
 
 {{- define "containerImage" -}}
