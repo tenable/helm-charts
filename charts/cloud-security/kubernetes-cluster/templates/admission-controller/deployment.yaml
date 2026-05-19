@@ -113,5 +113,5 @@ spec:
           secret:
             defaultMode: 0444
             secretName: {{ include "admissionController.certificateSecretName" . }}
-        {{- include "containerSecretsVolume" . | nindent 8 }}
+        {{- include "containerSecretsVolume" (dict "root" .) | nindent 8 }}
 {{- end }}

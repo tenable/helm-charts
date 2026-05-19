@@ -61,14 +61,15 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-        {{- include "containerSecretsVolume" . | nindent 8 }}
+        {{- include "containerSecretsVolume" (dict "name" (include "apiKeyTokenSecretName" (dict "phase" "post-delete" "root" .)) "root" .) | nindent 8 }}
 ---
-{{ $apiKeyTokenSecretAnnotations := 
-  list 
+{{ $apiKeyTokenSecretAnnotations :=
+  list
   "helm.sh/hook: post-delete"
   "helm.sh/hook-delete-policy: before-hook-creation, hook-failed, hook-succeeded"
   "helm.sh/hook-weight: \"-1\"" }}
-{{ include "apiKeyTokenSecret" (dict "name" (include "apiKeyTokenSecretName" .) "root" . "annotations" $apiKeyTokenSecretAnnotations) }}
+{{ include "apiKeyTokenSecret" (dict "name" (include "apiKeyTokenSecretName" (dict "phase" "post-delete" "root" .)) "root" . "annotations" $apiKeyTokenSecretAnnotations) }}
+
 ---
 {{ $containerImagePullSecretAnnotations :=
   list

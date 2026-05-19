@@ -73,5 +73,5 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-        {{- include "containerSecretsVolume" . | nindent 8 }}
+        {{- include "containerSecretsVolume" (dict "root" .) | nindent 8 }}
 {{- end }}

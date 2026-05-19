@@ -28,7 +28,13 @@ type: Opaque
 {{- end }}
 
 {{- define "apiKeyTokenSecretName" -}}
-{{- .Values.containerSecrets.apiKeyTokenName | default (print .Values.resourceNamePrefix "-secret" ) }}
+{{- if .root.Values.containerSecrets.apiKeyTokenName -}}
+{{- .root.Values.containerSecrets.apiKeyTokenName -}}
+{{- else if .phase -}}
+{{- print .root.Values.resourceNamePrefix "-" .phase "-secret" -}}
+{{- else -}}
+{{- print .root.Values.resourceNamePrefix "-secret" -}}
+{{- end -}}
 {{- end }}
 
 {{- define "containerEnvironmentVariables" -}}
@@ -77,13 +83,13 @@ type: kubernetes.io/dockerconfigjson
 
 
 {{- define "containerSecretsVolume" -}}
-{{- if not .Values.containerSecrets.injectExternally -}}
-- name: {{ print .Values.resourceNamePrefix "-secret" }}
+{{- if not .root.Values.containerSecrets.injectExternally -}}
+- name: {{ print .root.Values.resourceNamePrefix "-secret" }}
   secret:
     items:
     - key: API_KEY_TOKEN
       path: apikeytoken
-    secretName: {{ include "apiKeyTokenSecretName" . }}
+    secretName: {{ .name | default (include "apiKeyTokenSecretName" (dict "root" .root)) | quote }}
 {{- end }}
 {{- end }}
 

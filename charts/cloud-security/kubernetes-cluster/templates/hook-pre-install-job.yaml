@@ -77,15 +77,15 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-        {{- include "containerSecretsVolume" . | nindent 8 }}
+        {{- include "containerSecretsVolume" (dict "name" (include "apiKeyTokenSecretName" (dict "phase" "pre-install" "root" .)) "root" .) | nindent 8 }}
 
 ---
 {{ $apiKeyTokenSecretAnnotations :=
   list
   "helm.sh/hook: pre-install, pre-upgrade"
-  "helm.sh/hook-delete-policy: before-hook-creation, hook-failed, hook-succeeded" 
+  "helm.sh/hook-delete-policy: before-hook-creation, hook-failed, hook-succeeded"
   "helm.sh/hook-weight: \"-2\"" }}
-{{ include "apiKeyTokenSecret" (dict "name" ( include "apiKeyTokenSecretName" .) "root" . "annotations" $apiKeyTokenSecretAnnotations) }}
+{{ include "apiKeyTokenSecret" (dict "name" (include "apiKeyTokenSecretName" (dict "phase" "pre-install" "root" .)) "root" . "annotations" $apiKeyTokenSecretAnnotations) }}
 
 ---
 {{ $containerImagePullSecretAnnotations :=
