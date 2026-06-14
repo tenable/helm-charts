@@ -24,6 +24,7 @@ admissionController:
         memory: "256Mi"
     securityContext: {}
     tolerations: []
+  readSecrets: false
   replicas: 3
   strategy:
     rollingUpdate:

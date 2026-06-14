@@ -100,6 +100,9 @@
           ],
           "type": "object"
         },
+        "readSecrets": {
+          "type": "boolean"
+        },
         "replicas": {
           "type": "integer"
         },
@@ -153,6 +156,7 @@
         "logLevel",
         "networkPolicy",
         "pod",
+        "readSecrets",
         "replicas",
         "strategy",
         "webhook"
