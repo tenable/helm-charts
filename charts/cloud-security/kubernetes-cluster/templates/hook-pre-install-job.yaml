@@ -78,8 +78,8 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-        {{- include "containerCaCertificateVolume" (dict "name" (include "containerCaCertificateSecretName" (dict "phase" "pre-install" "root" .)) "root" .) | nindent 8 }}
-        {{- include "containerSecretsVolume" (dict "name" (include "apiKeyTokenSecretName" (dict "phase" "pre-install" "root" .)) "root" .) | nindent 8 }}
+        {{- include "containerCaCertificateVolume" (dict "name" (include "containerCaCertificateSecretName" (dict "parent" "pre-install" "root" .)) "root" .) | nindent 8 }}
+        {{- include "containerSecretsVolume" (dict "name" (include "apiKeyTokenSecretName" (dict "parent" "pre-install" "root" .)) "root" .) | nindent 8 }}
 
 ---
 {{ $apiKeyTokenSecretAnnotations :=
@@ -87,7 +87,7 @@ spec:
   "helm.sh/hook: pre-install, pre-upgrade"
   "helm.sh/hook-delete-policy: before-hook-creation, hook-failed, hook-succeeded"
   "helm.sh/hook-weight: \"-2\"" }}
-{{ include "apiKeyTokenSecret" (dict "name" (include "apiKeyTokenSecretName" (dict "phase" "pre-install" "root" .)) "root" . "annotations" $apiKeyTokenSecretAnnotations) }}
+{{ include "apiKeyTokenSecret" (dict "name" (include "apiKeyTokenSecretName" (dict "parent" "pre-install" "root" .)) "root" . "annotations" $apiKeyTokenSecretAnnotations) }}
 
 ---
 {{ $containerCaCertificateSecretAnnotations :=
@@ -95,7 +95,7 @@ spec:
   "helm.sh/hook: pre-install, pre-upgrade"
   "helm.sh/hook-delete-policy: before-hook-creation, hook-failed, hook-succeeded"
   "helm.sh/hook-weight: \"-3\"" }}
-{{ include "containerCaCertificateSecret" (dict "name" (include "containerCaCertificateSecretName" (dict "phase" "pre-install" "root" .)) "root" . "annotations" $containerCaCertificateSecretAnnotations) }}
+{{ include "containerCaCertificateSecret" (dict "name" (include "containerCaCertificateSecretName" (dict "parent" "pre-install" "root" .)) "root" . "annotations" $containerCaCertificateSecretAnnotations) }}
 
 ---
 {{ $containerImagePullSecretAnnotations :=

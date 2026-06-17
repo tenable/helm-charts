@@ -30,8 +30,8 @@ type: Opaque
 {{- define "apiKeyTokenSecretName" -}}
 {{- if .root.Values.containerSecrets.apiKeyTokenName -}}
 {{- .root.Values.containerSecrets.apiKeyTokenName -}}
-{{- else if .phase -}}
-{{- print .root.Values.resourceNamePrefix "-" .phase "-secret" -}}
+{{- else if .parent -}}
+{{- print .root.Values.resourceNamePrefix "-" .parent "-secret" -}}
 {{- else -}}
 {{- print .root.Values.resourceNamePrefix "-secret" -}}
 {{- end -}}
@@ -71,8 +71,8 @@ type: Opaque
 {{- define "containerCaCertificateSecretName" -}}
 {{- if .root.Values.containerCaCertificate.secretName -}}
 {{- .root.Values.containerCaCertificate.secretName -}}
-{{- else if .phase -}}
-{{- print .root.Values.resourceNamePrefix "-" .phase "-ca-certificate" -}}
+{{- else if .parent -}}
+{{- print .root.Values.resourceNamePrefix "-" .parent "-ca-certificate" -}}
 {{- else -}}
 {{- print .root.Values.resourceNamePrefix "-ca-certificate" -}}
 {{- end -}}
