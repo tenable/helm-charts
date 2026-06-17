@@ -100,6 +100,9 @@
           ],
           "type": "object"
         },
+        "readSecrets": {
+          "type": "boolean"
+        },
         "replicas": {
           "type": "integer"
         },
@@ -153,6 +156,7 @@
         "logLevel",
         "networkPolicy",
         "pod",
+        "readSecrets",
         "replicas",
         "strategy",
         "webhook"
@@ -237,6 +241,29 @@
         "identity",
         "network",
         "pod"
+      ],
+      "type": "object"
+    },
+    "containerCaCertificate": {
+      "properties": {
+        "pem": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "secretName": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "volumeMountPath": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "volumeMountPath"
       ],
       "type": "object"
     },
@@ -668,8 +695,9 @@
     "apiKeyToken",
     "apiUrl",
     "connector",
-    "containerImage",
+    "containerCaCertificate",
     "containerEnvironmentVariables",
+    "containerImage",
     "containerSecrets",
     "hooks",
     "pod",

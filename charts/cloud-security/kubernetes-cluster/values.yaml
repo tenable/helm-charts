@@ -24,6 +24,7 @@ admissionController:
         memory: "256Mi"
     securityContext: {}
     tolerations: []
+  readSecrets: false
   replicas: 3
   strategy:
     rollingUpdate:
@@ -49,6 +50,10 @@ connector:
     resources: {}
     securityContext: {}
     tolerations: []
+containerCaCertificate:
+  pem: null
+  secretName: null
+  volumeMountPath: "/etc/ssl/extra"
 containerEnvironmentVariables: []
 containerImage:
   pullSecrets: []

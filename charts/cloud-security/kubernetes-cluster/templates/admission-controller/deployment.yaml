@@ -97,6 +97,7 @@ spec:
             - mountPath: /var/run/secrets/certificates
               name: {{ include "admissionController.resourceNamePrefix" . }}-certificate-volume
               readOnly: true
+            {{- include "containerCaCertificateVolumeMount" . | nindent 12 }}
             {{- include "containerSecretsVolumeMount" . | nindent 12 }}
       imagePullSecrets:
         {{- include "containerImagePullSecretNames" (dict "root" .) | nindent 8 }}
@@ -113,5 +114,6 @@ spec:
           secret:
             defaultMode: 0444
             secretName: {{ include "admissionController.certificateSecretName" . }}
-        {{- include "containerSecretsVolume" . | nindent 8 }}
+        {{- include "containerCaCertificateVolume" (dict "root" .) | nindent 8 }}
+        {{- include "containerSecretsVolume" (dict "root" .) | nindent 8 }}
 {{- end }}
