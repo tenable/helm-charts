@@ -1,0 +1,35 @@
+# TES Operator - Deprecated and End-of-Life Chart Versions
+#
+# This file is the source of truth for TES operator chart lifecycle state.
+# It lives alongside index.yaml since it directly controls what gets applied here.
+#
+# During Step 5 of the release process, ensure the actions below are applied
+# before opening the PR:
+# Release process: https://tenable.atlassian.net/wiki/spaces/TES/pages/2387771622/Release+Process
+#
+# TODO: A script will be added in the future to automate both actions below,
+# removing the need for the manual Step 5 checks:
+#   - DEPRECATED: set `deprecated: true` in index.yaml for listed versions
+#   - EOL:        delete the version .tgz from releases/ and regenerate index.yaml
+#
+# TES Support Policy: https://tenable.atlassian.net/wiki/spaces/TES/pages/3468853255
+#   - 12-18 months from GA → deprecated (helm warning on install, still available)
+#   - 18+ months from GA  → EOL (removed from charts.tenable.com)
+#
+# Format: <chart-version> | <app-version> | <status> (deprecated|eol) | <status-since-date YYYY-MM-DD>
+
+# --- DEPRECATED (12-18 months) ---
+# During Step 5 (https://tenable.atlassian.net/wiki/spaces/TES/pages/2387771622/Release+Process#Step-5):
+# ensure these have `deprecated: true` in index.yaml
+1.5.0 | 1.5.0 | deprecated | 2026-05-31
+1.3.0 | 1.3.0 | deprecated | 2026-01-31
+
+# --- END OF LIFE (18+ months) ---
+# During Step 5 (https://tenable.atlassian.net/wiki/spaces/TES/pages/2387771622/Release+Process#Step-5):
+# ensure these .tgz files are removed from releases/ and index regenerated
+1.2.0 | 1.2.0 | eol | 2026-04-30
+1.0.4 | 1.0.4 | eol | 2026-02-28
+1.0.3 | 1.0.3 | eol | 2026-02-28
+1.0.2 | 1.0.2 | eol | 2026-02-28
+1.0.1 | 1.0.1 | eol | 2026-02-28
+1.0.0 | 1.0.0 | eol | 2026-02-28
