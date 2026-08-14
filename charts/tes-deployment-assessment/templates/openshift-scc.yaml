@@ -7,13 +7,13 @@ metadata:
 allowPrivilegedContainer: false
 runAsUser:
   type: MustRunAsRange
-  uidRangeMin: 1000
-  uidRangeMax: 1000
+  uidRangeMin: {{ .Values.securityContext.runAsUser }}
+  uidRangeMax: {{ .Values.securityContext.runAsUser }}
 seLinuxContext:
   type: MustRunAs
 supplementalGroups:
   type: MustRunAs
   ranges:
-  - min: 3000
-    max: 3000
+  - min: {{ .Values.securityContext.runAsGroup }}
+    max: {{ .Values.securityContext.runAsGroup }}
 {{- end }}
