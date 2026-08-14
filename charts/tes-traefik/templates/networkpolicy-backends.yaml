@@ -1,0 +1,60 @@
+{{- if and .Values.networkPolicy.enabled .Values.networkPolicy.backends.allowOnlyFromTraefik }}
+---
+# NetworkPolicy for SecurityCenter Backend
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: securitycenter-backend
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: securitycenter
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: networkpolicy
+spec:
+  podSelector:
+    matchLabels:
+      app: sc-pod
+  policyTypes:
+    - Ingress
+
+  # Only allow ingress from Traefik pods
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: traefik
+              app.kubernetes.io/instance: {{ .Release.Name }}
+      ports:
+        - protocol: TCP
+          port: 443
+        - protocol: TCP
+          port: 8837
+---
+# NetworkPolicy for Container Security Backend
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: consec-backend
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: consec-blade
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: networkpolicy
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: consec-blade
+  policyTypes:
+    - Ingress
+
+  # Only allow ingress from Traefik pods
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: traefik
+              app.kubernetes.io/instance: {{ .Release.Name }}
+      ports:
+        - protocol: TCP
+          port: {{ .Values.tes.consoleSecurityPort }}
+{{- end }}

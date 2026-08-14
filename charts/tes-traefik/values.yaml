@@ -1,0 +1,415 @@
+# TES Traefik Helm Chart Values
+
+# Global settings
+global:
+  namespace: ""  # Will be set during installation
+  domain: ""     # e.g., namespace.cloud.aws.tenablesecurity.com
+
+# Network Policies (Optional - NOT deployed by default)
+# Example templates provided but MUST be customized for your environment
+# Customize based on:
+#   - External PostgreSQL location
+#   - Nessus Manager connectivity
+#   - Plugin download requirements
+#   - DNS servers
+#   - Monitoring/logging endpoints
+networkPolicy:
+  enabled: false  # Set to true ONLY after customizing for your environment
+  # Traefik ingress/egress restrictions
+  traefik:
+    # Allow ingress on designated ports
+    ingressPorts:
+      - 8443  # https
+      - 8837  # sensor
+      - 8444  # consec-scanner
+    # Egress rules are hardcoded in networkpolicy-traefik.yaml:
+    # DNS (kube-system:53), K8s API (6443), SC pod (443/8837), consec-blade (443)
+  # Backend service restrictions
+  backends:
+    # Only allow traffic from Traefik pods
+    allowOnlyFromTraefik: true
+
+# Traefik configuration (passed to traefik subchart)
+traefik:
+  # Disable IngressClass creation - TES is namespace-scoped, no cluster-level access
+  ingressClass:
+    enabled: false
+
+  # Use namespace-scoped Role/RoleBinding instead of ClusterRole/ClusterRoleBinding.
+  # TES deployments do not have cluster-level permissions, and allowCrossNamespace=false
+  # means Traefik only needs to watch its own namespace anyway.
+  rbac:
+    namespaced: true
+
+  # Resource requirements (per pod)
+  # Total cluster resources: 200m CPU (requests), 2 cores (limits), 256Mi RAM (requests), 1Gi RAM (limits)
+  resources:
+    requests:
+      cpu: 100m      # Per pod: 2 pods = 200m total
+      memory: 128Mi  # Per pod: 2 pods = 256Mi total
+    limits:
+      cpu: 1000m     # Per pod: 2 pods = 2 cores total
+      memory: 512Mi  # Per pod: 2 pods = 1Gi total
+
+  # Pod Security Context - Platform Detection Required
+  # OpenShift (default): runAsNonRoot=false + null UIDs allow SCC to inject and enforce security
+  # Standard K8s: Must override in site files with explicit UIDs + runAsNonRoot=true
+  # Site file override example:
+  #   traefik.podSecurityContext.runAsNonRoot: true
+  #   traefik.podSecurityContext.runAsUser: 65532
+  #   traefik.podSecurityContext.runAsGroup: 65532
+  #   traefik.podSecurityContext.fsGroup: 65532
+  podSecurityContext:
+    runAsNonRoot: false  # OpenShift SCC will enforce; must override to true for standard K8s
+    runAsUser: null
+    runAsGroup: null
+    fsGroup: null
+    seccompProfile:
+      type: RuntimeDefault
+
+  securityContext:
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+
+  image:
+    repository: traefik
+    tag: v3.6.12
+
+  # Override with your actual secret name
+  deployment:
+#    imagePullSecrets:
+#      - name: docker-hub-creds
+    replicas: 2
+    podLabels:
+      lb: tes-traefik
+
+  ports:
+    websecure: null  # Disable default websecure entrypoint; we use https below
+
+    https:
+      port: 8443
+      exposedPort: 8443
+      expose:
+        default: true
+
+    # Sensor port for Nessus scanners
+    sensor-port:
+      port: 8837
+      exposedPort: 8837
+      protocol: TCP
+      expose:
+        default: true
+
+    # Consec scanner port (optional, for separating scanner traffic from API/GUI)
+    consec-scanner:
+      port: 8444
+      exposedPort: 8444
+      protocol: TCP
+      expose:
+        default: true
+
+  service:
+    enabled: false  # We create our own service
+
+  ingressRoute:
+    dashboard:
+      enabled: false
+
+  providers:
+    kubernetesCRD:
+      enabled: true
+      allowCrossNamespace: false
+      allowExternalNameServices: true
+    kubernetesIngress:
+      allowExternalNameServices: true
+
+  logs:
+    general:
+      level: INFO
+    access:
+      enabled: true
+
+  additionalArguments:
+    # Large file upload support (e.g., scanner uploads, plugin files)
+    # Default 60s timeout is too short for multi-hundred MB uploads
+    - "--entryPoints.https.transport.respondingTimeouts.readTimeout=600s"
+    - "--entryPoints.https.transport.respondingTimeouts.writeTimeout=600s"
+
+gateway:
+  # Service type: ClusterIP (default), NodePort, or LoadBalancer
+  # - ClusterIP: Internal cluster access only (default)
+  # - NodePort: Expose on static ports on each node (30000-32767 range)
+  # - LoadBalancer: Provision cloud load balancer or use virtual IP (MetalLB, etc.)
+  serviceType: ClusterIP
+
+  # LoadBalancer configuration (only applies when serviceType: LoadBalancer)
+  # Static IP address for LoadBalancer service (optional)
+  # For MetalLB/bare-metal: specify IP from pool
+  # For cloud providers: must be pre-allocated in same region/zone
+  loadBalancerIP: ""  # Example: "192.168.1.100" or "10.0.0.50"
+
+  # Restrict LoadBalancer to specific source IP ranges (optional)
+  # Default allows all sources (0.0.0.0/0)
+  loadBalancerSourceRanges: []
+  # Example:
+  #   - "10.0.0.0/8"      # Internal network
+  #   - "172.16.0.0/12"   # Private network
+  #   - "203.0.113.0/24"  # Specific public range
+
+  # External traffic policy: Cluster (default) or Local
+  # - Cluster: Traffic may be forwarded to any node (may SNAT source IP)
+  # - Local: Traffic only to local node endpoints (preserves source IP, better performance)
+  externalTrafficPolicy: ""  # Empty = use Kubernetes default (Cluster)
+
+  # Session affinity: None (default) or ClientIP
+  sessionAffinity: ""  # Empty = None
+
+  # For LoadBalancer type: whether to allocate NodePorts (default: true)
+  # Set false to skip NodePort allocation (requires cloud provider support)
+  allocateLoadBalancerNodePorts: true
+
+  # Service annotations (for cloud providers, MetalLB, etc.)
+  annotations: {}
+  # Examples:
+  # MetalLB:
+  #   metallb.universe.tf/address-pool: production-pool
+  #   metallb.universe.tf/allow-shared-ip: "true"
+  # AWS ELB:
+  #   service.beta.kubernetes.io/aws-load-balancer-type: nlb
+  #   service.beta.kubernetes.io/aws-load-balancer-internal: "true"
+  # Azure:
+  #   service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+  # GCP:
+  #   cloud.google.com/load-balancer-type: Internal
+
+  # Port configuration
+  ports:
+    # HTTPS port (main SecurityCenter access)
+    https:
+      port: 443
+      targetPort: 8443
+      protocol: TCP
+
+    # Sensor port (Nessus scanners)
+    sensor:
+      enabled: true
+      port: 8837
+      targetPort: 8837
+      protocol: TCP
+
+    # Consec scanner port (Container Security scanners)
+    # When enabled, separates scanner communication from API/GUI traffic
+    # Allows different network policies for user traffic (443) vs scanner traffic
+    consec-scanner:
+      enabled: false  # Set to true to enable dedicated consec scanner port
+      port: 9443      # External port for consec scanner communication
+      targetPort: 8444
+      protocol: TCP
+
+    # Additional ports (for future use)
+    additional: []
+
+# TES services configuration
+tes:
+  securityCenterService: tes-sc
+  securityCenterPort: 443
+
+  consoleSecurityService: consec-blade
+  consoleSecurityPort: 443
+
+  platformUIService: tes-platform-ui
+  platformUIPort: 443
+
+  exposureResponseService: tes-exposure-response
+  exposureResponsePort: 8091  # HTTPS
+
+  service:
+    name: tes
+    selector:
+      app: sc-pod
+    port: 443
+    targetPort: https
+
+# IngressRoute configuration
+ingressRoutes:
+  root:
+    enabled: true
+    name: tes-root
+    priority: 10
+    entrypoints: ["https"]
+    loadBalancer:
+      enabled: true
+
+  # Sensor route (port 8837)
+  sensor:
+    enabled: true
+    name: tes-sensor
+    priority: 10
+    entrypoints: ["sensor-port"]
+    # Routes sensor traffic to SecurityCenter:8837
+
+  # Container Security route
+  containerSecurity:
+    enabled: true
+    service: consec-blade
+    port: 443
+
+    # Internal API (current - for TES internal microservices)
+    internal:
+      enabled: true
+      name: tes-gateway-consec-internal
+      priority: 90
+      # Uses https by default (port 443)
+      # When dedicatedPort.enabled=true, uses consec-scanner entrypoint instead
+      entrypoints: ["https"]
+      pathPrefix: /tes/gateway/blades/consec/
+
+      # Optional: IP whitelist for internal-only access
+      ipWhitelist:
+        enabled: false  # Set true to restrict to internal networks
+        sourceRange:
+          - 10.0.0.0/8      # Internal Kubernetes cluster
+          - 172.16.0.0/12   # Private networks
+          # - 192.168.0.0/16  # Add more as needed
+
+      # Dedicated port for consec scanner communication
+      # When enabled, scanner traffic is separated from API/GUI traffic
+      dedicatedPort:
+        enabled: false  # Set to true to use dedicated consec scanner port
+
+    # Public API (customer-facing APIs)
+    public:
+      enabled: true  # Enabled by default for customer API access
+      name: tes-gateway-consec-public
+      priority: 95  # Higher priority than internal
+      entrypoints: ["https"]
+      pathPrefix: /public/consec/api
+      # No IP restrictions - customer-facing
+
+  # Licensing service route
+  licensing:
+    enabled: true
+    name: tes-gateway-licensing
+    priority: 95  # Same priority as consec public
+    service: tes-licensing-service
+    port: 8092
+
+# ServersTransport configuration
+serversTransports:
+  mtls:
+    enabled: true
+    name: tes-mtls
+    insecureSkipVerify: true  # TODO: set to false for NIAP compliance once backend CA trust is validated
+    # Client certificate for mTLS authentication (Traefik v3+)
+    # Must match certificates.certManager.secretName
+    certificatesSecrets:
+      - tes-internal-cert
+    # Root CA certificates for validating backend services
+    rootCAsSecrets: []  # Defaults to {{ .Release.Namespace }}-tes-root-secret (created by tes-operator)
+    # Timeout configuration for large file uploads and long-running operations
+    forwardingTimeouts:
+      dialTimeout: "30s"              # Connection establishment timeout
+      responseHeaderTimeout: "600s"   # Wait up to 10 min for response headers (large uploads)
+      idleConnTimeout: "90s"          # Keep-alive for idle connections
+
+  insecureSkipVerify:
+    enabled: false  # Set to true ONLY for development/testing
+    name: insecure-skip-verify
+
+# Default transport to use for IngressRoutes
+defaultTransport: mtls
+
+# Certificate management
+certificates:
+  # External TLS certificate (browser → Traefik)
+  external:
+    enabled: true  # Enable external TLS certificate generation
+    secretName: tes-proxy-cert
+    issuerRef:
+      name: tes-ca-issuer  # Self-signed for testing, use real CA in production
+      kind: Issuer
+    duration: 2160h  # 90 days
+    renewBefore: 720h  # Renew 30 days before expiry
+    additionalDnsNames: []  # Add any additional domain SANs
+    additionalIpAddresses: []  # Add extra IP SANs (e.g. VIP alongside a hostname)
+
+  # Backend mTLS certificate (Traefik → SC/Consec)
+  certManager:
+    enabled: true  # Requires cert-manager v1.13+ installed in cluster
+    secretName: tes-internal-cert
+    issuerRef:
+      name: tes-ca-issuer
+      kind: Issuer  # Change to ClusterIssuer if using cluster-wide issuer
+    duration: 2160h  # 90 days
+    renewBefore: 720h  # Renew 30 days before expiry
+    commonName: traefik-gateway
+
+  manual:
+    enabled: false  # Set to true ONLY for development without cert-manager
+    securityCenterPod: tenable-security-center-0
+    secretName: tes-proxy-cert
+
+  security:
+    # RBAC restricts secret access to Traefik service account only
+    rbacEnabled: true
+    # Audit logging for secret access
+    auditLogging: true
+
+# Customer ingress integration (ClusterIP mode only)
+customerIngress:
+  # Examples are provided in examples/ directory
+  # Customers should apply the appropriate example for their ingress controller
+  enabled: false
+  type: nginx  # nginx, istio, traefik, haproxy
+
+edgeCases:
+  # Conditional header manipulation
+  conditionalHeaders:
+    enabled: true
+
+  # Custom error pages
+  customErrors:
+    enabled: false
+    service: error-pages  # Name of the error page backend service
+    query: /{status}.html  # Path template on the error service; {status} is replaced by the HTTP status code
+
+# Rate limiting configuration (Optional - Disabled by default)
+rateLimit:
+  # Enable rate limiting globally
+  enabled: false  # Set to true ONLY after configuring appropriate limits for your environment
+
+  # API endpoints rate limiting (REST API, automation)
+  api:
+    name: tes-api-rate-limit
+    average: 100  # requests per second per IP
+    burst: 200    # maximum burst size
+    period: 1s
+
+  # Scanner endpoints rate limiting (Container Security scans)
+  scanner:
+    name: tes-scanner-rate-limit
+    average: 50   # requests per second per IP
+    burst: 100
+    period: 1s
+
+  # UI endpoints rate limiting (browser requests)
+  ui:
+    name: tes-ui-rate-limit
+    average: 30   # requests per second per IP
+    burst: 60
+    period: 1s
+
+  # IP strategy configuration
+  ipStrategy:
+    depth: 1  # Trust first X-Forwarded-For entry
+
+  # IP addresses to exclude from rate limiting (optional)
+  # Useful for internal monitoring, health checks, or trusted networks
+  excludedIPs: []
+    # - 127.0.0.1/32
+    # - 10.0.0.0/8      # Internal networks
+  # - 172.16.0.0/12   # Private networks
+

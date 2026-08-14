@@ -16,6 +16,9 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
+        {{- with (omit (.Values.podLabels | default dict) "app.kubernetes.io/name") }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
         app.kubernetes.io/name: {{ .Values.name }}
     spec:
       securityContext:

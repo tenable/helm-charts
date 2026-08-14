@@ -1,0 +1,29 @@
+{{- if .Values.rateLimit.enabled }}
+---
+# API Rate Limiting Middleware
+# Protects API endpoints from abuse and ensures fair resource usage
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ .Values.rateLimit.api.name | default "tes-api-rate-limit" }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: traefik
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: middleware
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  rateLimit:
+    average: {{ .Values.rateLimit.api.average }}
+    burst: {{ .Values.rateLimit.api.burst }}
+    period: {{ .Values.rateLimit.api.period | default "1s" }}
+    sourceCriterion:
+      ipStrategy:
+        depth: {{ .Values.rateLimit.ipStrategy.depth | default 1 }}
+        {{- if .Values.rateLimit.excludedIPs }}
+        excludedIPs:
+        {{- range .Values.rateLimit.excludedIPs }}
+          - {{ . }}
+        {{- end }}
+        {{- end }}
+{{- end }}

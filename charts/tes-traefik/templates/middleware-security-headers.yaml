@@ -1,0 +1,21 @@
+---
+# Security Headers Middleware
+# Matches Apache headers.conf configuration
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: security-headers
+  namespace: {{ .Release.Namespace }}
+spec:
+  headers:
+    frameDeny: true
+    contentTypeNosniff: true
+    browserXssFilter: true
+    stsSeconds: 31536000
+    stsIncludeSubdomains: true
+    contentSecurityPolicy: "frame-ancestors 'self' app.pendo.io"
+    customResponseHeaders:
+      X-XSS-Protection: "1; mode=block"
+      Expect-CT: "max-age=31536000"
+      Cache-Control: "no-cache, no-store"
+      Pragma: "no-cache"

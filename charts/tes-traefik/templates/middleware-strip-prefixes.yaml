@@ -1,0 +1,24 @@
+{{- if and .Values.ingressRoutes.licensing.enabled (include "tes-traefik.domain" .) }}
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-platform-licensing-prefix
+  namespace: {{ .Release.Namespace }}
+spec:
+  stripPrefix:
+    prefixes:
+      - /tes/gateway/blades/platform/ls
+{{- end }}
+{{- if and .Values.edgeCases.conditionalHeaders.enabled (include "tes-traefik.domain" .) }}
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-platform-er-prefix
+  namespace: {{ .Release.Namespace }}
+spec:
+  stripPrefix:
+    prefixes:
+      - /tes/gateway/blades/platform/er
+{{- end }}

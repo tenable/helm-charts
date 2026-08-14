@@ -1,0 +1,45 @@
+{{- if .Values.edgeCases.conditionalHeaders.enabled }}
+---
+# Cache Control Middleware for Static Assets (Fonts)
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: cache-fonts
+  namespace: {{ .Release.Namespace }}
+spec:
+  headers:
+    customResponseHeaders:
+      Cache-Control: "public, max-age=31536000, immutable"
+---
+# Cache Control Middleware for Container Security Assets
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: cache-consec-assets
+  namespace: {{ .Release.Namespace }}
+spec:
+  headers:
+    customResponseHeaders:
+      Cache-Control: "public, max-age=31536000, immutable"
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: no-encoding-sc-ui
+  namespace: {{ .Release.Namespace }}
+spec:
+  headers:
+    customResponseHeaders:
+      Content-Encoding: ""
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: remove-range-headers
+  namespace: {{ .Release.Namespace }}
+spec:
+  headers:
+    customRequestHeaders:
+      Range: ""
+      Request-Range: ""
+{{- end }}

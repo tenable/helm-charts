@@ -1,0 +1,50 @@
+{{- if and .Values.ingressRoutes.root.enabled (include "tes-traefik.domain" .) }}
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ .Values.ingressRoutes.root.name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  entryPoints:
+    {{- range .Values.ingressRoutes.root.entrypoints }}
+    - {{ . }}
+    {{- end }}
+  routes:
+    - match: Host("{{ include "tes-traefik.domain" . }}")
+      kind: Rule
+      priority: {{ .Values.ingressRoutes.root.priority }}
+      middlewares:
+        - name: security-headers
+        {{- if .Values.rateLimit.enabled }}
+        - name: {{ .Values.rateLimit.ui.name | default "tes-ui-rate-limit" }}
+        {{- end }}
+        {{- if .Values.edgeCases.conditionalHeaders.enabled }}
+        - name: remove-range-headers
+        {{- end }}
+      services:
+        - name: {{ .Values.tes.securityCenterService }}
+          port: {{ .Values.tes.securityCenterPort }}
+          scheme: https
+          serversTransport: {{ .Release.Namespace }}-{{- if eq .Values.defaultTransport "mtls" }}{{ .Values.serversTransports.mtls.name }}{{- else }}{{ .Values.serversTransports.insecureSkipVerify.name }}{{- end }}
+    {{- if .Values.ingressRoutes.root.loadBalancer.enabled }}
+    - match: HostRegexp(".*")
+      kind: Rule
+      priority: {{ add .Values.ingressRoutes.root.priority -1 }}
+      middlewares:
+        - name: security-headers
+        {{- if .Values.rateLimit.enabled }}
+        - name: {{ .Values.rateLimit.ui.name | default "tes-ui-rate-limit" }}
+        {{- end }}
+        {{- if .Values.edgeCases.conditionalHeaders.enabled }}
+        - name: remove-range-headers
+        {{- end }}
+      services:
+        - name: {{ .Values.tes.securityCenterService }}
+          port: {{ .Values.tes.securityCenterPort }}
+          scheme: https
+          serversTransport: {{ .Release.Namespace }}-{{- if eq .Values.defaultTransport "mtls" }}{{ .Values.serversTransports.mtls.name }}{{- else }}{{ .Values.serversTransports.insecureSkipVerify.name }}{{- end }}
+    {{- end }}
+  tls:
+    secretName: {{ .Values.certificates.external.secretName }}
+{{- end }}

@@ -20,10 +20,10 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "tes-operator.labels" . | nindent 8 }}
-	{{- with .Values.operator.podLabels }}
+        {{- with (omit (.Values.operator.podLabels | default dict) "helm.sh/chart" "app.kubernetes.io/name" "app.kubernetes.io/instance" "app.kubernetes.io/version" "app.kubernetes.io/managed-by") }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
+        {{- include "tes-operator.labels" . | nindent 8 }}
     spec:
       {{- if .Values.operator.image.imagePullSecret }}
       imagePullSecrets:

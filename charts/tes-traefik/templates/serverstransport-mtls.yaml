@@ -1,0 +1,37 @@
+{{- if .Values.serversTransports.mtls.enabled }}
+---
+apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: {{ .Release.Namespace }}-{{ .Values.serversTransports.mtls.name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  # Certificate validation enforced (NIAP compliant)
+  insecureSkipVerify: {{ .Values.serversTransports.mtls.insecureSkipVerify | default false }}
+  
+  # Timeout configuration for large file uploads and long-running requests
+  {{- if .Values.serversTransports.mtls.forwardingTimeouts }}
+  forwardingTimeouts:
+    dialTimeout: {{ .Values.serversTransports.mtls.forwardingTimeouts.dialTimeout | default "30s" }}
+    responseHeaderTimeout: {{ .Values.serversTransports.mtls.forwardingTimeouts.responseHeaderTimeout | default "600s" }}
+    idleConnTimeout: {{ .Values.serversTransports.mtls.forwardingTimeouts.idleConnTimeout | default "90s" }}
+  {{- end }}
+  
+  # Client certificate for mTLS authentication (Traefik → backend)
+  {{- if .Values.serversTransports.mtls.certificatesSecrets }}
+  certificatesSecrets:
+  {{- range .Values.serversTransports.mtls.certificatesSecrets }}
+    - {{ . }}
+  {{- end }}
+  {{- end }}
+  
+  # Root CA certificates for validating backend server certificates
+  rootCAsSecrets:
+  {{- if .Values.serversTransports.mtls.rootCAsSecrets }}
+  {{- range .Values.serversTransports.mtls.rootCAsSecrets }}
+    - {{ . }}
+  {{- end }}
+  {{- else }}
+    - {{ .Release.Namespace }}-tes-root-secret
+  {{- end }}
+{{- end }}
