@@ -75,7 +75,6 @@ Create the name of the service account to use
 {{/*
     Generate new data
 */}}
-  installed_version: ""
   helm_username: {{ .Values.operator.helm.username | b64enc | quote }}
   helm_password: {{ .Values.operator.helm.password | b64enc | quote }}
   installed_version: ""
