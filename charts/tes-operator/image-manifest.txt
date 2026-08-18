@@ -14,7 +14,7 @@ tenable/securitycenter-runtime:6.9.0
 tenable/tes-log-scraper:1.1.5
 tenable/tes-platform-ui:1.2.20
 tenable/tes-exposure-response:1.1.5
-tenable/sc-job-manager:1.0.285
+tenable/sc-job-manager:1.1.2
 tenable/tes-reporting:6.9.0
 postgres:17
 traefik:3.6.12
