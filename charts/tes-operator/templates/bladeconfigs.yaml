@@ -3,7 +3,22 @@ kind: ConfigMap
 metadata:
   name: tes-blade-configs
 data:
-  {{- range $key, $value := .Values.tes }}
+  {{- $tes := deepCopy .Values.tes }}
+  {{- if .Values.operator.image.imagePullSecret }}
+  {{- $imagePullSecrets := list (dict "name" .Values.operator.image.imagePullSecret) }}
+  {{- if not (hasKey $tes.blades.global "image") }}
+    {{- $_ := set $tes.blades.global "image" dict }}
+  {{- end }}
+  {{- $_ := set $tes.blades.global.image "imagePullSecrets" $imagePullSecrets }}
+  {{- $currentTraefik := index $tes.blades "traefik" | default dict }}
+  {{- $traefikNested := index $currentTraefik "traefik" | default dict }}
+  {{- $deployment := index $traefikNested "deployment" | default dict }}
+  {{- $_ := set $deployment "imagePullSecrets" $imagePullSecrets }}
+  {{- $_ := set $traefikNested "deployment" $deployment }}
+  {{- $_ := set $currentTraefik "traefik" $traefikNested }}
+  {{- $_ := set $tes.blades "traefik" $currentTraefik }}
+  {{- end }}
+  {{- range $key, $value := $tes }}
     {{ $key }}: |
   {{ toJson $value | default "{}" | indent 4 }}
   {{- end -}}
