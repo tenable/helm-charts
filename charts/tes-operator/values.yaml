@@ -10,7 +10,7 @@ operator:
   image:
     name: tes-operator
     pullPolicy: IfNotPresent
-    tag: "1.9.0-IA"
+    tag: "1.9.0"
     imagePullSecret: ""
     registry: "tenable"
   helm:
