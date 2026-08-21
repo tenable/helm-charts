@@ -2,8 +2,8 @@
 # plan to use your own internal docker registry, you will need these images
 
 tenable/tes-operator:1.9.0-IA
-tenable/tes-consec-api:1.9.61
-tenable/tes-consec-ui:1.9.25
+tenable/tes-consec-api:1.9.63
+tenable/tes-consec-ui:1.9.27
 tenable/tes-consec-scan:1.9.32
 tenable/tes-consec-tvdl:1.9.15
 tenable/tes-consec-policy:1.9.19
@@ -12,7 +12,7 @@ tenable/tes-licensing-service:1.0.68
 tenable/securitycenter-install:6.9.0
 tenable/securitycenter-runtime:6.9.0
 tenable/tes-log-scraper:1.1.5
-tenable/tes-platform-ui:1.2.20
+tenable/tes-platform-ui:1.2.22
 tenable/tes-exposure-response:1.1.5
 tenable/sc-job-manager:1.1.2
 tenable/tes-reporting:6.9.0
