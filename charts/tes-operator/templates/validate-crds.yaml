@@ -1,10 +1,9 @@
 {{/*
 Validate that the Traefik CRDs used by this chart are installed in the cluster.
-
 */}}
-{{- $liveCluster := lookup "v1" "Namespace" "" "default" -}}
+{{- $liveCluster := lookup "v1" "Namespace" "" .Release.Namespace -}}
 {{- if $liveCluster -}}
   {{- if not (.Capabilities.APIVersions.Has "traefik.io/v1alpha1") -}}
-  {{- fail "\n\nRequired Traefik CRDs are not installed in the cluster.\nInstall them with:\n\n  kubectl apply -f https://raw.githubusercontent.com/traefik/traefik/v3.6/docs/content/reference/dynamic-configuration/kubernetes-crd-definition-v1.yml\n" -}}
+  {{- fail "\n\nRequired Traefik CRDs are not installed in the cluster.\nNote: this is a one-time installation that requires cluster-level access.\nInstall them with:\n\n  kubectl apply -f https://raw.githubusercontent.com/traefik/traefik/v3.6/docs/content/reference/dynamic-configuration/kubernetes-crd-definition-v1.yml\n\nSubsequent installs and upgrades will work with namespace-level access once the CRDs are installed.\n" -}}
   {{- end -}}
 {{- end -}}
