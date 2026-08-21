@@ -1,8 +1,8 @@
 # Tenable Enclave Security (TES) Helm Chart
 
-![Version: 1.8.0](https://img.shields.io/badge/Version-1.8.0-informational?style=flat-square)
+![Version: 1.9.0](https://img.shields.io/badge/Version-1.9.0-informational?style=flat-square)
 ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
-![AppVersion: 1.8.0](https://img.shields.io/badge/AppVersion-1.8.0-informational?style=flat-square)
+![AppVersion: 1.9.0](https://img.shields.io/badge/AppVersion-1.9.0-informational?style=flat-square)
 
 This chart bootstraps a Tenable Enclave Security deployment on a Kubernetes cluster using the Helm package manager. It installs the tes-operator, which configures and installs Tenable Enclave Security components.
 
@@ -26,9 +26,9 @@ This chart bootstraps a Tenable Enclave Security deployment on a Kubernetes clus
   - [Disable cert-manager CSI Driver](#disable-cert-manager-csi-driver)
   - [Specify PVC Size](#specify-pvc-size)
   - [Specify PVC Storage Class](#specify-pvc-storage-class)
-  - [Specify Registry for TES Images](#specify-registry-for-tes-images)
+  - [Deploy from a private registry](#deploy-from-a-private-registry)
   - [Specify Registry for PostgreSQL DB Image](#specify-registry-for-postgresql-db-image)
-  - [Change Service Type](#change-service-type)
+  - [Change TES Service Type](#change-tes-service-type)
   - [Configure Routable URL](#configure-routable-url)
   - [External DNS Annotation](#external-dns-annotation)
   - [Reporting job annotations and tolerations](#reporting-job-annotations-and-tolerations)
@@ -36,6 +36,8 @@ This chart bootstraps a Tenable Enclave Security deployment on a Kubernetes clus
   - [Reporting job lifetime](#reporting-job-lifetime)
   - [Job manager POD log level](#job-manager-pod-log-level)
   - [Pod Annotations](#pod-annotations)
+  - [Pod Labels](#pod-labels)
+  - [Configure Ingress in front of TES](#configure-ingress-in-front-of-tes)
 - [Global TES Settings](#global-tes-settings)
 - [Important Notes](#important-notes)
 - [Additional Resources](#additional-resources)
@@ -386,6 +388,9 @@ tes:
       tes-consec-tvdl:
         podAnnotations:
           tenable.com/product: "tenable-enclave-security"
+      tes-consec-ui:
+        podAnnotations:
+          tenable.com/product: "tenable-enclave-security"
     tes-platform:
       tes-exposure-response:
         podAnnotations:
@@ -393,6 +398,78 @@ tes:
       tes-platform-ui:
         podAnnotations:
           tenable.com/product: "tenable-enclave-security"
+      tes-licensing-service:
+        podAnnotations:
+          tenable.com/product: "tenable-enclave-security"
+```
+
+### Pod Labels
+
+You can set custom pod labels for respective pods using the below values. Available across all blades with the same structure as Pod Annotations:
+
+```yaml
+tes:
+  blades:
+    securitycenter:
+      podLabels:
+        team: security
+      sc-job-manager:
+        podLabels:
+          team: security
+    container-security:
+      tes-consec-api:
+        podLabels:
+          team: security
+      tes-consec-scan:
+        podLabels:
+          team: security
+      tes-consec-policy:
+        podLabels:
+          team: security
+      tes-consec-tvdl:
+        podLabels:
+          team: security
+      tes-consec-ui:
+        podLabels:
+          team: security
+    tes-platform:
+      tes-exposure-response:
+        podLabels:
+          team: security
+      tes-platform-ui:
+        podLabels:
+          team: security
+      tes-licensing-service:
+        podLabels:
+          team: security
+```
+
+### Configure Ingress in front of TES
+
+By default TES provisions a LoadBalancer service as the entrypoint to TES. Using the below option an ingress can be configured instead.
+
+```yaml
+tes:
+  blades:
+    global:
+      ingress:
+        enabled: true
+        className: "alb"
+        annotations:
+          alb.ingress.kubernetes.io/scheme: "internal"
+          alb.ingress.kubernetes.io/target-type: "ip"
+          alb.ingress.kubernetes.io/certificate-arn: "arn:aws:acm:us-east-1:123456789:certificate/abc"
+          alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
+          alb.ingress.kubernetes.io/backend-protocol: "HTTPS"
+        hosts:
+          - host: "tes.example.com"
+            paths:
+              - path: /
+                pathType: Prefix
+        tls:
+          - secretName: tes-tls
+            hosts:
+              - "tes.example.com"
 ```
 
 ## Global TES Settings
