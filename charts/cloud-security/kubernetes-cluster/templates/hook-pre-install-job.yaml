@@ -5,6 +5,7 @@ metadata:
     {{- include "annotations" . | nindent 4 }}
     helm.sh/hook: pre-install, pre-upgrade
     helm.sh/hook-delete-policy: before-hook-creation, hook-succeeded
+    helm.sh/hook-output-log-policy: hook-failed
     helm.sh/hook-weight: "-1"
   labels:
     {{- include "labels" . | nindent 4 }}
@@ -13,15 +14,19 @@ metadata:
 spec:
   backoffLimit: 0
   template:
+    {{- $hookAnnotations := default .Values.pod.annotations .Values.hooks.pod.annotations }}
+    {{- $hookLabels := default .Values.pod.labels .Values.hooks.pod.labels }}
+    {{- if or $hookAnnotations $hookLabels }}
     metadata:
+      {{- with $hookAnnotations }}
       annotations:
-        {{- with (default .Values.pod.annotations .Values.hooks.pod.annotations) }}
-          {{- toYaml . | nindent 8 }}
-        {{- end }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $hookLabels }}
       labels:
-        {{- with (default .Values.pod.labels .Values.hooks.pod.labels) }}
-          {{- toYaml . | nindent 8 }}
-        {{- end }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- end }}
     spec:
       {{- with (default .Values.pod.affinity .Values.hooks.pod.affinity) }}
       affinity:
@@ -52,7 +57,7 @@ spec:
             {{- end }}
             {{- if .Values.accountId }}
             - --tenant-raw-id
-            - {{ .Values.accountId | quote }}
+            - {{ include "accountId" . | quote }}
             {{- end }}
           {{- include "containerEnvironmentVariables" . | nindent 10 }}
           image: {{ include "containerImage" . }}
@@ -64,11 +69,15 @@ spec:
           {{- end }}
           securityContext:
             {{- include "containerSecurityContext" (dict "securityContext" (default .Values.pod.containers.securityContext .Values.hooks.pod.containers.securityContext)) | nindent 12 }}
+          {{- $volumeMounts := print (include "containerCaCertificateVolumeMount" .) "\n" (include "containerSecretsVolumeMount" .) }}
+          {{- with trim $volumeMounts }}
           volumeMounts:
-            {{- include "containerCaCertificateVolumeMount" . | nindent 10 }}
-            {{- include "containerSecretsVolumeMount" . | nindent 10 }}
+            {{- . | nindent 10 }}
+          {{- end }}
+      {{- with (include "containerImagePullSecretNames" (dict "name" (print .Values.resourceNamePrefix "-pre-install-image-pull-secret") "root" .) | trim) }}
       imagePullSecrets:
-        {{- include "containerImagePullSecretNames" (dict "name" (print .Values.resourceNamePrefix "-pre-install-image-pull-secret") "root" .) | nindent 8 }}
+        {{- . | nindent 8 }}
+      {{- end }}
       restartPolicy: Never
       securityContext:
         {{- include "podSecurityContext" (dict "root" . "workloadContext" .Values.hooks.pod.securityContext) | nindent 8 }}
@@ -77,9 +86,11 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- $volumes := print (include "containerCaCertificateVolume" (dict "name" (include "containerCaCertificateSecretName" (dict "parent" "pre-install" "root" .)) "root" .)) "\n" (include "containerSecretsVolume" (dict "name" (include "apiKeyTokenSecretName" (dict "parent" "pre-install" "root" .)) "root" .)) }}
+      {{- with trim $volumes }}
       volumes:
-        {{- include "containerCaCertificateVolume" (dict "name" (include "containerCaCertificateSecretName" (dict "parent" "pre-install" "root" .)) "root" .) | nindent 8 }}
-        {{- include "containerSecretsVolume" (dict "name" (include "apiKeyTokenSecretName" (dict "parent" "pre-install" "root" .)) "root" .) | nindent 8 }}
+        {{- . | nindent 8 }}
+      {{- end }}
 
 ---
 {{ $apiKeyTokenSecretAnnotations :=
