@@ -27,6 +27,9 @@ helm search repo tenable
 
 ### Security Center
 
+> **Deprecated:** The standalone Security Center Helm chart is deprecated and will no longer receive updates.
+> Customers should migrate to [Tenable Enclave Security](#tenable-enclave-security), which includes Security Center and is the supported deployment path going forward.
+
 [Install Security Center](https://docs.tenable.com/quick-reference/container-deployments/Content/security-center-in-kubernetes-install.htm)
 
 ### Tenable Enclave Security
