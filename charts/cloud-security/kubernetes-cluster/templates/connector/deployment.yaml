@@ -18,10 +18,10 @@ spec:
     type: Recreate
   template:
     metadata:
+      {{- with (default .Values.pod.annotations .Values.connector.pod.annotations) }}
       annotations:
-        {{- with (default .Values.pod.annotations .Values.connector.pod.annotations) }}
-          {{- toYaml . | nindent 8 }}
-        {{- end }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       labels:
         {{- include "labels" . | nindent 8 }}
         {{- include "connector.labels" . | nindent 8 }}
@@ -61,11 +61,15 @@ spec:
           {{- end }}
           securityContext:
             {{- include "containerSecurityContext" (dict "securityContext" (default .Values.pod.containers.securityContext .Values.connector.pod.containers.securityContext)) | nindent 12 }}
+          {{- $volumeMounts := print (include "containerCaCertificateVolumeMount" .) "\n" (include "containerSecretsVolumeMount" .) }}
+          {{- with trim $volumeMounts }}
           volumeMounts:
-            {{- include "containerCaCertificateVolumeMount" . | nindent 12 }}
-            {{- include "containerSecretsVolumeMount" . | nindent 12 }}
+            {{- . | nindent 12 }}
+          {{- end }}
+      {{- with (include "containerImagePullSecretNames" (dict "root" .) | trim) }}
       imagePullSecrets:
-        {{- include "containerImagePullSecretNames" (dict "root" .) | nindent 8 }}
+        {{- . | nindent 8 }}
+      {{- end }}
       securityContext:
         {{- include "podSecurityContext" (dict "root" . "workloadContext" .Values.connector.pod.securityContext) | nindent 8 }}
       serviceAccountName: {{ include "connector.resourceNamePrefix" . }}-service-account
@@ -73,7 +77,9 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- $volumes := print (include "containerCaCertificateVolume" (dict "root" .)) "\n" (include "containerSecretsVolume" (dict "root" .)) }}
+      {{- with trim $volumes }}
       volumes:
-        {{- include "containerCaCertificateVolume" (dict "root" .) | nindent 8 }}
-        {{- include "containerSecretsVolume" (dict "root" .) | nindent 8 }}
+        {{- . | nindent 8 }}
+      {{- end }}
 {{- end }}
