@@ -1,8 +1,8 @@
 # Tenable Enclave Security (TES) Helm Chart
 
-![Version: 1.9.0](https://img.shields.io/badge/Version-1.9.0-informational?style=flat-square)
+![Version: 1.9.1](https://img.shields.io/badge/Version-1.9.1-informational?style=flat-square)
 ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
-![AppVersion: 1.9.0](https://img.shields.io/badge/AppVersion-1.9.0-informational?style=flat-square)
+![AppVersion: 1.9.1](https://img.shields.io/badge/AppVersion-1.9.1-informational?style=flat-square)
 
 This chart bootstraps a Tenable Enclave Security deployment on a Kubernetes cluster using the Helm package manager. It installs the tes-operator, which configures and installs Tenable Enclave Security components.
 
@@ -28,6 +28,7 @@ This chart bootstraps a Tenable Enclave Security deployment on a Kubernetes clus
   - [Specify PVC Storage Class](#specify-pvc-storage-class)
   - [Deploy from a private registry](#deploy-from-a-private-registry)
   - [Specify Registry for PostgreSQL DB Image](#specify-registry-for-postgresql-db-image)
+  - [Override Traefik Image Registry](#override-traefik-image-registry)
   - [Change TES Service Type](#change-tes-service-type)
   - [Configure Routable URL](#configure-routable-url)
   - [External DNS Annotation](#external-dns-annotation)
@@ -38,6 +39,7 @@ This chart bootstraps a Tenable Enclave Security deployment on a Kubernetes clus
   - [Pod Annotations](#pod-annotations)
   - [Pod Labels](#pod-labels)
   - [Configure Ingress in front of TES](#configure-ingress-in-front-of-tes)
+  - [Set Replica Count](#set-replica-count)
 - [Global TES Settings](#global-tes-settings)
 - [Important Notes](#important-notes)
 - [Additional Resources](#additional-resources)
@@ -62,6 +64,8 @@ operator:
     imagePullSecret: registrypullsecret # private image registry access secret, if needed
 ```
 
+> **Note:** `operator.image.registry` covers all blade service images but does not automatically propagate to the Traefik image or the PostgreSQL DB init job images. Set those separately — see [Override Traefik Image Registry](#override-traefik-image-registry) and [Specify Registry for PostgreSQL DB Image](#specify-registry-for-postgresql-db-image).
+
 ### Specify Registry for PostgreSQL DB Image
 
 You can use the following option to specify the PostgreSQL DB image registry.
@@ -74,6 +78,20 @@ tes:
         initJob:
           image:
             registry: myregistry.example.com
+```
+
+### Override Traefik Image Registry
+
+The Traefik image registry must be overridden separately from `operator.image.registry`, as it is not automatically propagated. Set the following in addition to the standard private registry configuration:
+
+```yaml
+tes:
+  blades:
+    traefik:
+      traefik:
+        image:
+          registry: myregistry.example.com
+          repository: traefik  # override if using a different image name e.g. traefik-stig
 ```
 
 ### Disable Cluster Scope
@@ -470,6 +488,51 @@ tes:
           - secretName: tes-tls
             hosts:
               - "tes.example.com"
+```
+
+### Set Replica Count
+
+To reduce replica counts for all services (for example, in a development or resource-constrained environment):
+
+```yaml
+tes:
+  blades:
+    traefik:
+      traefik:
+        deployment:
+          replicas: 1
+
+    container-security:
+      tes-consec-api:
+        replicaCount: 1
+        autoscaling:
+          enabled: false
+      tes-consec-scan:
+        replicaCount: 1
+        autoscaling:
+          enabled: false
+      tes-consec-ui:
+        replicaCount: 1
+      tes-consec-tvdl:
+        replicaCount: 1
+        autoscaling:
+          enabled: false
+      tes-consec-policy:
+        replicaCount: 1
+        autoscaling:
+          enabled: false
+
+    tes-platform:
+      tes-licensing-service:
+        replicaCount: 1
+        autoscaling:
+          enabled: false
+      tes-exposure-response:
+        replicaCount: 1
+        autoscaling:
+          enabled: false
+      tes-platform-ui:
+        replicaCount: 1
 ```
 
 ## Global TES Settings
