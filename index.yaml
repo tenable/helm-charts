@@ -245,6 +245,16 @@ entries:
     version: 1.0.0
   tes-operator:
   - apiVersion: v2
+    appVersion: 1.9.1
+    created: "2026-09-17T16:27:50+05:30"
+    description: Tenable Enclave Security operator
+    digest: 73a9b4aaddd37fee8c94aad9e8939c9ef9d671cf3e02df418cd789667e7500bb
+    name: tes-operator
+    type: application
+    urls:
+    - releases/tes-operator-1.9.1.tgz
+    version: 1.9.1
+  - apiVersion: v2
     appVersion: 1.9.0
     created: "2026-09-01T09:59:49.659854+01:00"
     description: Tenable Enclave Security operator
@@ -334,4 +344,4 @@ entries:
     urls:
     - releases/tes-operator-1.3.0.tgz
     version: 1.3.0
-generated: "2026-09-01T09:59:49.643159+01:00"
+generated: "2026-09-17T16:27:50+05:30"
