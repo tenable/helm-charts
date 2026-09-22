@@ -67,8 +67,10 @@ spec:
             {{- include "containerCaCertificateVolumeMount" . | nindent 12 }}
             {{- include "containerSecretsVolumeMount" . | nindent 12 }}
       hostPID: true
+      {{- with (include "containerImagePullSecretNames" (dict "root" .) | trim) }}
       imagePullSecrets:
-        {{- include "containerImagePullSecretNames" (dict "root" .) | nindent 8 }}
+        {{- . | nindent 8 }}
+      {{- end }}
       securityContext:
         {{- include "podSecurityContext" (dict "root" . "workloadContext" .Values.sensor.pod.securityContext) | nindent 8 }}
       serviceAccountName: {{ include "sensor.resourceNamePrefix" . }}-service-account
