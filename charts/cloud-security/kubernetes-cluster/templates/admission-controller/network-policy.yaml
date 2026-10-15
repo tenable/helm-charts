@@ -10,8 +10,8 @@ metadata:
   name: {{ include "admissionController.resourceNamePrefix" . }}-network-policy
   namespace: {{ include "namespace" . }}
 spec:
-  ingress:
   {{- with .Values.admissionController.networkPolicy.ingress }}
+  ingress:
   {{- toYaml . | nindent 4 }}
   {{- end }}
   podSelector:

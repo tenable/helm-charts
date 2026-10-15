@@ -18,12 +18,9 @@ allowedCapabilities:
   - '*'
 allowedUnsafeSysctls:
   - '*'
-defaultAddCapabilities: null
 fsGroup:
   type: RunAsAny
-priority: null
 readOnlyRootFilesystem: false
-requiredDropCapabilities: null
 runAsUser:
   type: RunAsAny
 seccompProfiles:

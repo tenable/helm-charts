@@ -1,3 +1,11 @@
+{{- define "accountId" -}}
+{{- if kindIs "float64" .Values.accountId -}}
+{{- printf "%.0f" .Values.accountId -}}
+{{- else -}}
+{{- .Values.accountId -}}
+{{- end -}}
+{{- end }}
+
 {{- define "annotations" -}}
 meta.helm.sh/release-name: {{ .Release.Name }}
 meta.helm.sh/release-namespace: {{ .Release.Namespace }}

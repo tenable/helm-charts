@@ -16,10 +16,10 @@ spec:
       backoffLimit: 3
       template:
         metadata:
+          {{- with (default .Values.pod.annotations .Values.updater.pod.annotations) }}
           annotations:
-            {{- with (default .Values.pod.annotations .Values.updater.pod.annotations) }}
-              {{- toYaml . | nindent 12 }}
-            {{- end }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           labels:
             {{- include "labels" . | nindent 12 }}
             {{- include "updater.labels" . | nindent 12 }}
@@ -54,7 +54,7 @@ spec:
                 {{- end }}
                 {{- if .Values.accountId }}
                 - --tenant-raw-id
-                - {{ .Values.accountId | quote }}
+                - {{ include "accountId" . | quote }}
                 {{- end }}
               {{- include "containerEnvironmentVariables" . | nindent 14 }}
               image: {{ include "containerImage" . }}
@@ -66,11 +66,15 @@ spec:
               {{- end }}
               securityContext:
                 {{- include "containerSecurityContext" (dict "securityContext" (default .Values.pod.containers.securityContext .Values.updater.pod.containers.securityContext)) | nindent 16 }}
+              {{- $volumeMounts := print (include "containerCaCertificateVolumeMount" .) "\n" (include "containerSecretsVolumeMount" .) }}
+              {{- with trim $volumeMounts }}
               volumeMounts:
-                {{- include "containerCaCertificateVolumeMount" . | nindent 16 }}
-                {{- include "containerSecretsVolumeMount" . | nindent 16 }}
+                {{- . | nindent 16 }}
+              {{- end }}
+          {{- with (include "containerImagePullSecretNames" (dict "root" .) | trim) }}
           imagePullSecrets:
-            {{- include "containerImagePullSecretNames" (dict "root" .) | nindent 12 }}
+            {{- . | nindent 12 }}
+          {{- end }}
           securityContext:
             {{- include "podSecurityContext" (dict "root" . "workloadContext" .Values.updater.pod.securityContext) | nindent 12 }}
           serviceAccountName: {{ include "updater.resourceNamePrefix" . }}-service-account
@@ -78,8 +82,10 @@ spec:
           tolerations:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          {{- $volumes := print (include "containerCaCertificateVolume" (dict "root" .)) "\n" (include "containerSecretsVolume" (dict "root" .)) }}
+          {{- with trim $volumes }}
           volumes:
-            {{- include "containerCaCertificateVolume" (dict "root" .) | nindent 12 }}
-            {{- include "containerSecretsVolume" (dict "root" .) | nindent 12 }}
+            {{- . | nindent 12 }}
+          {{- end }}
       ttlSecondsAfterFinished: 7200
   schedule: "0 * * * *"
