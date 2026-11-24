@@ -2,7 +2,7 @@ name: tes-deployment-assessment
 image:
   registry: tenable
   pullPolicy: IfNotPresent
-  tag: "1.3.8"
+  tag: "1.3.18"
 
 replicaCount: 2
 
@@ -17,7 +17,7 @@ affinity:
 service:
   https:
     containerPort: 8091
-  
+
 validatingWebhook:
   # timeoutSeconds Must be between 1 and 30
   timeoutSeconds: 15
@@ -27,7 +27,7 @@ validatingWebhook:
   failurePolicy: Ignore
   path: /api/v1/validate-webhook
   # Namespaces to exclude from assessment.
-  # release namespace is excluded by default to allow the 
+  # release namespace is excluded by default to allow the
   # webhook pod to be deployed.
   excludeNamespaces:
     - kube-system
@@ -35,7 +35,7 @@ validatingWebhook:
   # includeNamespaces:
   #   - tes-test
 
-# To be supplied via the {cluster-name}.yaml file that
+# To be supplied via the tes-config.yaml file that
 # must be downloaded from the tenable enclave security.
 # deployment scanners page
 # tesConfig:
@@ -92,6 +92,7 @@ autoscaling:
   targetMemoryUtilizationPercentage: 85
 
 podAnnotations:
+podLabels:
 
 nodeSelector: {}
 
