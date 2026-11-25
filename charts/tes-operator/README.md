@@ -1,8 +1,8 @@
 # Tenable Enclave Security (TES) Helm Chart
 
-![Version: 1.9.2](https://img.shields.io/badge/Version-1.9.2-informational?style=flat-square)
+![Version: 1.10.0](https://img.shields.io/badge/Version-1.10.0-informational?style=flat-square)
 ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
-![AppVersion: 1.9.2](https://img.shields.io/badge/AppVersion-1.9.2-informational?style=flat-square)
+![AppVersion: 1.10.0](https://img.shields.io/badge/AppVersion-1.10.0-informational?style=flat-square)
 
 This chart bootstraps a Tenable Enclave Security deployment on a Kubernetes cluster using the Helm package manager. It installs the tes-operator, which configures and installs Tenable Enclave Security components.
 
