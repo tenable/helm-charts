@@ -39,6 +39,7 @@ This chart bootstraps a Tenable Enclave Security deployment on a Kubernetes clus
   - [Pod Annotations](#pod-annotations)
   - [Pod Labels](#pod-labels)
   - [Configure Ingress in front of TES](#configure-ingress-in-front-of-tes)
+  - [Configure a dedicated Consec scanner port](#configure-a-dedicated-consec-scanner-port)
   - [Set Replica Count](#set-replica-count)
 - [Global TES Settings](#global-tes-settings)
 - [Important Notes](#important-notes)
@@ -490,6 +491,44 @@ tes:
               - "tes.example.com"
 ```
 
+### Configure a dedicated Consec scanner port
+
+By default, Container Security scanners reach Tenable Enclave Security through the standard HTTPS entrypoint. TES 1.10 can expose a dedicated port for scanner traffic so it can be separated from API and GUI traffic, for example to apply different network policies.
+
+```yaml
+tes:
+  blades:
+    global:
+      traefik:
+        consecScannerPort:
+          enabled: true
+          port: 9443
+```
+
+| Setting | Default | Description |
+| --- | --- | --- |
+| `tes.blades.global.traefik.consecScannerPort.enabled` | `false` | Expose a dedicated port for Container Security scanner traffic |
+| `tes.blades.global.traefik.consecScannerPort.port` | `9443` | Port exposed on the Traefik gateway service; traffic is forwarded to the `consec-scanner` entrypoint (container port `8444`) |
+
+When enabled:
+
+- the Traefik gateway service exposes the port and the Container Security ingress route uses the `consec-scanner` entrypoint;
+- the callback URL that the Container Security API reports to scanners becomes `<TES URL>:<port>`;
+- the port is derived from this single setting. Do not configure a scanner port under `gateway.ports`.
+
+For `NodePort` services, the node port can be pinned:
+
+```yaml
+tes:
+  blades:
+    traefik:
+      gateway:
+        serviceType: NodePort
+        ports:
+          consec-scanner:
+            nodePort: 30444
+```
+
 ### Set Replica Count
 
 To reduce replica counts for all services (for example, in a development or resource-constrained environment):
@@ -548,6 +587,7 @@ tes:
 | tes.blades.global.url | string | `nil` | Routable URL to access Tenable Enclave Security. Used by scanners to publish data. If not configured, automatically uses LoadBalancer service hostname. |
 | tes.blades.global.registry | string | `"tenable"` | Container registry for TES blade images |
 | tes.blades.global.disableCertManagerCsiDriver | bool | `false` | Disable cert-manager CSI driver and use certificate resources instead |
+| tes.blades.global.traefik.consecScannerPort | object | `{"enabled": false, "port": 9443}` | Dedicated port for Container Security scanner traffic. See [Configure a dedicated Consec scanner port](#configure-a-dedicated-consec-scanner-port). |
 
 
 ## Important Notes
